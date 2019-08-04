@@ -4,13 +4,23 @@ import MyPlacesScreen from "./components/MyPlacesScreen";
 import MyDenunciasScreen from "./components/MyDenunciasScreen";
 import { createStackNavigator, createDrawerNavigator } from "react-navigation";
 
-const ProfileStackNavigator = createStackNavigator({
-  Profile: { screen: ProfileScreen, title: "Perfil" }
-});
+const ProfileStackNavigator = createStackNavigator(
+  {
+    Profile: { screen: ProfileScreen, title: "Perfil" }
+  },
+  {
+    headerMode: "none"
+  }
+);
 
-const MapStackNavigator = createStackNavigator({
-  Map: { screen: HomeScreen, title: "Home" }
-});
+const MapStackNavigator = createStackNavigator(
+  {
+    Map: { screen: HomeScreen, title: "Home" }
+  },
+  {
+    headerMode: "none"
+  }
+);
 
 const BottomNavigator = createStackNavigator(
   {
