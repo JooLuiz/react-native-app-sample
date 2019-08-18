@@ -1,1 +1,5 @@
-export const TESTE = "TESTE";
+export const GET_USER_LOCATION = "GET_USER_LOCATION";
+
+export const SET_USER_LOCATION = "SET_USER_LOCATION";
+
+export const SET_INITIAL_REGION = "SET_INITIAL_REGION";

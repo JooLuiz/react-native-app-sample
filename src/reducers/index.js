@@ -1,4 +1,4 @@
 import { combineReducers } from "redux";
-import errors from "./errors";
+import map from "./map";
 
-export default combineReducers({ errors });
+export default combineReducers({ map });
