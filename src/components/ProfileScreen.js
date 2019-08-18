@@ -6,8 +6,8 @@ class ProfileScreen extends React.Component {
   render() {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <Text>{this.props.msg}</Text>
-        <Text>{this.props.status}</Text>
+        <Text>{this.props.initialPosition.latitude}</Text>
+        <Text>{this.props.initialPosition.longitude}</Text>
         <Text>Profile Screen</Text>
         <View style={{ flex: 1, position: "absolute", bottom: 0 }}>
           <Button
@@ -29,8 +29,7 @@ class ProfileScreen extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  msg: state.errors.msg,
-  status: state.errors.status
+  initialPosition: state.map.initialPosition
 });
 
 export default connect(

@@ -1,69 +1,109 @@
 import React from "react";
 import { connect } from "react-redux";
-import { agoraVai } from "../actions/test";
-import { View, StyleSheet, Button } from "react-native";
+import { setUserLocation } from "../actions/map";
+import {
+  View,
+  StyleSheet,
+  Button,
+  TextInput,
+  Dimensions,
+  Text,
+  TouchableOpacity
+} from "react-native";
 import MapView from "react-native-maps";
+import Geolocation from "@react-native-community/geolocation";
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
     title: "Home"
   };
 
-  openModal = () => {
-    this.props.agoraVai("mano sera q vai");
+  state = {
+    mapRegion: null,
+    text: null
   };
 
-  closeModal = () => {
-    this.props.agoraVai("Teste 2");
-  };
+  componentDidMount() {
+    this.watchID = Geolocation.watchPosition(
+      position => {
+        let region = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          latitudeDelta: 0.0065,
+          longitudeDelta: 0.0065
+        };
+        this.onRegionChange(region);
+      },
+      error => console.log(error)
+    );
+  }
+
+  onRegionChange(region) {
+    this.setState({
+      mapRegion: region
+    });
+  }
+
+  componentWillUnmount() {
+    Geolocation.clearWatch(this.watchID);
+  }
 
   render() {
     return (
       <View style={styles.container}>
         <MapView
           style={styles.map}
-          initialRegion={{
-            latitude: 37.78825,
-            longitude: -122.4324,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421
-          }}
+          initialRegion={this.state.mapRegion}
+          showsUserLocation={true}
+          followUserLocation={true}
+          onRegionChange={this.onRegionChange.bind(this)}
           showsCompass={true}
           zoomControlEnabled={true}
           showsTraffic={true}
         />
-        <View style={{ flex: 1, position: "absolute", bottom: 0 }}>
-          <Button
-            title="Menu"
-            onPress={() => this.props.navigation.openDrawer()}
-          />
-          <Button
-            title="Home"
-            onPress={() => this.props.navigation.navigate("Mapa")}
-          />
-          <Button
-            title="Profile"
-            onPress={() => this.props.navigation.navigate("Profile")}
+        <View
+          style={{
+            flex: 1,
+            position: "absolute",
+            top: Dimensions.get("window").height * 0.1
+          }}
+        >
+          <TextInput
+            style={{
+              height: Dimensions.get("window").height * 0.07,
+              width: Dimensions.get("window").width * 0.9,
+              borderColor: "gray",
+              borderWidth: 1,
+              backgroundColor: "white",
+              borderRadius: 7
+            }}
+            onChangeText={text => this.setState({ text })}
+            value={this.state.text}
           />
         </View>
-        {/* <Button title="Open Modal" onPress={() => this.openModal()} />
-        <Button title="Close Modal" onPress={() => this.closeModal()} />
-
-
-        <View style={{ flex: 1, position: "absolute", bottom: 0 }}>
-          <Button
-            title="Menu"
+        <View style={styles.denunciaBottomButtom}>
+          <Text style={styles.circle} />
+        </View>
+        <View style={styles.navigationBottomButtons}>
+          <TouchableOpacity
+            style={styles.navigationButton}
             onPress={() => this.props.navigation.openDrawer()}
-          />
-          <Button
-            title="Home"
+          >
+            <Text>Menu</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.navigationButton}
             onPress={() => this.props.navigation.navigate("Mapa")}
-          />
-          <Button
-            title="Profile"
+          >
+            <Text>Home</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.navigationButton}
             onPress={() => this.props.navigation.navigate("Profile")}
-          />
-        </View> */}
+          >
+            <Text>Perfil</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
@@ -79,6 +119,31 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     alignItems: "center"
   },
+  denunciaBottomButtom: {
+    flex: 1,
+    position: "absolute",
+    bottom: Dimensions.get("window").height * 0.15,
+    left: Dimensions.get("window").width * 0.12
+  },
+  navigationBottomButtons: {
+    flex: 1,
+    position: "absolute",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    bottom: 0
+  },
+  navigationButton: {
+    flex: 1,
+    height: Dimensions.get("window").width * 0.17,
+    width: Dimensions.get("window").width / 3,
+    backgroundColor: "green",
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  buttons: {
+    flex: 1
+  },
   map: {
     position: "absolute",
     top: 0,
@@ -86,15 +151,16 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     ...StyleSheet.absoluteFillObject
+  },
+  circle: {
+    height: Dimensions.get("window").width * 0.17,
+    width: Dimensions.get("window").width * 0.17,
+    borderRadius: 400,
+    backgroundColor: "red"
   }
 });
 
-const mapStateToProps = state => ({
-  msg: state.errors.msg,
-  status: state.errors.status
-});
-
 export default connect(
-  mapStateToProps,
-  { agoraVai }
+  null,
+  { setUserLocation }
 )(HomeScreen);
