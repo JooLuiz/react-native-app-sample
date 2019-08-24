@@ -13,6 +13,7 @@ import {
 import MapView from "react-native-maps";
 import Geolocation from "@react-native-community/geolocation";
 import BottomButtons from "./BottomButtons";
+import Geocoder from "react-native-geocoding";
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -20,10 +21,40 @@ class HomeScreen extends React.Component {
   };
 
   state = {
-    text: null
+    text: null,
+    place: null,
+    places: null
   };
 
+  getPlaceFromName() {
+    if (this.state.text == "" || this.state.text == null) {
+      this.state.place = null;
+    } else {
+      this.getPlace(this.state.text);
+    }
+  }
+
+  getPlace(place) {
+    Geocoder.from(place).then(json => {
+      var location = json.results[0].geometry.location;
+      this.state.place = { latitude: location.lat, longitude: location.lng };
+    });
+  }
+
+  getPlaceFromCoordinate() {}
+
+  showMarker() {
+    return this.state.place ? (
+      <MapView.Marker
+        coordinate={this.state.place}
+        title={this.state.text}
+        description={this.state.text}
+      />
+    ) : null;
+  }
+
   componentDidMount() {
+    Geocoder.init("YOUR_API_KEY");
     this.watchID = Geolocation.watchPosition(
       position => {
         let region = {
@@ -51,14 +82,16 @@ class HomeScreen extends React.Component {
           showsUserLocation={true}
           followUserLocation={true}
           onRegionChange={this.onRegionChange.bind(this)}
-        />
+        >
+          {this.showMarker()}
+        </MapView>
         <View style={styles.searchInputView}>
           <TextInput
             style={styles.searchInput}
             placeholder="pesquisar local"
             onChangeText={text => this.setState({ text })}
             value={this.state.text}
-            onSubmitEditing={() => this.props.navigation.openDrawer()}
+            onSubmitEditing={() => this.getPlaceFromName()}
           />
         </View>
         <View style={styles.denunciaBottomButtom}>
