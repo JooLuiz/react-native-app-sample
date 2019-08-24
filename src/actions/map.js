@@ -1,12 +1,8 @@
-import {
-  GET_USER_LOCATION,
-  SET_USER_LOCATION,
-  SET_INITIAL_REGION
-} from "./types";
+import { GET_USER_CURRENT_LOCATION, SET_USER_CURRENT_LOCATION } from "./types";
 import Geolocation from "@react-native-community/geolocation";
 
-export const getUserLocation = () => dispatch => {
-  var initialPosition = Geolocation.getCurrentPosition(
+export const getUserCurrentLocation = () => dispatch => {
+  var userCurrentLocation = Geolocation.getCurrentPosition(
     position => {
       return {
         latitude: position.coords.latitude,
@@ -19,26 +15,17 @@ export const getUserLocation = () => dispatch => {
 
   dispatch({
     payload: {
-      initialPosition: initialPosition
+      userCurrentLocation: userCurrentLocation
     },
-    type: GET_USER_LOCATION
+    type: GET_USER_CURRENT_LOCATION
   });
 };
 
-export const setUserLocation = (latitude, longitude) => dispatch => {
+export const setUserCurrentLocation = coordinates => dispatch => {
   dispatch({
     payload: {
-      initialPosition: { latitude: latitude, longitude: longitude }
+      userCurrentLocation: coordinates
     },
-    type: SET_USER_LOCATION
-  });
-};
-
-export const setInitialRegion = (latitude, longitude) => dispatch => {
-  dispatch({
-    payload: {
-      initialRegion: { latitude: latitude, longitude: longitude }
-    },
-    type: SET_INITIAL_REGION
+    type: SET_USER_CURRENT_LOCATION
   });
 };

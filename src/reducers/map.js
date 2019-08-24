@@ -1,25 +1,18 @@
 import {
-  GET_USER_LOCATION,
-  SET_USER_LOCATION,
-  SET_INITIAL_REGION
+  SET_USER_CURRENT_LOCATION,
+  GET_USER_CURRENT_LOCATION
 } from "../actions/types";
 
 const initialState = {
-  initialRegion: {},
-  initialPosition: {},
-  finalPosition: {}
+  userCurrentLocation: null
 };
 
 export default function(state = initialState, action) {
   switch (action.type) {
-    case GET_USER_LOCATION:
-    case SET_USER_LOCATION:
+    case SET_USER_CURRENT_LOCATION:
+    case GET_USER_CURRENT_LOCATION:
       return {
-        initialPosition: action.payload.initialPosition
-      };
-    case SET_INITIAL_REGION:
-      return {
-        initialRegion: action.payload.initialRegion
+        userCurrentLocation: action.payload.userCurrentLocation
       };
     default:
       return state;
