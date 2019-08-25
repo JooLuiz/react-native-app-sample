@@ -8,7 +8,8 @@ import {
   TextInput,
   Dimensions,
   Text,
-  TouchableOpacity
+  TouchableOpacity,
+  FlatList
 } from "react-native";
 import MapView from "react-native-maps";
 import Geolocation from "@react-native-community/geolocation";
@@ -36,8 +37,15 @@ class HomeScreen extends React.Component {
 
   getPlace(place) {
     Geocoder.from(place).then(json => {
+      //TODO show list with all the addresses and a message if there is none.
       var location = json.results[0].geometry.location;
-      this.state.place = { latitude: location.lat, longitude: location.lng };
+      this.state.place = {
+        latitude: location.lat,
+        longitude: location.lng,
+        latitudeDelta: 0.0065,
+        longitudeDelta: 0.0065
+      };
+      this._map.animateCamera(this.state.place, 300);
     });
   }
 
@@ -78,10 +86,15 @@ class HomeScreen extends React.Component {
       <View style={styles.container}>
         <MapView
           style={styles.map}
-          initialRegion={this.props.userCurrentLocation}
+          initialRegion={
+            this.state.place ? this.state.place : this.props.userCurrentLocation
+          }
           showsUserLocation={true}
           followUserLocation={true}
           onRegionChange={this.onRegionChange.bind(this)}
+          ref={ref => {
+            this._map = ref;
+          }}
         >
           {this.showMarker()}
         </MapView>
@@ -92,6 +105,19 @@ class HomeScreen extends React.Component {
             onChangeText={text => this.setState({ text })}
             value={this.state.text}
             onSubmitEditing={() => this.getPlaceFromName()}
+          />
+          <FlatList
+            style={{
+              backgroundColor: "white",
+              borderBottomStartRadius: 7
+            }}
+            contentContainerStyle={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center"
+            }}
+            data={[{ address: "oi" }, { address: "td" }, { address: "bem" }]}
+            renderItem={({ item }) => <Text>{item.address}</Text>}
           />
         </View>
         <View style={styles.denunciaBottomButtom}>
