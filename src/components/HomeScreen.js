@@ -8,11 +8,13 @@ import {
   TextInput,
   Dimensions,
   Text,
-  TouchableOpacity
+  TouchableOpacity,
+  FlatList
 } from "react-native";
 import MapView from "react-native-maps";
 import Geolocation from "@react-native-community/geolocation";
 import BottomButtons from "./BottomButtons";
+import Geocoder from "react-native-geocoding";
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -20,10 +22,47 @@ class HomeScreen extends React.Component {
   };
 
   state = {
-    text: null
+    text: null,
+    place: null,
+    places: null
   };
 
+  getPlaceFromName() {
+    if (this.state.text == "" || this.state.text == null) {
+      this.state.place = null;
+    } else {
+      this.getPlace(this.state.text);
+    }
+  }
+
+  getPlace(place) {
+    Geocoder.from(place).then(json => {
+      //TODO show list with all the addresses and a message if there is none.
+      var location = json.results[0].geometry.location;
+      this.state.place = {
+        latitude: location.lat,
+        longitude: location.lng,
+        latitudeDelta: 0.0065,
+        longitudeDelta: 0.0065
+      };
+      this._map.animateCamera(this.state.place, 300);
+    });
+  }
+
+  getPlaceFromCoordinate() {}
+
+  showMarker() {
+    return this.state.place ? (
+      <MapView.Marker
+        coordinate={this.state.place}
+        title={this.state.text}
+        description={this.state.text}
+      />
+    ) : null;
+  }
+
   componentDidMount() {
+    Geocoder.init("YOUR_API_KEY");
     this.watchID = Geolocation.watchPosition(
       position => {
         let region = {
@@ -47,18 +86,38 @@ class HomeScreen extends React.Component {
       <View style={styles.container}>
         <MapView
           style={styles.map}
-          initialRegion={this.props.userCurrentLocation}
+          initialRegion={
+            this.state.place ? this.state.place : this.props.userCurrentLocation
+          }
           showsUserLocation={true}
           followUserLocation={true}
           onRegionChange={this.onRegionChange.bind(this)}
-        />
+          ref={ref => {
+            this._map = ref;
+          }}
+        >
+          {this.showMarker()}
+        </MapView>
         <View style={styles.searchInputView}>
           <TextInput
             style={styles.searchInput}
             placeholder="pesquisar local"
             onChangeText={text => this.setState({ text })}
             value={this.state.text}
-            onSubmitEditing={() => this.props.navigation.openDrawer()}
+            onSubmitEditing={() => this.getPlaceFromName()}
+          />
+          <FlatList
+            style={{
+              backgroundColor: "white",
+              borderBottomStartRadius: 7
+            }}
+            contentContainerStyle={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center"
+            }}
+            data={[{ address: "oi" }, { address: "td" }, { address: "bem" }]}
+            renderItem={({ item }) => <Text>{item.address}</Text>}
           />
         </View>
         <View style={styles.denunciaBottomButtom}>
