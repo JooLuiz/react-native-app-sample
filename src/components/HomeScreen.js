@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { setUserCurrentLocation, getUserCurrentLocation } from "../actions/map";
+import { setTravellingPoints } from "../actions/directions";
 import {
   View,
   StyleSheet,
@@ -15,6 +16,9 @@ import MapView from "react-native-maps";
 import Geolocation from "@react-native-community/geolocation";
 import BottomButtons from "./BottomButtons";
 import Geocoder from "react-native-geocoding";
+import axios from "axios";
+import Polyline from "@mapbox/polyline";
+// import MapViewDirections from "react-native-maps-directions";
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -24,7 +28,8 @@ class HomeScreen extends React.Component {
   state = {
     text: null,
     place: null,
-    places: null
+    start: null,
+    coords: null
   };
 
   getPlaceFromName() {
@@ -36,20 +41,23 @@ class HomeScreen extends React.Component {
   }
 
   getPlace(place) {
-    Geocoder.from(place).then(json => {
-      //TODO show list with all the addresses and a message if there is none.
-      var location = json.results[0].geometry.location;
-      this.state.place = {
-        latitude: location.lat,
-        longitude: location.lng,
-        latitudeDelta: 0.0065,
-        longitudeDelta: 0.0065
-      };
-      this._map.animateCamera(this.state.place, 300);
-    });
+    if (!this.state.start) {
+      Geocoder.from(place).then(json => {
+        var location = json.results[0].geometry.location;
+        this.state.place = {
+          latitude: location.lat,
+          longitude: location.lng,
+          latitudeDelta: 0.0065,
+          longitudeDelta: 0.0065
+        };
+        this._map.animateToCoordinate(this.state.place, 2000);
+      });
+    }
   }
 
-  getPlaceFromCoordinate() {}
+  getPlaceFromCoordinate(coords) {
+    this.getPlace(coords);
+  }
 
   showMarker() {
     return this.state.place ? (
@@ -59,6 +67,58 @@ class HomeScreen extends React.Component {
         description={this.state.text}
       />
     ) : null;
+  }
+
+  showDirectionsButton() {
+    return this.state.place && !this.state.start ? (
+      <View style={styles.directionsBottomButtom}>
+        <TouchableOpacity
+          onPress={() => {
+            this.startDirections();
+          }}
+        >
+          <Text style={styles.greyCircle} />
+        </TouchableOpacity>
+      </View>
+    ) : null;
+  }
+
+  async startDirections() {
+    Geolocation.getCurrentPosition(position => {
+      this.state.start = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+        latitudeDelta: 0.0065,
+        longitudeDelta: 0.0065
+      };
+      let origin = position.coords.latitude + "," + position.coords.longitude;
+      let destination =
+        this.state.place.latitude + "," + this.state.place.longitude;
+      axios
+        .get(
+          "https://maps.googleapis.com/maps/api/directions/json?origin=" +
+            origin +
+            "&destination=" +
+            destination +
+            "&key=YOUR_API_KEY"
+        )
+        .then(res => {
+          let encodedPoints = res.data.routes[0].overview_polyline.points;
+          encodedPoints = encodedPoints.replace(/\\\\/g, "\\");
+          let points = Polyline.decode(
+            res.data.routes[0].overview_polyline.points
+          );
+          console.error(encodedPoints);
+          let coords = points.map(point => {
+            return {
+              latitude: point[0],
+              longitude: point[1]
+            };
+          });
+          console.error(coords);
+          this.setState({ coords: coords });
+        });
+    });
   }
 
   componentDidMount() {
@@ -86,9 +146,7 @@ class HomeScreen extends React.Component {
       <View style={styles.container}>
         <MapView
           style={styles.map}
-          initialRegion={
-            this.state.place ? this.state.place : this.props.userCurrentLocation
-          }
+          initialRegion={this.props.userCurrentLocation}
           showsUserLocation={true}
           followUserLocation={true}
           onRegionChange={this.onRegionChange.bind(this)}
@@ -97,6 +155,13 @@ class HomeScreen extends React.Component {
           }}
         >
           {this.showMarker()}
+          {this.state.coords ? (
+            <MapView.Polyline
+              coordinates={this.state.coords}
+              strokeWidth={2}
+              strokeColor="red"
+            />
+          ) : null}
         </MapView>
         <View style={styles.searchInputView}>
           <TextInput
@@ -106,23 +171,17 @@ class HomeScreen extends React.Component {
             value={this.state.text}
             onSubmitEditing={() => this.getPlaceFromName()}
           />
-          <FlatList
-            style={{
-              backgroundColor: "white",
-              borderBottomStartRadius: 7
-            }}
-            contentContainerStyle={{
-              flex: 1,
-              justifyContent: "center",
-              alignItems: "center"
-            }}
-            data={[{ address: "oi" }, { address: "td" }, { address: "bem" }]}
-            renderItem={({ item }) => <Text>{item.address}</Text>}
-          />
         </View>
         <View style={styles.denunciaBottomButtom}>
-          <Text style={styles.circle} />
+          <TouchableOpacity
+            onPress={() => {
+              this.props.navigation.openDrawer();
+            }}
+          >
+            <Text style={styles.circle} />
+          </TouchableOpacity>
         </View>
+        {this.showDirectionsButton()}
         <BottomButtons navigation={this.props.navigation} />
       </View>
     );
@@ -167,19 +226,42 @@ const styles = StyleSheet.create({
     bottom: Dimensions.get("window").height * 0.15,
     left: Dimensions.get("window").width * 0.12
   },
+  directionsBottomButtom: {
+    flex: 1,
+    position: "absolute",
+    bottom: Dimensions.get("window").height * 0.15,
+    right: Dimensions.get("window").width * 0.12
+  },
   circle: {
     height: Dimensions.get("window").width * 0.17,
     width: Dimensions.get("window").width * 0.17,
     borderRadius: 400,
     backgroundColor: "red"
+  },
+  greyCircle: {
+    height: Dimensions.get("window").width * 0.17,
+    width: Dimensions.get("window").width * 0.17,
+    borderRadius: 400,
+    backgroundColor: "grey"
+  },
+  flatListStyle: {
+    backgroundColor: "white",
+    borderBottomStartRadius: 7
+  },
+  flatListItemStyle: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center"
   }
 });
 
 const mapStateToProps = state => ({
-  userCurrentLocation: state.map.userCurrentLocation
+  userCurrentLocation: state.map.userCurrentLocation,
+  start: state.directions.start,
+  end: state.directions.end
 });
 
 export default connect(
   mapStateToProps,
-  { setUserCurrentLocation, getUserCurrentLocation }
+  { setUserCurrentLocation, getUserCurrentLocation, setTravellingPoints }
 )(HomeScreen);
