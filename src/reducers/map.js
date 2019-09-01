@@ -1,7 +1,4 @@
-import {
-  SET_USER_CURRENT_LOCATION,
-  GET_USER_CURRENT_LOCATION
-} from "../actions/types";
+import { SET_USER_CURRENT_LOCATION } from "../actions/types";
 
 const initialState = {
   userCurrentLocation: null
@@ -10,7 +7,6 @@ const initialState = {
 export default function(state = initialState, action) {
   switch (action.type) {
     case SET_USER_CURRENT_LOCATION:
-    case GET_USER_CURRENT_LOCATION:
       return {
         userCurrentLocation: action.payload.userCurrentLocation
       };
