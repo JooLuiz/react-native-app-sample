@@ -11,7 +11,7 @@ const BottomNavigator = createStackNavigator(
     Mapa: { screen: HomeScreen, title: "Home" },
     Profile: { screen: Login, title: "Perfil" },
     Login: { screen: Login },
-    Register: { screen: Register },
+    Register: { screen: Register }
   },
   {
     headerMode: "none"
