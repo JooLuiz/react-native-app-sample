@@ -7,7 +7,7 @@ import BottomButtons from "./BottomButtons";
 class Register extends React.Component {
     render() {
         if (this.props.isAuthenticated) {
-            return this.props.navigation.navigate('Mapa');
+            return this.props.navigation.navigate('Perfil');
         }
         return (
             <View style={{ flex: 1 }}>
