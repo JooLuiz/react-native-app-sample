@@ -91,9 +91,9 @@ class LoginOrCreateForm extends Component {
                         />
                     </View>
                 </View>
-                <View style={{ alignContent: "center", width: "50%"}}>
+                <View style={{ alignContent: "center" }}>
                     {this.renderButton()}
-                    <View>
+                    <View style={{ alignContent: "center" }}>
                         {this.renderCreateLink()}
                     </View>
                 </View>
