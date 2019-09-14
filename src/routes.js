@@ -8,7 +8,7 @@ import { createStackNavigator, createDrawerNavigator, createSwitchNavigator } fr
 
 const BottomNavigator = createStackNavigator({
 	Mapa: { screen: HomeScreen, title: "Home" },
-    Profile: { screen: Login, title: "Perfil" },
+    	Profile: { screen: ProfileScreen, title: "Perfil" },
   },
   {
     headerMode: "none"
