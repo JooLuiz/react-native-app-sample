@@ -9,7 +9,7 @@ class ProfileScreen extends React.Component {
   render() {
 	_retrieveData = async () => {
 		try {
-			const value = await AsyncStorage.getItem('TASKS');
+			const value = await AsyncStorage.getItem('token');
 			if(value == null) {
 				return(this.props.navigation.navigate('Login'));
 			}
