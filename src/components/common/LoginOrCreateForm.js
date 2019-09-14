@@ -1,6 +1,7 @@
 import React, {Component} from "react";
+import { connect } from "react-redux";
 import {Button, View, Text, TextInput, StyleSheet} from "react-native";
-import axios from "axios";
+import {login, register} from "../../actions/auth";
 
 class LoginOrCreateForm extends Component {
 
@@ -23,24 +24,13 @@ class LoginOrCreateForm extends Component {
     }
 
     handleRequest() {
-        const endpoint = this.props.create ? 'register' : 'login';
         const payload = { username: this.state.username, password: this.state.password }
         if(this.props.create) {
             payload.email = this.state.email;
+            this.props.register(payload);
+        } else {
+            this.props.login(payload);
         }
-        
-        let path = `/auth/${endpoint}/`;
-        console.warn(path)
-        console.warn(payload)
-        axios
-        .post(path, payload)
-        .then(response => {
-                console.warn(response)
-                const {token, user} = response.data;
-                axios.defaults.headers.common.Authorization = `Token ${token}`;
-                this.props.navigation.navigate('Mapa');
-            })
-            .catch(error => console.warn(error));
     }
 
     renderCreateForm(){
@@ -59,10 +49,10 @@ class LoginOrCreateForm extends Component {
     }
 
     renderButton() {
-        const buttonText = this.props.create ? 'Registrar' : 'Login';
+        const buttonText = this.props.create ? "Registrar" : "Login";
 
         return (
-            <Button title={buttonText} onPress={this.handleRequest.bind(this)} />
+            <Button onPress={this.handleRequest.bind(this)} title={buttonText} />
         );
     }
 
@@ -101,7 +91,7 @@ class LoginOrCreateForm extends Component {
                         />
                     </View>
                 </View>
-                <View>
+                <View style={{ alignContent: "center", width: "50%"}}>
                     {this.renderButton()}
                     <View>
                         {this.renderCreateLink()}
@@ -112,4 +102,11 @@ class LoginOrCreateForm extends Component {
     }
 }
 
-export default LoginOrCreateForm;
+const style = StyleSheet.create({
+
+});
+
+export default connect(
+    null,
+    {login, register}
+)(LoginOrCreateForm);

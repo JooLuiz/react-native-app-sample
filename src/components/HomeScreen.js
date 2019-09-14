@@ -67,7 +67,7 @@ class HomeScreen extends React.Component {
           destinationLatLng +
           "&mode=" +
           this.state.mode +
-          "&key=YOUR_API_KEY"
+          "&key=AIzaSyCvyMmPHN4CIKsmIErJw-jAMw0lGkjtn9o"
       )
       .then(res => {
         let encodedPoints = res.data.routes[0].overview_polyline.points;
@@ -128,7 +128,7 @@ class HomeScreen extends React.Component {
         .get(
           "https://maps.googleapis.com/maps/api/geocode/json?address=" +
             address +
-            "&region=br&key=YOUR_API_KEY"
+            "&region=br&key=AIzaSyCvyMmPHN4CIKsmIErJw-jAMw0lGkjtn9o"
         )
         .then(json => {
           console.warn(json);

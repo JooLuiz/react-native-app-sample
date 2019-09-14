@@ -4,23 +4,27 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import MyPlacesScreen from "./components/MyPlacesScreen";
 import MyDenunciasScreen from "./components/MyDenunciasScreen";
-import { createStackNavigator, createDrawerNavigator } from "react-navigation";
+import { createStackNavigator, createDrawerNavigator, createSwitchNavigator } from "react-navigation";
 
-const BottomNavigator = createStackNavigator(
-  {
-    Mapa: { screen: HomeScreen, title: "Home" },
+const BottomNavigator = createStackNavigator({
+	Mapa: { screen: HomeScreen, title: "Home" },
     Profile: { screen: Login, title: "Perfil" },
-    Login: { screen: Login },
-    Register: { screen: Register },
   },
   {
     headerMode: "none"
   }
 );
 
+const SignScreens = createSwitchNavigator({
+	Login: { screen: Login },
+    Register: { screen: Register },
+})
+
 const AppNavigator = createDrawerNavigator({
   Mapa: BottomNavigator,
   MeusLocais: { screen: MyPlacesScreen, title: "Meus Locais" },
-  MinhasDenuncias: { screen: MyDenunciasScreen, title: "Minhas Denuncias" }
+  MinhasDenuncias: { screen: MyDenunciasScreen, title: "Minhas Denuncias" },
+  SignScreens
 });
+
 export default AppNavigator;
