@@ -5,14 +5,25 @@ import LoginOrCreateForm from "./common/LoginOrCreateForm";
 import BottomButtons from "./BottomButtons";
 
 class Register extends React.Component {
-    render() {
-        return (
-            <View style={{ flex: 1 }}>
-                <Text style={{ fontSize: 12, padding: 15}}>Cadastro</Text>
-                <LoginOrCreateForm navigation={ this.props.navigation } create />
-            </View>
-        );
+  render() {
+    if (this.props.isAuthenticated) {
+      return this.props.navigation.goBack();
     }
+    return (
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <Text style={{ fontSize: 30, padding: 15 }}>Cadastro</Text>
+        <LoginOrCreateForm navigation={this.props.navigation} create />
+        <BottomButtons navigation={this.props.navigation} />
+      </View>
+    );
+  }
 }
 
-export default connect()(Register);
+const mapStateToProps = state => ({
+  isAuthenticated: state.auth.isAuthenticated
+});
+
+export default connect(
+  mapStateToProps,
+  null
+)(Register);
