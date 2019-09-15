@@ -262,7 +262,8 @@ class HomeScreen extends React.Component {
   }
 
   denunciaButton() {
-    return (
+    console.warn(this.props.token);
+    return this.props.isAuthenticated ? (
       <View style={styles.denunciaBottomButtom}>
         <TouchableOpacity
           onPress={() => {
@@ -272,7 +273,7 @@ class HomeScreen extends React.Component {
           <Text style={styles.circle} />
         </TouchableOpacity>
       </View>
-    );
+    ) : null;
   }
 
   cancelCoords() {
@@ -437,7 +438,9 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => ({
-  userCurrentLocation: state.map.userCurrentLocation
+  userCurrentLocation: state.map.userCurrentLocation,
+  isAuthenticated: state.auth.isAuthenticated,
+  token: state.auth.token
 });
 
 export default connect(
