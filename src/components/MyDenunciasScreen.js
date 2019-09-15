@@ -5,6 +5,9 @@ import BottomButtons from "./BottomButtons";
 
 class MyDenunciasScreen extends React.Component {
   render() {
+    if (!this.props.isAuthenticated) {
+      return this.props.navigation.navigate("Login");
+    }
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <Text>Denuncias Screen</Text>
@@ -14,11 +17,13 @@ class MyDenunciasScreen extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({});
+const mapStateToProps = state => ({
+  isAuthenticated: state.auth.isAuthenticated
+});
 
 const styles = StyleSheet.create({});
 
 export default connect(
-  null,
+  mapStateToProps,
   null
 )(MyDenunciasScreen);

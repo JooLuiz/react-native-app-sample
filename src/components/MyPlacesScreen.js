@@ -5,6 +5,9 @@ import BottomButtons from "./BottomButtons";
 
 class MyPlacesScreen extends React.Component {
   render() {
+    if (!this.props.isAuthenticated) {
+      return this.props.navigation.navigate("Login");
+    }
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <Text>MyPlaces Screen</Text>
@@ -14,11 +17,11 @@ class MyPlacesScreen extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({});
-
-const styles = StyleSheet.create({});
+const mapStateToProps = state => ({
+  isAuthenticated: state.auth.isAuthenticated
+});
 
 export default connect(
-  null,
+  mapStateToProps,
   null
 )(MyPlacesScreen);
