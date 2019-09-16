@@ -1,8 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
-import { View, Text } from "react-native";
+import { View, Text, Button } from "react-native";
 import LoginOrCreateForm from "./common/LoginOrCreateForm";
-import BottomButtons from "./BottomButtons";
 
 class Login extends React.Component {
   render() {
@@ -13,7 +12,6 @@ class Login extends React.Component {
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <Text style={{ fontSize: 30, padding: 15 }}>Login</Text>
         <LoginOrCreateForm navigation={this.props.navigation} />
-        <BottomButtons navigation={this.props.navigation} />
       </View>
     );
   }

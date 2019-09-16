@@ -123,7 +123,6 @@ class HomeScreen extends React.Component {
       } else if (type === "coordinates") {
         address = place.latitude + "," + place.longitude;
       }
-      console.warn(address);
       axios
         .get(
           "https://maps.googleapis.com/maps/api/geocode/json?address=" +
@@ -131,7 +130,6 @@ class HomeScreen extends React.Component {
             "&region=br&key=YOUR_API_KEY"
         )
         .then(json => {
-          console.warn(json);
           var location = json.data.results[0].geometry.location;
           this.state.place = {
             latitude: location.lat,
@@ -262,7 +260,6 @@ class HomeScreen extends React.Component {
   }
 
   denunciaButton() {
-    console.warn(this.props.token);
     return this.props.isAuthenticated ? (
       <View style={styles.denunciaBottomButtom}>
         <TouchableOpacity
