@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import axios from "axios";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
+import { loadUser } from "./src/actions/auth";
 
 library.add(fab);
 
@@ -15,6 +16,7 @@ export default class App extends React.Component {
   componentDidMount() {
     axios.defaults.baseURL = "http://ceaaeedc.ngrok.io/api";
     axios.defaults.timeout = 1500;
+    store.dispatch(loadUser());
   }
 
   render() {
