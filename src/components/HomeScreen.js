@@ -264,7 +264,7 @@ class HomeScreen extends React.Component {
       <View style={styles.denunciaBottomButtom}>
         <TouchableOpacity
           onPress={() => {
-            this.props.navigation.openDrawer();
+            this.props.navigation.navigate("TipoDenuncia");
           }}
         >
           <Text style={styles.circle} />

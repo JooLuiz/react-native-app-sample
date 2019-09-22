@@ -18,8 +18,6 @@ export const loadUser = () => (dispatch, getState) => {
 
   tokenConfig(getState)
     .then(function(config) {
-      console.warn("Headers" + config.headers);
-
       axios
         .get("/auth/user", config)
         .then(res => {
