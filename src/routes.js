@@ -6,7 +6,11 @@ import MyPlacesScreen from "./components/MyPlacesScreen";
 import MyDenunciasScreen from "./components/MyDenunciasScreen";
 import TipoDenunciaScreen from "./components/TipoDenunciaScreen";
 import DenunciaScreen from "./components/DenunciaScreen";
-import { createStackNavigator, createDrawerNavigator } from "react-navigation";
+import SideMenu from "./components/SideMenu"
+import {
+  createStackNavigator,
+  createDrawerNavigator
+} from "react-navigation";
 
 const BottomNavigator = createStackNavigator(
   {
@@ -25,7 +29,9 @@ const BottomNavigator = createStackNavigator(
 const AppNavigator = createDrawerNavigator({
   Mapa: BottomNavigator,
   MeusLocais: { screen: MyPlacesScreen, title: "Meus Locais" },
-  MinhasDenuncias: { screen: MyDenunciasScreen, title: "Minhas Denuncias" }
+  MinhasDenuncias: { screen: MyDenunciasScreen, title: "Minhas Denuncias" },
+  }, {
+    contentComponent: SideMenu
 });
 
 export default AppNavigator;

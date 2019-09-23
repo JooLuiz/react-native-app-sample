@@ -6,9 +6,10 @@ import { Provider } from "react-redux";
 import axios from "axios";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
+import { faCog } from '@fortawesome/free-solid-svg-icons';
 import { loadUser } from "./src/actions/auth";
 
-library.add(fab);
+library.add(fab, faCog);
 
 const AppContainer = createAppContainer(AppNavigator);
 
