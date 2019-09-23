@@ -6,15 +6,16 @@ import { Provider } from "react-redux";
 import axios from "axios";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
+import { faCog } from '@fortawesome/free-solid-svg-icons';
 import { loadUser } from "./src/actions/auth";
 
-library.add(fab);
+library.add(fab, faCog);
 
 const AppContainer = createAppContainer(AppNavigator);
 
 export default class App extends React.Component {
   componentDidMount() {
-    axios.defaults.baseURL = "http://ceaaeedc.ngrok.io/api";
+    axios.defaults.baseURL = "http://98a250dd.ngrok.io/api";
     axios.defaults.timeout = 1500;
     store.dispatch(loadUser());
   }
