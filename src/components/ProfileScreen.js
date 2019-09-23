@@ -9,7 +9,7 @@ class ProfileScreen extends React.Component {
     if (!this.props.isAuthenticated) {
       return this.props.navigation.navigate("Login");
     }
-    console.warn(this.props.token);
+
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <Text>Profile Screen</Text>
@@ -20,8 +20,7 @@ class ProfileScreen extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  isAuthenticated: state.auth.isAuthenticated,
-  token: state.auth.token
+  isAuthenticated: state.auth.isAuthenticated
 });
 
 export default connect(

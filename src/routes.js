@@ -4,6 +4,8 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import MyPlacesScreen from "./components/MyPlacesScreen";
 import MyDenunciasScreen from "./components/MyDenunciasScreen";
+import TipoDenunciaScreen from "./components/TipoDenunciaScreen";
+import DenunciaScreen from "./components/DenunciaScreen";
 import SideMenu from "./components/SideMenu"
 import {
   createStackNavigator,
@@ -14,8 +16,10 @@ const BottomNavigator = createStackNavigator(
   {
     Mapa: { screen: HomeScreen, title: "Home" },
     Profile: { screen: ProfileScreen, title: "Perfil" },
-    Login: { screen: Login },
-    Register: { screen: Register }
+    TipoDenuncia: { screen: TipoDenunciaScreen, title: "TipoDenuncia" },
+    Denuncia: { screen: DenunciaScreen, title: "Denuncia" },
+    Login: { screen: Login, title: "Login" },
+    Register: { screen: Register, title: "Register" }
   },
   {
     headerMode: "none"
