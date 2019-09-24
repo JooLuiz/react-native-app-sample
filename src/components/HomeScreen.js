@@ -177,50 +177,50 @@ class HomeScreen extends React.Component {
       this.state.destination &&
       !this.state.coords ? (
       <View style={styles.travellingModeView}>
-        <View style={styles.buttonContainer}>
-          <Text>Dirigindo</Text>
-          <TouchableOpacity
-            style={styles.checkBoxcircle}
-            onPress={() => this.setTravelMode("driving")}
-          >
+        <TouchableOpacity
+          style={styles.checkBoxcircle}
+          onPress={() => this.setTravelMode("driving")}
+        >
+          <View style={styles.buttonContainer}>
+            <Text>Dirigindo</Text>
             {this.state.mode === "driving" && (
               <View style={styles.checkedCircle} />
             )}
-          </TouchableOpacity>
-        </View>
-        <View style={styles.buttonContainer}>
-          <Text>Transporte Público</Text>
-          <TouchableOpacity
-            style={styles.checkBoxcircle}
-            onPress={() => this.setTravelMode("transit")}
-          >
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.checkBoxcircle}
+          onPress={() => this.setTravelMode("transit")}
+        >
+          <View style={styles.buttonContainer}>
+            <Text>Transporte Público</Text>
             {this.state.mode === "transit" && (
               <View style={styles.checkedCircle} />
             )}
-          </TouchableOpacity>
-        </View>
-        <View style={styles.buttonContainer}>
-          <Text>Bibicleta</Text>
-          <TouchableOpacity
-            style={styles.checkBoxcircle}
-            onPress={() => this.setTravelMode("bicycling")}
-          >
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.checkBoxcircle}
+          onPress={() => this.setTravelMode("bicycling")}
+        >
+          <View style={styles.buttonContainer}>
+            <Text>Bibicleta</Text>
             {this.state.mode === "bicycling" && (
               <View style={styles.checkedCircle} />
             )}
-          </TouchableOpacity>
-        </View>
-        <View style={styles.buttonContainer}>
-          <Text>Andando</Text>
-          <TouchableOpacity
-            style={styles.checkBoxcircle}
-            onPress={() => this.setTravelMode("walking")}
-          >
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.checkBoxcircle}
+          onPress={() => this.setTravelMode("walking")}
+        >
+          <View style={styles.buttonContainer}>
+            <Text>Andando</Text>
             {this.state.mode === "walking" && (
               <View style={styles.checkedCircle} />
             )}
-          </TouchableOpacity>
-        </View>
+          </View>
+        </TouchableOpacity>
       </View>
     ) : null;
   }

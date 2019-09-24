@@ -36,7 +36,6 @@ class TipoDenunciaScreen extends React.Component {
           renderItem={({ item }) => (
             <TouchableHighlight onPress={() => this.setTipoDenunciaAndGo(item)}>
               <View style={styles.listItem}>
-                <Text>{item.id}</Text>
                 <Text>{item.descricao}</Text>
               </View>
             </TouchableHighlight>
