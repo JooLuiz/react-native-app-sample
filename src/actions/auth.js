@@ -21,8 +21,6 @@ export const loadUser = () => (dispatch, getState) => {
       axios
         .get("/auth/user", config)
         .then(res => {
-          console.warn("responsta");
-          console.warn(res);
           dispatch({
             type: USER_LOADED,
             payload: res.data
@@ -44,7 +42,6 @@ export const login = payload => dispatch => {
   axios
     .post(`/auth/login`, payload)
     .then(response => {
-      console.warn("Login" + response.data.token);
       dispatch({
         type: LOGIN_SUCCESS,
         payload: response.data
@@ -84,7 +81,6 @@ export const tokenConfig = async getState => {
     //Headers
     const config = { headers: { "Content-type": "application/json" } };
 
-    console.warn("TOKEN" + token);
     //if token add to header
     if (token) config.headers["Authorization"] = `Token ${token}`;
     else reject("Error");

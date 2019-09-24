@@ -6,8 +6,7 @@ import {
   StyleSheet,
   TouchableHighlight,
   Dimensions,
-  FlatList,
-  Strong
+  FlatList
 } from "react-native";
 import BottomButtons from "./BottomButtons";
 

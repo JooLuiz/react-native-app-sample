@@ -13,6 +13,7 @@ import {
   getAllDenuncias
 } from "./src/actions/denunciasUsuario";
 import { getDenuncias } from "./src/actions/denuncias";
+import { getEnderecoUsuario } from "./src/actions/enderecosUsuario";
 
 library.add(fab, faCog);
 
@@ -20,12 +21,13 @@ const AppContainer = createAppContainer(AppNavigator);
 
 export default class App extends React.Component {
   componentDidMount() {
-    axios.defaults.baseURL = "http://253e1534.ngrok.io/api";
+    axios.defaults.baseURL = "http://86d0666f.ngrok.io/api";
     axios.defaults.timeout = 1500;
     store.dispatch(loadUser());
     store.dispatch(getAllDenuncias());
     store.dispatch(getDenunciasUsuario());
     store.dispatch(getDenuncias());
+    store.dispatch(getEnderecoUsuario());
   }
 
   render() {
