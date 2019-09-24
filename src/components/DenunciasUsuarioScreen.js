@@ -23,13 +23,12 @@ class DenunciasUsuarioScreen extends React.Component {
     lng: null
   };
 
-  componentWillMount() {
-    this.getCurrentPosition();
+  setDenunciaPlace(place) {
+    this.state.place = place;
   }
 
   getPlace() {
-    let address;
-    if (type === "address") address = this.state.text.replace(/ /g, "+");
+    let address = this.state.text.replace(/ /g, "+");
 
     axios
       .get(
@@ -39,28 +38,30 @@ class DenunciasUsuarioScreen extends React.Component {
       )
       .then(json => {
         var location = json.data.results[0].geometry.location;
-        this.state.lat = location.lat;
-        this.state.lng = location.lng;
+        this.setState({ lat: location.lat, lng: location.lng });
+        this.registerAndGo(location.lat, location.lng);
       });
-  }
-
-  getCurrentPosition() {
-    Geolocation.getCurrentPosition(position => {
-      this.state.lat = position.coords.latitude;
-      this.state.lng = position.coords.longitude;
-    });
   }
 
   registerDenuncia() {
     if (this.state.place == "custom") this.getPlace();
     else this.getCurrentPosition();
+  }
 
-    if (this.state.lat == null || this.state.lng == null)
-      this.getCurrentPosition();
+  getCurrentPosition() {
+    Geolocation.getCurrentPosition(position => {
+      this.setState({
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+      });
+      this.registerAndGo(position.coords.latitude, position.coords.longitude);
+    });
+  }
 
+  registerAndGo(lat, lng) {
     const denuncia_usuario = {
-      latitude: this.state.lat,
-      longitude: this.state.lng,
+      latitude: this.state.lat == null ? lat : this.state.lat,
+      longitude: this.state.lng == null ? lng : this.state.lng,
       denuncia: this.props.currentDenuncia.id,
       comentario: this.state.comentario == null ? "" : this.state.comentario
     };
@@ -78,25 +79,25 @@ class DenunciasUsuarioScreen extends React.Component {
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <View style={styles.travellingModeView}>
           <TouchableOpacity
-            style={styles.checkBoxcircle}
+            style={styles.buttonContainer}
             onPress={() => this.setDenunciaPlace("current")}
           >
-            <View style={styles.buttonContainer}>
-              <Text>Utilizar Local Atual</Text>
+            <Text>Utilizar Local Atual</Text>
+            <View style={styles.checkBoxcircle}>
               {this.state.place === "current" && (
                 <View style={styles.checkedCircle} />
               )}
             </View>
           </TouchableOpacity>
           <TouchableOpacity
-            style={styles.checkBoxcircle}
+            style={styles.buttonContainer}
             onPress={() => this.setDenunciaPlace("custom")}
           >
-            <View style={styles.buttonContainer}>
-              <Text>Utilizar Local Atual</Text>
-              {this.state.place === "custom" && (
+            <Text>Pesquisar local</Text>
+            <View style={styles.checkBoxcircle}>
+              {this.state.place === "custom" ? (
                 <View style={styles.checkedCircle} />
-              )}
+              ) : null}
             </View>
           </TouchableOpacity>
           <View>

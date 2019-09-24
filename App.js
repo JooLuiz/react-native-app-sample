@@ -12,6 +12,7 @@ import {
   getDenunciasUsuario,
   getAllDenuncias
 } from "./src/actions/denunciasUsuario";
+import { getDenuncias } from "./src/actions/denuncias";
 
 library.add(fab, faCog);
 
@@ -24,6 +25,7 @@ export default class App extends React.Component {
     store.dispatch(loadUser());
     store.dispatch(getAllDenuncias());
     store.dispatch(getDenunciasUsuario());
+    store.dispatch(getDenuncias());
   }
 
   render() {
