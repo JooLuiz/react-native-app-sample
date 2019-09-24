@@ -17,7 +17,7 @@ class SideMenu extends Component {
             <View style={styles.container}>
                 <View style={{ padding: 60, backgroundColor: 'black' }}>
                 </View>
-                <ScrollView style={{ marginTop: 10 }}>
+                <ScrollView>
                     <View>
                         <TouchableOpacity onPress={this.navigateToScreen('Mapa')}>
                             <Text style={styles.screens}> Mapa </Text>
@@ -63,7 +63,9 @@ const styles = StyleSheet.create ({
     },
     screens:{
         padding: 20,
-        color: 'white'
+        color: 'white',
+        borderBottomWidth: 0.5,
+        borderBottomColor: '#4F4F4F'
     },
     footer:{
         flexDirection: 'row',

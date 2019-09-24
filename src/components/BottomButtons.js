@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Dimensions
 } from "react-native";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
 export class BottomButtons extends Component {
   render() {
@@ -15,19 +16,22 @@ export class BottomButtons extends Component {
           style={styles.navigationButton}
           onPress={() => this.props.navigation.openDrawer()}
         >
-          <Text style={{ color: "black" }}>Menu</Text>
+          <FontAwesomeIcon icon='bars' color={'white'} size={20} />
+          <Text style={{ color: "white" }}>Menu</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navigationButton}
           onPress={() => this.props.navigation.navigate("Mapa")}
         >
-          <Text style={{ color: "black" }}>Home</Text>
+          <FontAwesomeIcon icon='map-marked-alt' color={'white'} size={20} />
+          <Text style={{ color: "white" }}>Home</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navigationButton}
           onPress={() => this.props.navigation.navigate("Profile")}
         >
-          <Text style={{ color: "black" }}>Perfil</Text>
+          <FontAwesomeIcon icon='user' color={'white'} size={20} />
+          <Text style={{ color: "white" }}>Perfil</Text>
         </TouchableOpacity>
       </View>
     );
@@ -40,15 +44,19 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    bottom: 0
+    bottom: 0,
+    backgroundColor: "#363636"
   },
   navigationButton: {
     flex: 1,
     height: Dimensions.get("window").width * 0.17,
     width: Dimensions.get("window").width / 3,
-    backgroundColor: "white",
+    backgroundColor: "#363636",
+    color: "white",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    borderRightWidth: 0.5,
+    borderRightColor: '#4F4F4F'
   }
 });
 
