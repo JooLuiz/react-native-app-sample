@@ -250,7 +250,7 @@ class HomeScreen extends React.Component {
       <View style={styles.searchInputView}>
         <TextInput
           style={styles.searchInput}
-          placeholder="pesquisar local"
+          placeholder="Pesquisar Local"
           onChangeText={text => this.setState({ text })}
           value={this.state.text}
           onSubmitEditing={() => this.getPlaceFromName()}
