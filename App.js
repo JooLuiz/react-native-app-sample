@@ -8,6 +8,11 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { faCog, faMapMarkedAlt, faBars, faUser } from '@fortawesome/free-solid-svg-icons';
 import { loadUser } from "./src/actions/auth";
+import {
+  getDenunciasUsuario,
+  getAllDenuncias
+} from "./src/actions/denunciasUsuario";
+import { getDenuncias } from "./src/actions/denuncias";
 
 library.add(fab, faCog, faMapMarkedAlt, faBars, faUser);
 
@@ -18,6 +23,9 @@ export default class App extends React.Component {
     axios.defaults.baseURL = "http://86d0666f.ngrok.io/api";
     axios.defaults.timeout = 1500;
     store.dispatch(loadUser());
+    store.dispatch(getAllDenuncias());
+    store.dispatch(getDenunciasUsuario());
+    store.dispatch(getDenuncias());
   }
 
   render() {

@@ -14,6 +14,7 @@ import Geolocation from "@react-native-community/geolocation";
 import BottomButtons from "./BottomButtons";
 import axios from "axios";
 import Polyline from "@mapbox/polyline";
+import { getAllDenuncias } from "../actions/denunciasUsuario";
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -28,6 +29,7 @@ class HomeScreen extends React.Component {
     mode: "driving",
     coords: null
   };
+
 
   componentDidMount() {
     this.watchID = Geolocation.watchPosition(
@@ -177,52 +179,72 @@ class HomeScreen extends React.Component {
       this.state.destination &&
       !this.state.coords ? (
       <View style={styles.travellingModeView}>
-        <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={styles.buttonContainer}
+          onPress={() => this.setTravelMode("driving")}
+        >
           <Text>Dirigindo</Text>
-          <TouchableOpacity
-            style={styles.checkBoxcircle}
-            onPress={() => this.setTravelMode("driving")}
-          >
+          <View style={styles.checkBoxcircle}>
             {this.state.mode === "driving" && (
               <View style={styles.checkedCircle} />
             )}
-          </TouchableOpacity>
-        </View>
-        <View style={styles.buttonContainer}>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.buttonContainer}
+          onPress={() => this.setTravelMode("transit")}
+        >
           <Text>Transporte Público</Text>
-          <TouchableOpacity
-            style={styles.checkBoxcircle}
-            onPress={() => this.setTravelMode("transit")}
-          >
+          <View style={styles.checkBoxcircle}>
             {this.state.mode === "transit" && (
               <View style={styles.checkedCircle} />
             )}
-          </TouchableOpacity>
-        </View>
-        <View style={styles.buttonContainer}>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.buttonContainer}
+          onPress={() => this.setTravelMode("bicycling")}
+        >
           <Text>Bibicleta</Text>
-          <TouchableOpacity
-            style={styles.checkBoxcircle}
-            onPress={() => this.setTravelMode("bicycling")}
-          >
+          <View style={styles.checkBoxcircle}>
             {this.state.mode === "bicycling" && (
               <View style={styles.checkedCircle} />
             )}
-          </TouchableOpacity>
-        </View>
-        <View style={styles.buttonContainer}>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.buttonContainer}
+          onPress={() => this.setTravelMode("walking")}
+        >
           <Text>Andando</Text>
-          <TouchableOpacity
-            style={styles.checkBoxcircle}
-            onPress={() => this.setTravelMode("walking")}
-          >
+          <View style={styles.checkBoxcircle}>
             {this.state.mode === "walking" && (
               <View style={styles.checkedCircle} />
             )}
-          </TouchableOpacity>
-        </View>
+          </View>
+        </TouchableOpacity>
       </View>
     ) : null;
+  }
+
+  showDenunciasMarker() {
+    var markers = [];
+    if (this.props.allDenuncias != null) {
+      this.props.allDenuncias.forEach(function(item, index) {
+        let denunciacoordinate = {
+          latitude: parseFloat(item.latitude),
+          longitude: parseFloat(item.longitude)
+        };
+        markers[index] = (
+          <MapView.Marker
+            coordinate={denunciacoordinate}
+            title={item.comentario}
+            description={item.comentario}
+          />
+        );
+      });
+    }
+    return markers;
   }
 
   showMarker() {
@@ -264,7 +286,7 @@ class HomeScreen extends React.Component {
       <View style={styles.denunciaBottomButtom}>
         <TouchableOpacity
           onPress={() => {
-            this.props.navigation.openDrawer();
+            this.props.navigation.navigate("TipoDenuncia");
           }}
         >
           <Text style={styles.circle} />
@@ -300,6 +322,7 @@ class HomeScreen extends React.Component {
             this._map = ref;
           }}
         >
+          {this.showDenunciasMarker()}
           {this.showMarker()}
           {this.showDirections()}
         </MapView>
@@ -437,10 +460,11 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => ({
   userCurrentLocation: state.map.userCurrentLocation,
   isAuthenticated: state.auth.isAuthenticated,
-  token: state.auth.token
+  denuncias: state.denuncias.denuncias,
+  allDenuncias: state.denunciasUsuario.allDenuncias
 });
 
 export default connect(
   mapStateToProps,
-  { setUserCurrentLocation }
+  { setUserCurrentLocation, getAllDenuncias }
 )(HomeScreen);
