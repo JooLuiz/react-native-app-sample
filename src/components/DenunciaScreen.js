@@ -9,12 +9,16 @@ import {
   TouchableHighlight
 } from "react-native";
 import BottomButtons from "./BottomButtons";
-import { getDenuncias } from "../actions/denuncias";
+import { getDenuncias, setCurrentDenuncia } from "../actions/denuncias";
 
 class DenunciaScreen extends React.Component {
   componentWillMount() {
-    console.warn(this.props.currentTipoDenuncia);
     this.props.getDenuncias();
+  }
+
+  setDenunciaAndGo(tipoDenuncia) {
+    this.props.setCurrentDenuncia(tipoDenuncia);
+    this.props.navigation.navigate("DenunciasUsuario");
   }
 
   render() {
@@ -34,9 +38,8 @@ class DenunciaScreen extends React.Component {
             </View>
           }
           renderItem={({ item }) => (
-            <TouchableHighlight onPress={() => this._onPress(item)}>
+            <TouchableHighlight onPress={() => this.setDenunciaAndGo(item)}>
               <View style={styles.listItem}>
-                <Text>{item.tipo_denuncia}</Text>
                 <Text>{item.descricao}</Text>
               </View>
             </TouchableHighlight>
@@ -66,5 +69,5 @@ const styles = StyleSheet.create({
 
 export default connect(
   mapStateToProps,
-  { getDenuncias }
+  { getDenuncias, setCurrentDenuncia }
 )(DenunciaScreen);
