@@ -11,9 +11,14 @@ import {
 } from "react-native";
 import BottomButtons from "./BottomButtons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { getEnderecoUsuario } from "../actions/enderecosUsuario";
 
 const voltar = "<-";
 class MyPlacesScreen extends React.Component {
+  componentWillMount() {
+    this.props.getEnderecoUsuario();
+  }
+
   render() {
     if (!this.props.isAuthenticated) {
       return this.props.navigation.navigate("Login");
@@ -106,5 +111,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  null
+  { getEnderecoUsuario }
 )(MyPlacesScreen);

@@ -9,9 +9,14 @@ import {
   FlatList
 } from "react-native";
 import BottomButtons from "./BottomButtons";
+import { getDenuncias } from "../actions/denuncias";
 
 const voltar = "<-";
 class MyDenunciasScreen extends React.Component {
+  componentWillMount() {
+    this.props.getDenuncias();
+  }
+
   render() {
     if (!this.props.isAuthenticated) {
       return this.props.navigation.navigate("Login");
@@ -85,5 +90,5 @@ const styles = StyleSheet.create({
 
 export default connect(
   mapStateToProps,
-  null
+  { getDenuncias }
 )(MyDenunciasScreen);
