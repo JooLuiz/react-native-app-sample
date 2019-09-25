@@ -6,15 +6,22 @@ import { Provider } from "react-redux";
 import axios from "axios";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
-import { faCog, faMapMarkedAlt, faBars, faUser } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCog,
+  faMapMarkedAlt,
+  faBars,
+  faUser,
+  faPlus
+} from "@fortawesome/free-solid-svg-icons";
 import { loadUser } from "./src/actions/auth";
 import {
   getDenunciasUsuario,
   getAllDenuncias
 } from "./src/actions/denunciasUsuario";
 import { getDenuncias } from "./src/actions/denuncias";
+import { getEnderecoUsuario } from "./src/actions/enderecosUsuario";
 
-library.add(fab, faCog, faMapMarkedAlt, faBars, faUser);
+library.add(fab, faCog, faMapMarkedAlt, faBars, faUser, faPlus);
 
 const AppContainer = createAppContainer(AppNavigator);
 
@@ -26,6 +33,7 @@ export default class App extends React.Component {
     store.dispatch(getAllDenuncias());
     store.dispatch(getDenunciasUsuario());
     store.dispatch(getDenuncias());
+    store.dispatch(getEnderecoUsuario());
   }
 
   render() {
