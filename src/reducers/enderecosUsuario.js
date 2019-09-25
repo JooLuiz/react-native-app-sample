@@ -19,7 +19,7 @@ export default function(state = initialState, action) {
     case SET_CURRENT_ENDERECO_USUARIO:
       return {
         ...state,
-        currentcurrentEnderecoUsuarioDenuncia: action.payload
+        currentEnderecoUsuario: action.payload
       };
     case ADD_ENDERECO_USUARIO:
       return {

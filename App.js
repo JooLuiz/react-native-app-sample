@@ -6,7 +6,13 @@ import { Provider } from "react-redux";
 import axios from "axios";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
-import { faCog, faMapMarkedAlt, faBars, faUser } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCog,
+  faMapMarkedAlt,
+  faBars,
+  faUser,
+  faPlus
+} from "@fortawesome/free-solid-svg-icons";
 import { loadUser } from "./src/actions/auth";
 import {
   getDenunciasUsuario,
@@ -15,7 +21,7 @@ import {
 import { getDenuncias } from "./src/actions/denuncias";
 import { getEnderecoUsuario } from "./src/actions/enderecosUsuario";
 
-library.add(fab, faCog, faMapMarkedAlt, faBars, faUser);
+library.add(fab, faCog, faMapMarkedAlt, faBars, faUser, faPlus);
 
 const AppContainer = createAppContainer(AppNavigator);
 

@@ -6,9 +6,11 @@ import {
   StyleSheet,
   TouchableHighlight,
   Dimensions,
-  FlatList
+  FlatList,
+  TouchableOpacity
 } from "react-native";
 import BottomButtons from "./BottomButtons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
 const voltar = "<-";
 class MyPlacesScreen extends React.Component {
@@ -27,7 +29,7 @@ class MyPlacesScreen extends React.Component {
           </TouchableHighlight>
         </View>
         <FlatList
-          data={this.props.denunciasUsuario}
+          data={this.props.enderecosUsuario}
           ListEmptyComponent={
             <View style={styles.listItem}>
               <Text>Você ainda não possui nenhum endereço</Text>
@@ -38,8 +40,8 @@ class MyPlacesScreen extends React.Component {
               <View style={styles.listItem}>
                 <Text>nome:{item.nome}</Text>
                 <Text>
-                  <View>Latitude:{item.latitude}</View>
-                  <View>Longitude:{item.longitude}</View>
+                  <Text>Latitude:{item.latitude}</Text>
+                  <Text>Longitude:{item.longitude}</Text>
                 </Text>
               </View>
             </TouchableHighlight>
@@ -48,10 +50,12 @@ class MyPlacesScreen extends React.Component {
         <View style={styles.denunciaBottomButtom}>
           <TouchableOpacity
             onPress={() => {
-              this.props.navigation.navigate("TipoDenuncia");
+              this.props.navigation.navigate("AddEnderecoScreen");
             }}
           >
-            <Text style={styles.circle} />
+            <Text style={styles.circle}>
+              <FontAwesomeIcon icon="plus" color={"white"} size={20} />
+            </Text>
           </TouchableOpacity>
         </View>
         <BottomButtons navigation={this.props.navigation} />
@@ -85,13 +89,13 @@ const styles = StyleSheet.create({
     flex: 1,
     position: "absolute",
     bottom: Dimensions.get("window").height * 0.15,
-    left: Dimensions.get("window").width * 0.12
+    right: Dimensions.get("window").width * 0.12
   },
   circle: {
     height: Dimensions.get("window").width * 0.17,
     width: Dimensions.get("window").width * 0.17,
     borderRadius: 400,
-    backgroundColor: "red"
+    backgroundColor: "#3B4859"
   }
 });
 
