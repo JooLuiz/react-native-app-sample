@@ -58,9 +58,9 @@ class MyPlacesScreen extends React.Component {
               this.props.navigation.navigate("AddEnderecoScreen");
             }}
           >
-            <Text style={styles.circle}>
-              <FontAwesomeIcon icon="plus" color={"white"} size={20} />
-            </Text>
+            <View style={styles.circle}>
+              <FontAwesomeIcon icon="plus" color={"white"} size={25} />
+            </View>
           </TouchableOpacity>
         </View>
         <BottomButtons navigation={this.props.navigation} />
@@ -97,6 +97,9 @@ const styles = StyleSheet.create({
     right: Dimensions.get("window").width * 0.12
   },
   circle: {
+    flex: 2,
+    alignItems: "center",
+    justifyContent: "center",
     height: Dimensions.get("window").width * 0.17,
     width: Dimensions.get("window").width * 0.17,
     borderRadius: 400,

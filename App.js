@@ -11,7 +11,9 @@ import {
   faMapMarkedAlt,
   faBars,
   faUser,
-  faPlus
+  faPlus,
+  faExclamationTriangle,
+  faDirections
 } from "@fortawesome/free-solid-svg-icons";
 import { loadUser } from "./src/actions/auth";
 import {
@@ -21,13 +23,22 @@ import {
 import { getDenuncias } from "./src/actions/denuncias";
 import { getEnderecoUsuario } from "./src/actions/enderecosUsuario";
 
-library.add(fab, faCog, faMapMarkedAlt, faBars, faUser, faPlus);
+library.add(
+  fab,
+  faCog,
+  faMapMarkedAlt,
+  faBars,
+  faUser,
+  faPlus,
+  faExclamationTriangle,
+  faDirections
+);
 
 const AppContainer = createAppContainer(AppNavigator);
 
 export default class App extends React.Component {
   componentDidMount() {
-    axios.defaults.baseURL = "http://86d0666f.ngrok.io/api";
+    axios.defaults.baseURL = "http://253e1534.ngrok.io/api";
     axios.defaults.timeout = 1500;
     store.dispatch(loadUser());
     store.dispatch(getAllDenuncias());
