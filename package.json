@@ -13,6 +13,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.22",
     "@fortawesome/free-brands-svg-icons": "^5.10.2",
+    "@fortawesome/free-regular-svg-icons": "^5.11.2",
     "@fortawesome/free-solid-svg-icons": "^5.10.2",
     "@fortawesome/react-native-fontawesome": "^0.1.0",
     "@mapbox/polyline": "^1.1.0",
