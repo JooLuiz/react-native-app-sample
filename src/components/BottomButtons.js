@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     height: Dimensions.get("window").width * 0.17,
     width: Dimensions.get("window").width / 3,
     backgroundColor: "#363636",
-    color: "white",
+    color: "#F4FA58",
     alignItems: "center",
     justifyContent: "center",
     borderRightWidth: 0.5,
