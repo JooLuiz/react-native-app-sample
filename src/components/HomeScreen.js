@@ -15,6 +15,7 @@ import BottomButtons from "./BottomButtons";
 import axios from "axios";
 import Polyline from "@mapbox/polyline";
 import { getAllDenuncias } from "../actions/denunciasUsuario";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -29,7 +30,6 @@ class HomeScreen extends React.Component {
     mode: "driving",
     coords: null
   };
-
 
   componentDidMount() {
     this.watchID = Geolocation.watchPosition(
@@ -167,8 +167,53 @@ class HomeScreen extends React.Component {
             this.startDirections();
           }}
         >
-          <Text style={styles.greyCircle} />
+          <View style={styles.greyCircle}>
+            <FontAwesomeIcon icon="directions" color={"white"} size={25} />
+          </View>
         </TouchableOpacity>
+      </View>
+    ) : null;
+  }
+
+  showPlaceDetailsButton() {
+    return this.state.place &&
+      this.state.origin &&
+      this.state.destination &&
+      !this.state.coords ? (
+      <View style={styles.placeDetailsButton}>
+        <View
+          style={{
+            height: Dimensions.get("window").width * 0.5,
+            width: Dimensions.get("window").width,
+            backgroundColor: "white"
+          }}
+        >
+          <Text
+            style={{ top: 5, color: "grey", fontSize: 12, alignSelf: "center" }}
+          >
+            Pesquisa
+          </Text>
+          <Text
+            style={{
+              top: 8,
+              color: "black",
+              fontSize: 16,
+              alignSelf: "center"
+            }}
+          >
+            {this.state.text}
+          </Text>
+          <View
+            style={{
+              top: 11,
+              alignSelf: "center",
+              width: Dimensions.get("window").width * 0.9,
+              borderBottomColor: "grey",
+              borderBottomWidth: 1
+            }}
+          />
+          {this.showTravellingOptions()}
+        </View>
       </View>
     ) : null;
   }
@@ -180,48 +225,28 @@ class HomeScreen extends React.Component {
       !this.state.coords ? (
       <View style={styles.travellingModeView}>
         <TouchableOpacity
-          style={styles.buttonContainer}
+          style={[styles.buttonContainer,{backgroundColor: this.state.mode === "driving" ? "grey": "white"}]}
           onPress={() => this.setTravelMode("driving")}
         >
           <Text>Dirigindo</Text>
-          <View style={styles.checkBoxcircle}>
-            {this.state.mode === "driving" && (
-              <View style={styles.checkedCircle} />
-            )}
-          </View>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.buttonContainer}
+          style={[styles.buttonContainer,{backgroundColor: this.state.mode === "transit" ? "grey": "white"}]}
           onPress={() => this.setTravelMode("transit")}
         >
           <Text>Transporte Público</Text>
-          <View style={styles.checkBoxcircle}>
-            {this.state.mode === "transit" && (
-              <View style={styles.checkedCircle} />
-            )}
-          </View>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.buttonContainer}
+          style={[styles.buttonContainer,{backgroundColor: this.state.mode === "bicycling" ? "grey": "white"}]}
           onPress={() => this.setTravelMode("bicycling")}
         >
           <Text>Bibicleta</Text>
-          <View style={styles.checkBoxcircle}>
-            {this.state.mode === "bicycling" && (
-              <View style={styles.checkedCircle} />
-            )}
-          </View>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.buttonContainer}
+          style={[styles.buttonContainer,{backgroundColor: this.state.mode === "walking" ? "grey": "white"}]}
           onPress={() => this.setTravelMode("walking")}
         >
           <Text>Andando</Text>
-          <View style={styles.checkBoxcircle}>
-            {this.state.mode === "walking" && (
-              <View style={styles.checkedCircle} />
-            )}
-          </View>
         </TouchableOpacity>
       </View>
     ) : null;
@@ -240,7 +265,13 @@ class HomeScreen extends React.Component {
             coordinate={denunciacoordinate}
             title={item.comentario}
             description={item.comentario}
-          />
+          >
+            <FontAwesomeIcon
+              icon="exclamation-triangle"
+              color={"black"}
+              size={30}
+            />
+          </MapView.Marker>
         );
       });
     }
@@ -268,7 +299,10 @@ class HomeScreen extends React.Component {
   }
 
   searchInput() {
-    return !this.state.coords ? (
+    return !this.state.place &&
+      !this.state.origin &&
+      !this.state.destination &&
+      !this.state.coords ? (
       <View style={styles.searchInputView}>
         <TextInput
           style={styles.searchInput}
@@ -289,7 +323,13 @@ class HomeScreen extends React.Component {
             this.props.navigation.navigate("TipoDenuncia");
           }}
         >
-          <Text style={styles.circle} />
+          <View style={styles.circle}>
+            <FontAwesomeIcon
+              icon="exclamation-triangle"
+              color={"white"}
+              size={25}
+            />
+          </View>
         </TouchableOpacity>
       </View>
     ) : null;
@@ -338,9 +378,10 @@ class HomeScreen extends React.Component {
           </View>
         ) : null}
         {this.searchInput()}
-        {this.showTravellingOptions()}
+        {/* {this.showTravellingOptions()} */}
         {this.denunciaButton()}
         {this.showDirectionsButton()}
+        {this.showPlaceDetailsButton()}
         <BottomButtons navigation={this.props.navigation} />
       </View>
     );
@@ -384,26 +425,39 @@ const styles = StyleSheet.create({
   denunciaBottomButtom: {
     flex: 1,
     position: "absolute",
-    bottom: Dimensions.get("window").height * 0.15,
-    left: Dimensions.get("window").width * 0.12
+    bottom: Dimensions.get("window").height * 0.13,
+    left: Dimensions.get("window").width * 0.07,
+    zIndex: 2
   },
   directionsBottomButtom: {
     flex: 1,
     position: "absolute",
-    bottom: Dimensions.get("window").height * 0.15,
-    right: Dimensions.get("window").width * 0.12
+    bottom: Dimensions.get("window").height * 0.13,
+    right: Dimensions.get("window").width * 0.07,
+    zIndex: 2
+  },
+  placeDetailsButton: {
+    flex: 1,
+    position: "absolute",
+    bottom: Dimensions.get("window").height * 0.09
   },
   circle: {
+    flex: 2,
+    alignItems: "center",
+    justifyContent: "center",
     height: Dimensions.get("window").width * 0.17,
     width: Dimensions.get("window").width * 0.17,
     borderRadius: 400,
-    backgroundColor: "red"
+    backgroundColor: "#3B4859"
   },
   greyCircle: {
+    flex: 2,
+    alignItems: "center",
+    justifyContent: "center",
     height: Dimensions.get("window").width * 0.17,
     width: Dimensions.get("window").width * 0.17,
     borderRadius: 400,
-    backgroundColor: "grey"
+    backgroundColor: "black"
   },
   flatListStyle: {
     backgroundColor: "white",
@@ -417,15 +471,19 @@ const styles = StyleSheet.create({
   travellingModeView: {
     flex: 1,
     position: "absolute",
-    top: Dimensions.get("window").height * 0.16999,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    top: 55,
     backgroundColor: "white",
-    borderRadius: 7,
-    width: Dimensions.get("window").width * 0.9
+    width: Dimensions.get("window").width
   },
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    borderWidth: 0.2,
+    borderColor: "grey",
     marginHorizontal: Dimensions.get("window").width * 0.03
   },
   checkBoxcircle: {

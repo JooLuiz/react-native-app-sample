@@ -16,22 +16,22 @@ export class BottomButtons extends Component {
           style={styles.navigationButton}
           onPress={() => this.props.navigation.openDrawer()}
         >
-          <FontAwesomeIcon icon='bars' color={'white'} size={20} />
-          <Text style={{ color: "white" }}>Menu</Text>
+          <FontAwesomeIcon icon="bars" color={"black"} size={20} />
+          <Text style={{ color: "black" }}>Menu</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navigationButton}
           onPress={() => this.props.navigation.navigate("Mapa")}
         >
-          <FontAwesomeIcon icon='map-marked-alt' color={'white'} size={20} />
-          <Text style={{ color: "white" }}>Home</Text>
+          <FontAwesomeIcon icon="map-marked-alt" color={"black"} size={20} />
+          <Text style={{ color: "black" }}>Home</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navigationButton}
           onPress={() => this.props.navigation.navigate("Profile")}
         >
-          <FontAwesomeIcon icon='user' color={'white'} size={20} />
-          <Text style={{ color: "white" }}>Perfil</Text>
+          <FontAwesomeIcon icon="user" color={"black"} size={20} />
+          <Text style={{ color: "black" }}>Perfil</Text>
         </TouchableOpacity>
       </View>
     );
@@ -45,18 +45,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     bottom: 0,
-    backgroundColor: "#363636"
+    backgroundColor: "#ffffff",
+    borderTopColor: "black",
+    borderTopWidth: 0.3
   },
   navigationButton: {
     flex: 1,
     height: Dimensions.get("window").width * 0.17,
     width: Dimensions.get("window").width / 3,
-    backgroundColor: "#363636",
-    color: "#F4FA58",
+    backgroundColor: "white",
+    color: "white",
     alignItems: "center",
-    justifyContent: "center",
-    borderRightWidth: 0.5,
-    borderRightColor: '#4F4F4F'
+    justifyContent: "center"
   }
 });
 
