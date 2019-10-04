@@ -8,6 +8,7 @@ import {
   TextInput,
   StyleSheet
 } from "react-native";
+import { login, register } from "../../actions/auth";
 
 class LoginOrCreateForm extends Component {
   state = {
