@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import BottomButtons from "./BottomButtons";
 import { getDenuncias, setCurrentDenuncia } from "../actions/denuncias";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
 class DenunciaScreen extends React.Component {
   componentWillMount() {
@@ -40,6 +41,7 @@ class DenunciaScreen extends React.Component {
           renderItem={({ item }) => (
             <TouchableHighlight onPress={() => this.setDenunciaAndGo(item)}>
               <View style={styles.listItem}>
+                <FontAwesomeIcon icon={item.icone} color={"black"} size={30} />
                 <Text>{item.descricao}</Text>
               </View>
             </TouchableHighlight>

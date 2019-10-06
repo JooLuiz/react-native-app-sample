@@ -225,25 +225,46 @@ class HomeScreen extends React.Component {
       !this.state.coords ? (
       <View style={styles.travellingModeView}>
         <TouchableOpacity
-          style={[styles.buttonContainer,{backgroundColor: this.state.mode === "driving" ? "grey": "white"}]}
+          style={[
+            styles.buttonContainer,
+            {
+              backgroundColor: this.state.mode === "driving" ? "grey" : "white"
+            }
+          ]}
           onPress={() => this.setTravelMode("driving")}
         >
           <Text>Dirigindo</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.buttonContainer,{backgroundColor: this.state.mode === "transit" ? "grey": "white"}]}
+          style={[
+            styles.buttonContainer,
+            {
+              backgroundColor: this.state.mode === "transit" ? "grey" : "white"
+            }
+          ]}
           onPress={() => this.setTravelMode("transit")}
         >
           <Text>Transporte Público</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.buttonContainer,{backgroundColor: this.state.mode === "bicycling" ? "grey": "white"}]}
+          style={[
+            styles.buttonContainer,
+            {
+              backgroundColor:
+                this.state.mode === "bicycling" ? "grey" : "white"
+            }
+          ]}
           onPress={() => this.setTravelMode("bicycling")}
         >
           <Text>Bibicleta</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.buttonContainer,{backgroundColor: this.state.mode === "walking" ? "grey": "white"}]}
+          style={[
+            styles.buttonContainer,
+            {
+              backgroundColor: this.state.mode === "walking" ? "grey" : "white"
+            }
+          ]}
           onPress={() => this.setTravelMode("walking")}
         >
           <Text>Andando</Text>
@@ -263,11 +284,11 @@ class HomeScreen extends React.Component {
         markers[index] = (
           <MapView.Marker
             coordinate={denunciacoordinate}
-            title={item.comentario}
+            title={item.denuncia.descricao}
             description={item.comentario}
           >
             <FontAwesomeIcon
-              icon="exclamation-triangle"
+              icon={item.denuncia.icone}
               color={"black"}
               size={30}
             />

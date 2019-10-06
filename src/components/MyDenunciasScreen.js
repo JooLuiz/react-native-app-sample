@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import BottomButtons from "./BottomButtons";
 import { getDenuncias } from "../actions/denuncias";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
 const voltar = "<-";
 class MyDenunciasScreen extends React.Component {
@@ -41,6 +42,14 @@ class MyDenunciasScreen extends React.Component {
           renderItem={({ item }) => (
             <TouchableHighlight>
               <View style={styles.listItem}>
+                <FontAwesomeIcon
+                  icon={
+                    this.props.denuncias.filter(d => d.id == item.denuncia)[0]
+                      .icone
+                  }
+                  color={"black"}
+                  size={30}
+                />
                 <Text>
                   Denuncia:
                   {

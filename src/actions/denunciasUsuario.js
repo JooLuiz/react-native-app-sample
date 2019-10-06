@@ -39,7 +39,6 @@ export const getAllDenuncias = () => (dispatch, getState) => {
 };
 
 //ADD Denuncia Usuario
-
 export const addDenunciaUsuario = DenunciaUsuario => (dispatch, getState) => {
   tokenConfig(getState).then(function(config) {
     axios
