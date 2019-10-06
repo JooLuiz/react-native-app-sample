@@ -23,6 +23,7 @@ import {
 } from "./src/actions/denunciasUsuario";
 import { getDenuncias } from "./src/actions/denuncias";
 import { getEnderecoUsuario } from "./src/actions/enderecosUsuario";
+import Loader from "./src/components/common/Loader";
 
 library.add(
   fab,
@@ -52,6 +53,7 @@ export default class App extends React.Component {
   render() {
     return (
       <Provider store={store}>
+        <Loader />
         <AppContainer />
       </Provider>
     );

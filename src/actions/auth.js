@@ -7,13 +7,15 @@ import {
   USER_LOADING,
   USER_LOADED,
   AUTH_ERROR,
-  LOGOUT_SUCCESS
+  LOADING,
+  LOADED
 } from "./types";
 import { _retrieveData } from "../reducers/auth";
 
 //CHECK THE TOKEN AND LOAD USER
 export const loadUser = () => (dispatch, getState) => {
   //user loading
+  dispatch({ type: LOADING });
   dispatch({ type: USER_LOADING });
 
   tokenConfig(getState)
@@ -35,10 +37,14 @@ export const loadUser = () => (dispatch, getState) => {
     })
     .catch(function(error) {
       console.warn(error);
+    })
+    .finally(t => {
+      dispatch({ type: LOADED });
     });
 };
 
 export const login = payload => dispatch => {
+  dispatch({ type: LOADING });
   axios
     .post(`/auth/login`, payload)
     .then(response => {
@@ -52,10 +58,14 @@ export const login = payload => dispatch => {
       dispatch({
         type: LOGIN_FAIL
       });
+    })
+    .finally(t => {
+      dispatch({ type: LOADED });
     });
 };
 
 export const register = payload => dispatch => {
+  dispatch({ type: LOADING });
   axios
     .post(`/auth/register`, payload)
     .then(response => {
@@ -69,6 +79,9 @@ export const register = payload => dispatch => {
       dispatch({
         type: REGISTER_FAIL
       });
+    })
+    .finally(t => {
+      dispatch({ type: LOADED });
     });
 };
 
