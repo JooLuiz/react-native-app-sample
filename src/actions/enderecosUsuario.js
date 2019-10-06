@@ -2,12 +2,15 @@ import axios from "axios";
 import {
   GET_ENDERECO_USUARIO,
   SET_CURRENT_ENDERECO_USUARIO,
-  ADD_ENDERECO_USUARIO
+  ADD_ENDERECO_USUARIO,
+  LOADING,
+  LOADED
 } from "./types";
 import { tokenConfig } from "./auth";
 
 //GET  de Denuncia
 export const getEnderecoUsuario = () => (dispatch, getState) => {
+  dispatch({ type: LOADING });
   tokenConfig(getState)
     .then(function(config) {
       axios
@@ -20,12 +23,16 @@ export const getEnderecoUsuario = () => (dispatch, getState) => {
         })
         .catch(err => console.warn(err));
     })
-    .catch(err => console.warn(err));
+    .catch(err => console.warn(err))
+    .finally(t => {
+      dispatch({ type: LOADED });
+    });
 };
 
 //ADD Endereco Usuario
 
 export const addEnderecoUsuario = EnderecoUsuario => (dispatch, getState) => {
+  dispatch({ type: LOADING });
   tokenConfig(getState).then(function(config) {
     axios
       .post("/endereco_usuario/", EnderecoUsuario, config)
@@ -35,7 +42,10 @@ export const addEnderecoUsuario = EnderecoUsuario => (dispatch, getState) => {
           payload: res.data
         });
       })
-      .catch(err => dispatch(console.warn(err)));
+      .catch(err => dispatch(console.warn(err)))
+      .finally(t => {
+        dispatch({ type: LOADED });
+      });
   });
 };
 

@@ -13,7 +13,8 @@ import {
   faUser,
   faPlus,
   faExclamationTriangle,
-  faDirections
+  faDirections,
+  faTrafficLight
 } from "@fortawesome/free-solid-svg-icons";
 import { loadUser } from "./src/actions/auth";
 import {
@@ -22,6 +23,7 @@ import {
 } from "./src/actions/denunciasUsuario";
 import { getDenuncias } from "./src/actions/denuncias";
 import { getEnderecoUsuario } from "./src/actions/enderecosUsuario";
+import Loader from "./src/components/common/Loader";
 
 library.add(
   fab,
@@ -31,25 +33,27 @@ library.add(
   faUser,
   faPlus,
   faExclamationTriangle,
-  faDirections
+  faDirections,
+  faTrafficLight
 );
 
 const AppContainer = createAppContainer(AppNavigator);
 
 export default class App extends React.Component {
-  componentDidMount() {
-    axios.defaults.baseURL = "http://c39c4282.ngrok.io/api";
+  componentWillMount() {
+    axios.defaults.baseURL = "http://b07a9176.ngrok.io/api";
     axios.defaults.timeout = 1500;
     store.dispatch(loadUser());
+    store.dispatch(getDenuncias());
     store.dispatch(getAllDenuncias());
     store.dispatch(getDenunciasUsuario());
-    store.dispatch(getDenuncias());
     store.dispatch(getEnderecoUsuario());
   }
 
   render() {
     return (
       <Provider store={store}>
+        <Loader />
         <AppContainer />
       </Provider>
     );

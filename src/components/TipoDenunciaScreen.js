@@ -13,6 +13,7 @@ import {
   getTipoDenuncias,
   setCurrentTipoDenuncia
 } from "../actions/tipoDenuncias";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
 class TipoDenunciaScreen extends React.Component {
   componentWillMount() {
@@ -36,6 +37,7 @@ class TipoDenunciaScreen extends React.Component {
           renderItem={({ item }) => (
             <TouchableHighlight onPress={() => this.setTipoDenunciaAndGo(item)}>
               <View style={styles.listItem}>
+                <FontAwesomeIcon icon={item.icone} color={"black"} size={30} />
                 <Text>{item.descricao}</Text>
               </View>
             </TouchableHighlight>
