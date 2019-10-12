@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { setUserCurrentLocation } from "../actions/map";
+import { getPlace, cancelMapOperations, setOrigin } from "../actions/map";
 import {
   View,
   StyleSheet,
@@ -16,6 +16,7 @@ import axios from "axios";
 import Polyline from "@mapbox/polyline";
 import { getAllDenuncias } from "../actions/denunciasUsuario";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faArrowAltCircleLeft } from "@fortawesome/free-regular-svg-icons";
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -23,16 +24,14 @@ class HomeScreen extends React.Component {
   };
 
   state = {
+    region: null,
     text: null,
-    place: null,
-    origin: null,
-    destination: null,
     mode: "driving",
     coords: null
   };
 
   componentDidMount() {
-    this.watchID = Geolocation.watchPosition(
+    Geolocation.getCurrentPosition(
       position => {
         let region = {
           latitude: position.coords.latitude,
@@ -47,7 +46,7 @@ class HomeScreen extends React.Component {
   }
 
   onRegionChange(region) {
-    this.props.setUserCurrentLocation(region);
+    this.setState({ region: region });
   }
 
   //Direction Functions
@@ -58,15 +57,17 @@ class HomeScreen extends React.Component {
 
   async startDirections() {
     let originLatLng =
-      this.state.origin.latitude + "," + this.state.origin.longitude;
-    let destinationLatLng =
-      this.state.destination.latitude + "," + this.state.destination.longitude;
+      this.props.origin.latitude + "," + this.props.origin.longitude;
+    let searchedPlaceLatLng =
+      this.props.searchedPlace.coordinates.latitude +
+      "," +
+      this.props.searchedPlace.coordinates.longitude;
     axios
       .get(
         "https://maps.googleapis.com/maps/api/directions/json?origin=" +
           originLatLng +
           "&destination=" +
-          destinationLatLng +
+          searchedPlaceLatLng +
           "&mode=" +
           this.state.mode +
           "&key=AIzaSyAvNMSYo05_RNMaBdKEw3UcPl2REfxUpas"
@@ -95,72 +96,38 @@ class HomeScreen extends React.Component {
         latitudeDelta: 0.0065,
         longitudeDelta: 0.0065
       };
-      this._map.animateToCoordinate(origin, 3000);
-      this.state.place = null;
-      this.state.origin = null;
-      this.state.destination = null;
+      this._map.animateToCoordinate(origin, 2000);
+      this.props.cancelMapOperations();
       this.state.coords = null;
     });
   }
 
-  //Geocoding Functions
-
-  getPlaceFromName() {
-    if (this.state.text == "" || this.state.text == null) {
-      this.state.place = null;
-    } else {
-      this.getPlace(this.state.text, "address");
-    }
-  }
-
-  getPlaceFromCoordinate(coords) {
-    this.getPlace(coords, "coordinates");
-  }
-
-  getPlace(place, type = "address") {
-    if (!this.state.coords) {
-      let address;
-      if (type === "address") {
-        address = place.replace(/ /g, "+");
-      } else if (type === "coordinates") {
-        address = place.latitude + "," + place.longitude;
+  componentWillReceiveProps(nextProps) {
+    console.warn(nextProps);
+    if (nextProps.searchedPlace) {
+      if (nextProps.searchedPlace.coordinates) {
+        this._map.animateToCoordinate(
+          nextProps.searchedPlace.coordinates,
+          2000
+        );
       }
-      axios
-        .get(
-          "https://maps.googleapis.com/maps/api/geocode/json?address=" +
-            address +
-            "&region=br&key=AIzaSyAvNMSYo05_RNMaBdKEw3UcPl2REfxUpas"
-        )
-        .then(json => {
-          var location = json.data.results[0].geometry.location;
-          this.state.place = {
-            latitude: location.lat,
-            longitude: location.lng,
-            latitudeDelta: 0.0065,
-            longitudeDelta: 0.0065
-          };
-          this.state.destination = this.state.place;
-          this._map.animateToCoordinate(this.state.place, 2000);
-          Geolocation.getCurrentPosition(position => {
-            var origin = {
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-              latitudeDelta: 0.0065,
-              longitudeDelta: 0.0065
-            };
-            this.state.origin = origin;
-          });
-        });
     }
+  }
+
+  getPlaceFromCoordinates(coords) {
+    this.props.getPlace(coords, "coordinates");
+    this.props.setOrigin();
+  }
+
+  getPlaceFromName(name) {
+    this.props.getPlace(name, "address");
+    this.props.setOrigin();
   }
 
   //Functions that effect the screen
 
   showDirectionsButton() {
-    return this.state.place &&
-      this.state.origin &&
-      this.state.destination &&
-      !this.state.coords ? (
+    return this.props.searchedPlace && !this.state.coords ? (
       <View style={styles.directionsBottomButtom}>
         <TouchableOpacity
           onPress={() => {
@@ -176,14 +143,13 @@ class HomeScreen extends React.Component {
   }
 
   showPlaceDetailsButton() {
-    return this.state.place &&
-      this.state.origin &&
-      this.state.destination &&
+    return this.props.searchedPlace &&
+      this.props.origin &&
       !this.state.coords ? (
       <View style={styles.placeDetailsButton}>
         <View
           style={{
-            height: Dimensions.get("window").width * 0.5,
+            height: Dimensions.get("window").width * 0.8,
             width: Dimensions.get("window").width,
             backgroundColor: "white"
           }}
@@ -191,7 +157,7 @@ class HomeScreen extends React.Component {
           <Text
             style={{ top: 5, color: "grey", fontSize: 12, alignSelf: "center" }}
           >
-            Pesquisa
+            Origem
           </Text>
           <Text
             style={{
@@ -201,11 +167,40 @@ class HomeScreen extends React.Component {
               alignSelf: "center"
             }}
           >
-            {this.state.text}
+            {this.props.origin.longName}
           </Text>
           <View
             style={{
               top: 11,
+              alignSelf: "center",
+              width: Dimensions.get("window").width * 0.9,
+              borderBottomColor: "grey",
+              borderBottomWidth: 1
+            }}
+          />
+          <Text
+            style={{
+              top: 10,
+              color: "grey",
+              fontSize: 12,
+              alignSelf: "center"
+            }}
+          >
+            Pesquisa
+          </Text>
+          <Text
+            style={{
+              top: 13,
+              color: "black",
+              fontSize: 16,
+              alignSelf: "center"
+            }}
+          >
+            {this.props.searchedPlace.longName}
+          </Text>
+          <View
+            style={{
+              top: 16,
               alignSelf: "center",
               width: Dimensions.get("window").width * 0.9,
               borderBottomColor: "grey",
@@ -219,10 +214,7 @@ class HomeScreen extends React.Component {
   }
 
   showTravellingOptions() {
-    return this.state.place &&
-      this.state.origin &&
-      this.state.destination &&
-      !this.state.coords ? (
+    return this.props.searchedPlace && !this.state.coords ? (
       <View style={styles.travellingModeView}>
         <TouchableOpacity
           style={[
@@ -300,11 +292,11 @@ class HomeScreen extends React.Component {
   }
 
   showMarker() {
-    return this.state.place ? (
+    return this.props.searchedPlace ? (
       <MapView.Marker
-        coordinate={this.state.place}
-        title={this.state.text}
-        description={this.state.text}
+        coordinate={this.props.searchedPlace.coordinates}
+        title={this.props.searchedPlace.longName}
+        description={this.props.searchedPlace.shortName}
       />
     ) : null;
   }
@@ -320,17 +312,14 @@ class HomeScreen extends React.Component {
   }
 
   searchInput() {
-    return !this.state.place &&
-      !this.state.origin &&
-      !this.state.destination &&
-      !this.state.coords ? (
+    return !this.props.searchedPlace && !this.state.coords ? (
       <View style={styles.searchInputView}>
         <TextInput
           style={styles.searchInput}
           placeholder="Pesquisar Local"
           onChangeText={text => this.setState({ text })}
           value={this.state.text}
-          onSubmitEditing={() => this.getPlaceFromName()}
+          onSubmitEditing={() => this.getPlaceFromName(this.state.text)}
         />
       </View>
     ) : null;
@@ -356,16 +345,18 @@ class HomeScreen extends React.Component {
     ) : null;
   }
 
-  cancelCoords() {
-    <View style={styles.cancelCoordsButton}>
-      <TouchableOpacity
-        onPress={() => {
-          this.cancelTravel();
-        }}
-      >
-        <Text style={styles.circle} />
-      </TouchableOpacity>
-    </View>;
+  cancel() {
+    return this.props.searchedPlace ? (
+      <View style={styles.cancelCoordsButton}>
+        <TouchableOpacity
+          onPress={() => {
+            this.cancelTravel();
+          }}
+        >
+          <FontAwesomeIcon icon={faArrowAltCircleLeft} size={30} />
+        </TouchableOpacity>
+      </View>
+    ) : null;
   }
 
   //Component Render
@@ -375,7 +366,7 @@ class HomeScreen extends React.Component {
       <View style={styles.container}>
         <MapView
           style={styles.map}
-          initialRegion={this.props.userCurrentLocation}
+          initialRegion={this.state.region}
           showsUserLocation={true}
           followUserLocation={true}
           onRegionChange={this.onRegionChange.bind(this)}
@@ -387,19 +378,8 @@ class HomeScreen extends React.Component {
           {this.showMarker()}
           {this.showDirections()}
         </MapView>
-        {this.state.coords ? (
-          <View style={styles.cancelCoordsButton}>
-            <TouchableOpacity
-              onPress={() => {
-                this.cancelTravel();
-              }}
-            >
-              <Text style={styles.cancelCoordsCircle} />
-            </TouchableOpacity>
-          </View>
-        ) : null}
+        {this.cancel()}
         {this.searchInput()}
-        {/* {this.showTravellingOptions()} */}
         {this.denunciaButton()}
         {this.showDirectionsButton()}
         {this.showPlaceDetailsButton()}
@@ -495,7 +475,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    top: 55,
+    top: 100,
     backgroundColor: "white",
     width: Dimensions.get("window").width
   },
@@ -526,7 +506,7 @@ const styles = StyleSheet.create({
     flex: 1,
     position: "absolute",
     top: Dimensions.get("window").height * 0.025,
-    left: Dimensions.get("window").width * 0.07
+    left: Dimensions.get("window").width * 0.05
   },
   cancelCoordsCircle: {
     height: Dimensions.get("window").width * 0.11,
@@ -537,13 +517,15 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => ({
-  userCurrentLocation: state.map.userCurrentLocation,
+  isTravelling: state.map.isTravelling,
+  searchedPlace: state.map.searchedPlace,
+  origin: state.map.origin,
+  destination: state.map.destination,
   isAuthenticated: state.auth.isAuthenticated,
-  denuncias: state.denuncias.denuncias,
   allDenuncias: state.denunciasUsuario.allDenuncias
 });
 
 export default connect(
   mapStateToProps,
-  { setUserCurrentLocation, getAllDenuncias }
+  { getAllDenuncias, getPlace, cancelMapOperations, setOrigin }
 )(HomeScreen);
