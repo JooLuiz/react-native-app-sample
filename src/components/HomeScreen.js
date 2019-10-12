@@ -20,6 +20,7 @@ import BottomButtons from "./BottomButtons";
 import { getAllDenuncias } from "../actions/denunciasUsuario";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faArrowAltCircleLeft } from "@fortawesome/free-regular-svg-icons";
+import SearchedPlaceDetail from "./SearchedPlaceDetail";
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -29,7 +30,6 @@ class HomeScreen extends React.Component {
   state = {
     region: null,
     text: null,
-    mode: "driving",
     coords: null
   };
 
@@ -53,10 +53,6 @@ class HomeScreen extends React.Component {
   }
 
   //Direction Functions
-
-  setTravelMode(mode) {
-    this.state.mode = mode;
-  }
 
   cancelTravel() {
     Geolocation.getCurrentPosition(position => {
@@ -104,7 +100,7 @@ class HomeScreen extends React.Component {
                 origin: this.props.origin,
                 dest: this.props.searchedPlace
               },
-              this.state.mode
+              this.props.travellingMode
             );
           }}
         >
@@ -120,122 +116,7 @@ class HomeScreen extends React.Component {
     return this.props.searchedPlace &&
       this.props.origin &&
       !this.props.directionsCoords ? (
-      <View style={styles.placeDetailsButton}>
-        <View
-          style={{
-            height: Dimensions.get("window").width * 0.8,
-            width: Dimensions.get("window").width,
-            backgroundColor: "white"
-          }}
-        >
-          <Text
-            style={{ top: 5, color: "grey", fontSize: 12, alignSelf: "center" }}
-          >
-            Origem
-          </Text>
-          <Text
-            style={{
-              top: 8,
-              color: "black",
-              fontSize: 16,
-              alignSelf: "center"
-            }}
-          >
-            {this.props.origin.longName}
-          </Text>
-          <View
-            style={{
-              top: 11,
-              alignSelf: "center",
-              width: Dimensions.get("window").width * 0.9,
-              borderBottomColor: "grey",
-              borderBottomWidth: 1
-            }}
-          />
-          <Text
-            style={{
-              top: 10,
-              color: "grey",
-              fontSize: 12,
-              alignSelf: "center"
-            }}
-          >
-            Pesquisa
-          </Text>
-          <Text
-            style={{
-              top: 13,
-              color: "black",
-              fontSize: 16,
-              alignSelf: "center"
-            }}
-          >
-            {this.props.searchedPlace.longName}
-          </Text>
-          <View
-            style={{
-              top: 16,
-              alignSelf: "center",
-              width: Dimensions.get("window").width * 0.9,
-              borderBottomColor: "grey",
-              borderBottomWidth: 1
-            }}
-          />
-          {this.showTravellingOptions()}
-        </View>
-      </View>
-    ) : null;
-  }
-
-  showTravellingOptions() {
-    return this.props.searchedPlace && !this.props.directionsCoords ? (
-      <View style={styles.travellingModeView}>
-        <TouchableOpacity
-          style={[
-            styles.buttonContainer,
-            {
-              backgroundColor: this.state.mode === "driving" ? "grey" : "white"
-            }
-          ]}
-          onPress={() => this.setTravelMode("driving")}
-        >
-          <Text>Dirigindo</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.buttonContainer,
-            {
-              backgroundColor: this.state.mode === "transit" ? "grey" : "white"
-            }
-          ]}
-          onPress={() => this.setTravelMode("transit")}
-        >
-          <Text>Transporte Público</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.buttonContainer,
-            {
-              backgroundColor:
-                this.state.mode === "bicycling" ? "grey" : "white"
-            }
-          ]}
-          onPress={() => this.setTravelMode("bicycling")}
-        >
-          <Text>Bibicleta</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.buttonContainer,
-            {
-              backgroundColor: this.state.mode === "walking" ? "grey" : "white"
-            }
-          ]}
-          onPress={() => this.setTravelMode("walking")}
-        >
-          <Text>Andando</Text>
-        </TouchableOpacity>
-      </View>
+      <SearchedPlaceDetail />
     ) : null;
   }
 
@@ -411,11 +292,6 @@ const styles = StyleSheet.create({
     right: Dimensions.get("window").width * 0.07,
     zIndex: 2
   },
-  placeDetailsButton: {
-    flex: 1,
-    position: "absolute",
-    bottom: Dimensions.get("window").height * 0.09
-  },
   circle: {
     flex: 2,
     alignItems: "center",
@@ -442,24 +318,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center"
-  },
-  travellingModeView: {
-    flex: 1,
-    position: "absolute",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    top: 100,
-    backgroundColor: "white",
-    width: Dimensions.get("window").width
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    borderWidth: 0.2,
-    borderColor: "grey",
-    marginHorizontal: Dimensions.get("window").width * 0.03
   },
   checkBoxcircle: {
     height: 20,
@@ -499,7 +357,8 @@ const mapStateToProps = state => ({
   allDenuncias: state.denunciasUsuario.allDenuncias,
   directionsCoords: state.map.directionsCoords,
   directionsDetail: state.map.directionsDetail,
-  directionsMessagePoints: state.map.directionsMessagePoints
+  directionsMessagePoints: state.map.directionsMessagePoints,
+  travellingMode: state.map.travellingMode
 });
 
 export default connect(

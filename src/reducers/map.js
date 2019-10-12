@@ -4,7 +4,8 @@ import {
   SET_ORIGIN,
   SET_DESTINATION,
   CANCEL_MAP_OPERATIONS,
-  SET_DIRECTIONS
+  SET_DIRECTIONS,
+  SET_TRAVELLING_MODE
 } from "../actions/types";
 
 const initialState = {
@@ -15,7 +16,8 @@ const initialState = {
   destination: null,
   directionsCoords: null,
   directionsMessagePoints: null,
-  directionsDetails: null
+  directionsDetails: null,
+  travellingMode: "driving"
 };
 
 export default function(state = initialState, action) {
@@ -55,6 +57,11 @@ export default function(state = initialState, action) {
         directionsCoords: action.payload.coords,
         directionsDetail: action.payload.directionsDetail,
         directionsMessagePoints: action.payload.directionsMessagePoints
+      };
+    case SET_TRAVELLING_MODE:
+      return {
+        ...state,
+        travellingMode: action.payload.travellingMode
       };
     default:
       return state;

@@ -6,7 +6,8 @@ import {
   LOADING,
   LOADED,
   CANCEL_MAP_OPERATIONS,
-  SET_DIRECTIONS
+  SET_DIRECTIONS,
+  SET_TRAVELLING_MODE
 } from "./types";
 import axios from "axios";
 import Geolocation from "@react-native-community/geolocation";
@@ -119,9 +120,9 @@ export const googleGeocoding = async address => {
   });
 };
 
-export const startDirections = points => dispatch => {
+export const startDirections = (points, mode) => dispatch => {
   dispatch({ type: LOADING });
-  googleDirections(points)
+  googleDirections(points, mode)
     .then(function(res) {
       dispatch({
         type: SET_DIRECTIONS,
@@ -137,9 +138,7 @@ export const startDirections = points => dispatch => {
     });
 };
 
-export const googleDirections = async (points, mode = "driving") => {
-  console.warn("google directions");
-  console.warn(points);
+export const googleDirections = async (points, mode) => {
   return new Promise((resolve, reject) => {
     let originLatLng =
       points.origin.coordinates.latitude +
@@ -160,8 +159,6 @@ export const googleDirections = async (points, mode = "driving") => {
           "&key=AIzaSyAvNMSYo05_RNMaBdKEw3UcPl2REfxUpas"
       )
       .then(res => {
-        console.warn("dei certo");
-        console.warn(res);
         let encodedPoints = res.data.routes[0].overview_polyline.points;
         encodedPoints = encodedPoints.replace(/\\\\/g, "\\");
         let points = Polyline.decode(
@@ -195,24 +192,35 @@ export const googleDirections = async (points, mode = "driving") => {
         resolve(finalResult);
       })
       .catch(e => {
-        console.warn("dei errado");
-        console.warn(e);
         reject(e);
       });
   });
 };
 
+export const setTravellingMode = mode => dispatch => {
+  dispatch({ type: LOADING });
+  dispatch({
+    type: SET_TRAVELLING_MODE,
+    payload: { travellingMode: mode }
+  });
+  dispatch({ type: LOADED });
+};
+
 export const cancelMapOperations = () => dispatch => {
+  dispatch({ type: LOADING });
   dispatch({
     type: CANCEL_MAP_OPERATIONS
   });
+  dispatch({ type: LOADED });
 };
 
 export const setDestination = place => dispatch => {
+  dispatch({ type: LOADING });
   dispatch({
     type: SET_DESTINATION,
     payload: {
       destination: place
     }
   });
+  dispatch({ type: LOADED });
 };
