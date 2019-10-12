@@ -3,7 +3,8 @@ import {
   SET_SEARCHED_PLACE,
   SET_ORIGIN,
   SET_DESTINATION,
-  CANCEL_MAP_OPERATIONS
+  CANCEL_MAP_OPERATIONS,
+  SET_DIRECTIONS
 } from "../actions/types";
 
 const initialState = {
@@ -11,7 +12,10 @@ const initialState = {
   isTravelling: false,
   searchedPlace: null,
   origin: null,
-  destination: null
+  destination: null,
+  directionsCoords: null,
+  directionsMessagePoints: null,
+  directionsDetails: null
 };
 
 export default function(state = initialState, action) {
@@ -40,7 +44,17 @@ export default function(state = initialState, action) {
         ...state,
         destination: null,
         origin: null,
-        searchedPlace: null
+        searchedPlace: null,
+        directionsCoords: null,
+        directionsDetail: null,
+        directionsMessagePoints: null
+      };
+    case SET_DIRECTIONS:
+      return {
+        ...state,
+        directionsCoords: action.payload.coords,
+        directionsDetail: action.payload.directionsDetail,
+        directionsMessagePoints: action.payload.directionsMessagePoints
       };
     default:
       return state;

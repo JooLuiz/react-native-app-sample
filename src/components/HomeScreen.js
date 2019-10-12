@@ -1,6 +1,11 @@
 import React from "react";
 import { connect } from "react-redux";
-import { getPlace, cancelMapOperations, setOrigin } from "../actions/map";
+import {
+  getPlace,
+  cancelMapOperations,
+  setOrigin,
+  startDirections
+} from "../actions/map";
 import {
   View,
   StyleSheet,
@@ -12,8 +17,6 @@ import {
 import MapView from "react-native-maps";
 import Geolocation from "@react-native-community/geolocation";
 import BottomButtons from "./BottomButtons";
-import axios from "axios";
-import Polyline from "@mapbox/polyline";
 import { getAllDenuncias } from "../actions/denunciasUsuario";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faArrowAltCircleLeft } from "@fortawesome/free-regular-svg-icons";
@@ -55,39 +58,6 @@ class HomeScreen extends React.Component {
     this.state.mode = mode;
   }
 
-  async startDirections() {
-    let originLatLng =
-      this.props.origin.latitude + "," + this.props.origin.longitude;
-    let searchedPlaceLatLng =
-      this.props.searchedPlace.coordinates.latitude +
-      "," +
-      this.props.searchedPlace.coordinates.longitude;
-    axios
-      .get(
-        "https://maps.googleapis.com/maps/api/directions/json?origin=" +
-          originLatLng +
-          "&destination=" +
-          searchedPlaceLatLng +
-          "&mode=" +
-          this.state.mode +
-          "&key=AIzaSyAvNMSYo05_RNMaBdKEw3UcPl2REfxUpas"
-      )
-      .then(res => {
-        let encodedPoints = res.data.routes[0].overview_polyline.points;
-        encodedPoints = encodedPoints.replace(/\\\\/g, "\\");
-        let points = Polyline.decode(
-          res.data.routes[0].overview_polyline.points
-        );
-
-        let coords = points.map(point => {
-          return {
-            latitude: point[0],
-            longitude: point[1]
-          };
-        });
-        this.setState({ coords: coords });
-      });
-  }
   cancelTravel() {
     Geolocation.getCurrentPosition(position => {
       var origin = {
@@ -98,12 +68,10 @@ class HomeScreen extends React.Component {
       };
       this._map.animateToCoordinate(origin, 2000);
       this.props.cancelMapOperations();
-      this.state.coords = null;
     });
   }
 
   componentWillReceiveProps(nextProps) {
-    console.warn(nextProps);
     if (nextProps.searchedPlace) {
       if (nextProps.searchedPlace.coordinates) {
         this._map.animateToCoordinate(
@@ -127,11 +95,17 @@ class HomeScreen extends React.Component {
   //Functions that effect the screen
 
   showDirectionsButton() {
-    return this.props.searchedPlace && !this.state.coords ? (
+    return this.props.searchedPlace && !this.props.directionsCoords ? (
       <View style={styles.directionsBottomButtom}>
         <TouchableOpacity
           onPress={() => {
-            this.startDirections();
+            this.props.startDirections(
+              {
+                origin: this.props.origin,
+                dest: this.props.searchedPlace
+              },
+              this.state.mode
+            );
           }}
         >
           <View style={styles.greyCircle}>
@@ -145,7 +119,7 @@ class HomeScreen extends React.Component {
   showPlaceDetailsButton() {
     return this.props.searchedPlace &&
       this.props.origin &&
-      !this.state.coords ? (
+      !this.props.directionsCoords ? (
       <View style={styles.placeDetailsButton}>
         <View
           style={{
@@ -214,7 +188,7 @@ class HomeScreen extends React.Component {
   }
 
   showTravellingOptions() {
-    return this.props.searchedPlace && !this.state.coords ? (
+    return this.props.searchedPlace && !this.props.directionsCoords ? (
       <View style={styles.travellingModeView}>
         <TouchableOpacity
           style={[
@@ -302,9 +276,9 @@ class HomeScreen extends React.Component {
   }
 
   showDirections() {
-    return this.state.coords ? (
+    return this.props.directionsCoords ? (
       <MapView.Polyline
-        coordinates={this.state.coords}
+        coordinates={this.props.directionsCoords}
         strokeWidth={2}
         strokeColor="red"
       />
@@ -312,7 +286,7 @@ class HomeScreen extends React.Component {
   }
 
   searchInput() {
-    return !this.props.searchedPlace && !this.state.coords ? (
+    return !this.props.searchedPlace && !this.props.directionsCoords ? (
       <View style={styles.searchInputView}>
         <TextInput
           style={styles.searchInput}
@@ -522,10 +496,13 @@ const mapStateToProps = state => ({
   origin: state.map.origin,
   destination: state.map.destination,
   isAuthenticated: state.auth.isAuthenticated,
-  allDenuncias: state.denunciasUsuario.allDenuncias
+  allDenuncias: state.denunciasUsuario.allDenuncias,
+  directionsCoords: state.map.directionsCoords,
+  directionsDetail: state.map.directionsDetail,
+  directionsMessagePoints: state.map.directionsMessagePoints
 });
 
 export default connect(
   mapStateToProps,
-  { getAllDenuncias, getPlace, cancelMapOperations, setOrigin }
+  { getAllDenuncias, getPlace, cancelMapOperations, setOrigin, startDirections }
 )(HomeScreen);

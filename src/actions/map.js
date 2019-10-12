@@ -5,10 +5,12 @@ import {
   SET_DESTINATION,
   LOADING,
   LOADED,
-  CANCEL_MAP_OPERATIONS
+  CANCEL_MAP_OPERATIONS,
+  SET_DIRECTIONS
 } from "./types";
 import axios from "axios";
 import Geolocation from "@react-native-community/geolocation";
+import Polyline from "@mapbox/polyline";
 
 export const setUserCurrentLocation = coordinates => dispatch => {
   dispatch({
@@ -112,6 +114,89 @@ export const googleGeocoding = async address => {
         resolve(finalPlace);
       })
       .catch(e => {
+        reject(e);
+      });
+  });
+};
+
+export const startDirections = points => dispatch => {
+  dispatch({ type: LOADING });
+  googleDirections(points)
+    .then(function(res) {
+      dispatch({
+        type: SET_DIRECTIONS,
+        payload: {
+          coords: res.coords,
+          directionsDetail: res.directionsDetail,
+          directionsMessagePoints: res.directionsMessagePoints
+        }
+      });
+    })
+    .finally(t => {
+      dispatch({ type: LOADED });
+    });
+};
+
+export const googleDirections = async (points, mode = "driving") => {
+  console.warn("google directions");
+  console.warn(points);
+  return new Promise((resolve, reject) => {
+    let originLatLng =
+      points.origin.coordinates.latitude +
+      "," +
+      points.origin.coordinates.longitude;
+    let destLatLng =
+      points.dest.coordinates.latitude +
+      "," +
+      points.dest.coordinates.longitude;
+    axios
+      .get(
+        "https://maps.googleapis.com/maps/api/directions/json?origin=" +
+          originLatLng +
+          "&destination=" +
+          destLatLng +
+          "&mode=" +
+          mode +
+          "&key=AIzaSyAvNMSYo05_RNMaBdKEw3UcPl2REfxUpas"
+      )
+      .then(res => {
+        console.warn("dei certo");
+        console.warn(res);
+        let encodedPoints = res.data.routes[0].overview_polyline.points;
+        encodedPoints = encodedPoints.replace(/\\\\/g, "\\");
+        let points = Polyline.decode(
+          res.data.routes[0].overview_polyline.points
+        );
+
+        let coords = points.map(point => {
+          return {
+            latitude: point[0],
+            longitude: point[1]
+          };
+        });
+
+        let legs = res.data.routes[0].legs[0];
+        let directionsDetail = {
+          distance: legs.distance,
+          duration: legs.duration,
+          start_address: legs.start_address,
+          end_address: legs.end_address
+        };
+
+        let directionsMessagePoints = {
+          steps: legs.steps
+        };
+
+        let finalResult = {
+          coords,
+          directionsDetail,
+          directionsMessagePoints
+        };
+        resolve(finalResult);
+      })
+      .catch(e => {
+        console.warn("dei errado");
+        console.warn(e);
         reject(e);
       });
   });
