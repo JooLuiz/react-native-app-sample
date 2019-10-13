@@ -68,66 +68,17 @@ class SearchedPlaceDetail extends React.Component {
   render() {
     return (
       <View style={styles.placeDetailsButton}>
-        <View
-          style={{
-            height: Dimensions.get("window").width * 0.8,
-            width: Dimensions.get("window").width,
-            backgroundColor: "white"
-          }}
-        >
-          <Text
-            style={{ top: 5, color: "grey", fontSize: 12, alignSelf: "center" }}
-          >
-            Origem
-          </Text>
-          <Text
-            style={{
-              top: 8,
-              color: "black",
-              fontSize: 16,
-              alignSelf: "center"
-            }}
-          >
+        <View style={styles.insideDetail}>
+          <Text style={styles.originTitle}>Origem</Text>
+          <Text style={styles.originDescription}>
             {this.props.origin.longName}
           </Text>
-          <View
-            style={{
-              top: 11,
-              alignSelf: "center",
-              width: Dimensions.get("window").width * 0.9,
-              borderBottomColor: "grey",
-              borderBottomWidth: 1
-            }}
-          />
-          <Text
-            style={{
-              top: 10,
-              color: "grey",
-              fontSize: 12,
-              alignSelf: "center"
-            }}
-          >
-            Pesquisa
-          </Text>
-          <Text
-            style={{
-              top: 13,
-              color: "black",
-              fontSize: 16,
-              alignSelf: "center"
-            }}
-          >
+          <View style={styles.originDivision} />
+          <Text style={styles.destinationTitle}>Pesquisa</Text>
+          <Text style={styles.destinationDescription}>
             {this.props.searchedPlace.longName}
           </Text>
-          <View
-            style={{
-              top: 16,
-              alignSelf: "center",
-              width: Dimensions.get("window").width * 0.9,
-              borderBottomColor: "grey",
-              borderBottomWidth: 1
-            }}
-          />
+          <View style={styles.destinationDivisor} />
           {this.showTravellingOptions()}
         </View>
       </View>
@@ -157,7 +108,50 @@ const styles = StyleSheet.create({
   placeDetailsButton: {
     flex: 1,
     position: "absolute",
-    bottom: Dimensions.get("window").height * 0.09
+    bottom: Dimensions.get("window").height * -0.02
+  },
+  insideDetail: {
+    height: Dimensions.get("window").width * 0.8,
+    width: Dimensions.get("window").width,
+    backgroundColor: "white"
+  },
+  originTitle: {
+    top: 5,
+    color: "grey",
+    fontSize: 12,
+    alignSelf: "center"
+  },
+  originDescription: {
+    top: 8,
+    color: "black",
+    fontSize: 16,
+    alignSelf: "center"
+  },
+  originDivision: {
+    top: 11,
+    alignSelf: "center",
+    width: Dimensions.get("window").width * 0.9,
+    borderBottomColor: "grey",
+    borderBottomWidth: 1
+  },
+  destinationTitle: {
+    top: 10,
+    color: "grey",
+    fontSize: 12,
+    alignSelf: "center"
+  },
+  destinationDescription: {
+    top: 13,
+    color: "black",
+    fontSize: 16,
+    alignSelf: "center"
+  },
+  destinationDivisor: {
+    top: 16,
+    alignSelf: "center",
+    width: Dimensions.get("window").width * 0.9,
+    borderBottomColor: "grey",
+    borderBottomWidth: 1
   }
 });
 

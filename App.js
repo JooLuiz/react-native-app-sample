@@ -14,7 +14,9 @@ import {
   faPlus,
   faExclamationTriangle,
   faDirections,
-  faTrafficLight
+  faTrafficLight,
+  faShareAlt,
+  faSave
 } from "@fortawesome/free-solid-svg-icons";
 import { loadUser } from "./src/actions/auth";
 import {
@@ -34,7 +36,9 @@ library.add(
   faPlus,
   faExclamationTriangle,
   faDirections,
-  faTrafficLight
+  faTrafficLight,
+  faShareAlt,
+  faSave
 );
 
 const AppContainer = createAppContainer(AppNavigator);

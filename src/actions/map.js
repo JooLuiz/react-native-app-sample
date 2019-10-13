@@ -161,9 +161,7 @@ export const googleDirections = async (points, mode) => {
       .then(res => {
         let encodedPoints = res.data.routes[0].overview_polyline.points;
         encodedPoints = encodedPoints.replace(/\\\\/g, "\\");
-        let points = Polyline.decode(
-          res.data.routes[0].overview_polyline.points
-        );
+        let points = Polyline.decode(encodedPoints);
 
         let coords = points.map(point => {
           return {
@@ -174,8 +172,8 @@ export const googleDirections = async (points, mode) => {
 
         let legs = res.data.routes[0].legs[0];
         let directionsDetail = {
-          distance: legs.distance,
-          duration: legs.duration,
+          distance: legs.distance.text,
+          duration: legs.duration.text,
           start_address: legs.start_address,
           end_address: legs.end_address
         };
@@ -183,7 +181,11 @@ export const googleDirections = async (points, mode) => {
         let directionsMessagePoints = {
           steps: legs.steps
         };
-
+        directionsMessagePoints.steps.forEach(element => {
+          element.html_instructions = element.html_instructions
+            .replace(/\<b\>/g, "")
+            .replace(/\<\/b\>/g, "");
+        });
         let finalResult = {
           coords,
           directionsDetail,

@@ -1,5 +1,10 @@
 import axios from "axios";
-import { GET_TIPO_DENUNCIA, SET_CURRENT_TIPO_DENUNCIA } from "./types";
+import {
+  GET_TIPO_DENUNCIA,
+  SET_CURRENT_TIPO_DENUNCIA,
+  LOADED,
+  LOADING
+} from "./types";
 import { tokenConfig } from "./auth";
 
 //GET Tipo de Denuncia
