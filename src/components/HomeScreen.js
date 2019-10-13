@@ -12,15 +12,18 @@ import {
   TextInput,
   Dimensions,
   Text,
-  TouchableOpacity
+  TouchableOpacity,
+  Share
 } from "react-native";
 import MapView from "react-native-maps";
 import Geolocation from "@react-native-community/geolocation";
 import BottomButtons from "./BottomButtons";
 import { getAllDenuncias } from "../actions/denunciasUsuario";
+import { addEnderecoUsuario } from "../actions/enderecosUsuario";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faArrowAltCircleLeft } from "@fortawesome/free-regular-svg-icons";
 import SearchedPlaceDetail from "./SearchedPlaceDetail";
+import TravelDetails from "./TravelDetails";
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -29,8 +32,7 @@ class HomeScreen extends React.Component {
 
   state = {
     region: null,
-    text: null,
-    coords: null
+    text: null
   };
 
   componentDidMount() {
@@ -92,7 +94,7 @@ class HomeScreen extends React.Component {
 
   showDirectionsButton() {
     return this.props.searchedPlace && !this.props.directionsCoords ? (
-      <View style={styles.directionsBottomButtom}>
+      <View style={[styles.defaultBottomButton, styles.directionsBottomButtom]}>
         <TouchableOpacity
           onPress={() => {
             this.props.startDirections(
@@ -104,7 +106,7 @@ class HomeScreen extends React.Component {
             );
           }}
         >
-          <View style={styles.greyCircle}>
+          <View style={[{ backgroundColor: "black" }, styles.circle]}>
             <FontAwesomeIcon icon="directions" color={"white"} size={25} />
           </View>
         </TouchableOpacity>
@@ -112,11 +114,19 @@ class HomeScreen extends React.Component {
     ) : null;
   }
 
-  showPlaceDetailsButton() {
+  showPlaceDetails() {
     return this.props.searchedPlace &&
       this.props.origin &&
       !this.props.directionsCoords ? (
       <SearchedPlaceDetail />
+    ) : null;
+  }
+
+  showTravellingMessages() {
+    return this.props.searchedPlace &&
+      this.props.origin &&
+      this.props.directionsCoords ? (
+      <TravelDetails />
     ) : null;
   }
 
@@ -182,18 +192,83 @@ class HomeScreen extends React.Component {
 
   denunciaButton() {
     return this.props.isAuthenticated ? (
-      <View style={styles.denunciaBottomButtom}>
+      <View style={[styles.defaultBottomButton, styles.denunciaBottomButtom]}>
         <TouchableOpacity
           onPress={() => {
             this.props.navigation.navigate("TipoDenuncia");
           }}
         >
-          <View style={styles.circle}>
+          <View style={[{ backgroundColor: "#3B4859" }, styles.circle]}>
             <FontAwesomeIcon
               icon="exclamation-triangle"
               color={"white"}
               size={25}
             />
+          </View>
+        </TouchableOpacity>
+      </View>
+    ) : null;
+  }
+
+  onShare = async () => {
+    try {
+      await Share.share(
+        {
+          message:
+            "Estou utilizando o RotaSegura App.\nVeja Minha Viagem.\nOrigem:" +
+            this.props.origin.longName +
+            ".\nDestino:" +
+            this.props.searchedPlace.longName +
+            "\nhttp://instagram.com/jooluizzz"
+        },
+        {
+          dialogTitle: "RotaSegura App - Compartilhe sua Viagem"
+        }
+      );
+    } catch (error) {
+      console.warn(error.message);
+    }
+  };
+
+  sharePlaceButton() {
+    return this.props.searchedPlace &&
+      this.props.origin &&
+      !this.props.directionsCoords ? (
+      <View style={[styles.defaultBottomButton, styles.sharePlaceBottomButtom]}>
+        <TouchableOpacity
+          onPress={() => {
+            this.onShare();
+          }}
+        >
+          <View style={[{ backgroundColor: "#2F68B3" }, styles.circle]}>
+            <FontAwesomeIcon icon="share-alt" color={"white"} size={25} />
+          </View>
+        </TouchableOpacity>
+      </View>
+    ) : null;
+  }
+
+  salvarEndereco() {
+    const endereco_usuario = {
+      latitude: this.props.searchedPlace.coordinates.latitude,
+      longitude: this.props.searchedPlace.coordinates.longitude,
+      nome: this.props.searchedPlace.longName
+    };
+    this.props.addEnderecoUsuario(endereco_usuario);
+  }
+
+  savePlaceButton() {
+    return this.props.searchedPlace &&
+      this.props.origin &&
+      !this.props.directionsCoords ? (
+      <View style={[styles.defaultBottomButton, styles.savePlaceBottomButtom]}>
+        <TouchableOpacity
+          onPress={() => {
+            this.salvarEndereco();
+          }}
+        >
+          <View style={[{ backgroundColor: "#DAE524" }, styles.circle]}>
+            <FontAwesomeIcon icon="save" color={"white"} size={25} />
           </View>
         </TouchableOpacity>
       </View>
@@ -236,8 +311,11 @@ class HomeScreen extends React.Component {
         {this.cancel()}
         {this.searchInput()}
         {this.denunciaButton()}
+        {this.sharePlaceButton()}
+        {this.savePlaceButton()}
         {this.showDirectionsButton()}
-        {this.showPlaceDetailsButton()}
+        {this.showPlaceDetails()}
+        {this.showTravellingMessages()}
         <BottomButtons navigation={this.props.navigation} />
       </View>
     );
@@ -278,19 +356,23 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 7
   },
-  denunciaBottomButtom: {
+  defaultBottomButton: {
     flex: 1,
     position: "absolute",
     bottom: Dimensions.get("window").height * 0.13,
-    left: Dimensions.get("window").width * 0.07,
     zIndex: 2
   },
+  denunciaBottomButtom: {
+    left: Dimensions.get("window").width * 0.07
+  },
+  sharePlaceBottomButtom: {
+    left: Dimensions.get("window").width * 0.3
+  },
+  savePlaceBottomButtom: {
+    right: Dimensions.get("window").width * 0.3
+  },
   directionsBottomButtom: {
-    flex: 1,
-    position: "absolute",
-    bottom: Dimensions.get("window").height * 0.13,
-    right: Dimensions.get("window").width * 0.07,
-    zIndex: 2
+    right: Dimensions.get("window").width * 0.07
   },
   circle: {
     flex: 2,
@@ -298,17 +380,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     height: Dimensions.get("window").width * 0.17,
     width: Dimensions.get("window").width * 0.17,
-    borderRadius: 400,
-    backgroundColor: "#3B4859"
-  },
-  greyCircle: {
-    flex: 2,
-    alignItems: "center",
-    justifyContent: "center",
-    height: Dimensions.get("window").width * 0.17,
-    width: Dimensions.get("window").width * 0.17,
-    borderRadius: 400,
-    backgroundColor: "black"
+    borderRadius: 400
   },
   flatListStyle: {
     backgroundColor: "white",
@@ -363,5 +435,12 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getAllDenuncias, getPlace, cancelMapOperations, setOrigin, startDirections }
+  {
+    getAllDenuncias,
+    getPlace,
+    cancelMapOperations,
+    setOrigin,
+    startDirections,
+    addEnderecoUsuario
+  }
 )(HomeScreen);
