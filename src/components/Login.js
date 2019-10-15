@@ -1,8 +1,8 @@
 import React from "react";
 import { connect } from "react-redux";
 import { View, Text, StyleSheet } from "react-native";
-import LoginOrCreateForm from "./common/LoginOrCreateForm"
-import GoBackButton from './common/GoBackButton';
+import LoginOrCreateForm from "./common/LoginOrCreateForm";
+import GoBackButton from "./common/GoBackButton";
 
 class Login extends React.Component {
   render() {
@@ -24,19 +24,19 @@ class Login extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems:  'center'
+    justifyContent: "center",
+    alignItems: "center"
   },
   input: {
-    width: '80%',
+    width: "80%",
     marginBottom: 50
   },
   text: {
-    alignItems: 'center',
+    alignItems: "center",
     padding: 20,
     fontSize: 20
   }
-})
+});
 
 const mapStateToProps = state => ({
   isAuthenticated: state.auth.isAuthenticated

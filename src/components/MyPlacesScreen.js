@@ -10,10 +10,12 @@ import {
   TouchableOpacity
 } from "react-native";
 import BottomButtons from "./BottomButtons";
+import EmptyList from "./common/EmptyList";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { getEnderecoUsuario } from "../actions/enderecosUsuario";
+import GoBackButton from "./common/GoBackButton";
+import { getPlace, setOrigin } from "../actions/map";
 
-const voltar = "<-";
 class MyPlacesScreen extends React.Component {
   componentWillMount() {
     this.props.getEnderecoUsuario();
@@ -25,34 +27,38 @@ class MyPlacesScreen extends React.Component {
     }
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <View style={styles.header}>
-          <TouchableHighlight
-            style={styles.backButton}
-            onPress={() => this.props.navigation.goBack()}
-          >
-            <Text>{voltar}</Text>
-          </TouchableHighlight>
-        </View>
+        <GoBackButton navigation={this.props.navigation} />
         <FlatList
           data={this.props.enderecosUsuario}
           ListEmptyComponent={
-            <View style={styles.listItem}>
-              <Text>Você ainda não possui nenhum endereço</Text>
-            </View>
+            <EmptyList text="Você ainda não possui nenhum endereço cadastrado" />
           }
           renderItem={({ item }) => (
-            <TouchableHighlight>
-              <View style={styles.listItem}>
-                <Text>nome:{item.nome}</Text>
-                <Text>
-                  <Text>Latitude:{item.latitude}</Text>
-                  <Text>Longitude:{item.longitude}</Text>
-                </Text>
+            <TouchableHighlight
+              style={{ backgroundColor: "white" }}
+              onPress={() => {
+                let coordinates = {
+                  latitude: item.latitude,
+                  longitude: item.longitude
+                };
+                this.props.getPlace(coordinates, "coordinates");
+                this.props.setOrigin();
+                this.props.navigation.navigate("Mapa");
+              }}
+            >
+              <View>
+                <View style={styles.listItens}>
+                  <FontAwesomeIcon icon="map-marker-alt" size={40} />
+                  <View style={styles.itemName}>
+                    <Text style={styles.nameText}>{item.nome}</Text>
+                  </View>
+                </View>
+                <View style={styles.division} />
               </View>
             </TouchableHighlight>
           )}
         />
-        <View style={styles.denunciaBottomButtom}>
+        <View style={styles.addPlaceBottomButtom}>
           <TouchableOpacity
             onPress={() => {
               this.props.navigation.navigate("AddEnderecoScreen");
@@ -70,31 +76,30 @@ class MyPlacesScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  listItem: {
+  itemName: {
     height: Dimensions.get("window").height * 0.07,
     width: Dimensions.get("window").width,
-    backgroundColor: "white",
     alignItems: "flex-start",
     justifyContent: "flex-start",
-    borderBottomWidth: 0.5
+    left: Dimensions.get("window").width * 0.03
   },
-  header: {
-    height: Dimensions.get("window").height * 0.04,
+  listItens: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
     width: Dimensions.get("window").width,
-    backgroundColor: "white",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-    borderBottomWidth: 0.5
+    height: Dimensions.get("window").height * 0.1,
+    left: Dimensions.get("window").height * 0.025
   },
-  backButton: {
-    height: Dimensions.get("window").height * 0.06,
-    width: Dimensions.get("window").width * 0.2
-  },
-  denunciaBottomButtom: {
+  addPlaceBottomButtom: {
     flex: 1,
     position: "absolute",
     bottom: Dimensions.get("window").height * 0.15,
     right: Dimensions.get("window").width * 0.12
+  },
+  nameText: {
+    fontSize: 15,
+    color: "black"
   },
   circle: {
     flex: 2,
@@ -104,6 +109,12 @@ const styles = StyleSheet.create({
     width: Dimensions.get("window").width * 0.17,
     borderRadius: 400,
     backgroundColor: "#3B4859"
+  },
+  division: {
+    alignSelf: "center",
+    width: Dimensions.get("window").width * 0.9,
+    borderBottomColor: "grey",
+    borderBottomWidth: 1
   }
 });
 
@@ -114,5 +125,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getEnderecoUsuario }
+  { getEnderecoUsuario, getPlace, setOrigin }
 )(MyPlacesScreen);
