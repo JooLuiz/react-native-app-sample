@@ -48,7 +48,7 @@ class MyPlacesScreen extends React.Component {
             >
               <View>
                 <View style={styles.listItens}>
-                  <FontAwesomeIcon icon="map-marker-alt" size={40} />
+                  <FontAwesomeIcon icon="map-marker-alt" size={30} />
                   <View style={styles.itemName}>
                     <Text style={styles.nameText}>{item.nome}</Text>
                   </View>
