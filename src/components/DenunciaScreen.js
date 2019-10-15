@@ -11,6 +11,8 @@ import {
 import BottomButtons from "./BottomButtons";
 import { getDenuncias, setCurrentDenuncia } from "../actions/denuncias";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import EmptyList from "./common/EmptyList";
+import GoBackButton from "./common/GoBackButton";
 
 class DenunciaScreen extends React.Component {
   componentWillMount() {
@@ -29,20 +31,31 @@ class DenunciaScreen extends React.Component {
 
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <GoBackButton navigation={this.props.navigation} />
         <FlatList
           data={this.props.denuncias.filter(
             d => d.tipo_denuncia == this.props.currentTipoDenuncia.id
           )}
           ListEmptyComponent={
-            <View style={styles.listItem}>
-              <Text>Não há dados cadastrados para este tipo de denúncia</Text>
-            </View>
+            <EmptyList text="Ainda não existem Denúncias Cadastradas para esse Tipo de Denúncia." />
           }
           renderItem={({ item }) => (
-            <TouchableHighlight onPress={() => this.setDenunciaAndGo(item)}>
-              <View style={styles.listItem}>
-                <FontAwesomeIcon icon={item.icone} color={"black"} size={30} />
-                <Text>{item.descricao}</Text>
+            <TouchableHighlight
+              style={{ backgroundColor: "white" }}
+              onPress={() => this.setDenunciaAndGo(item)}
+            >
+              <View>
+                <View style={styles.listItens}>
+                  <FontAwesomeIcon
+                    icon={item.icone}
+                    color={"black"}
+                    size={30}
+                  />
+                  <View style={styles.itemName}>
+                    <Text>{item.descricao}</Text>
+                  </View>
+                </View>
+                <View style={styles.division} />
               </View>
             </TouchableHighlight>
           )}
@@ -53,20 +66,38 @@ class DenunciaScreen extends React.Component {
   }
 }
 
+const styles = StyleSheet.create({
+  itemName: {
+    height: Dimensions.get("window").height * 0.07,
+    width: Dimensions.get("window").width,
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    left: Dimensions.get("window").width * 0.03
+  },
+  listItens: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height * 0.1,
+    left: Dimensions.get("window").height * 0.025
+  },
+  nameText: {
+    fontSize: 15,
+    color: "black"
+  },
+  division: {
+    alignSelf: "center",
+    width: Dimensions.get("window").width * 0.9,
+    borderBottomColor: "grey",
+    borderBottomWidth: 1
+  }
+});
+
 const mapStateToProps = state => ({
   isAuthenticated: state.auth.isAuthenticated,
   currentTipoDenuncia: state.tipoDenuncias.currentTipoDenuncia,
   denuncias: state.denuncias.denuncias
-});
-
-const styles = StyleSheet.create({
-  listItem: {
-    height: Dimensions.get("window").height * 0.07,
-    width: Dimensions.get("window").width,
-    backgroundColor: "white",
-    alignItems: "center",
-    justifyContent: "center"
-  }
 });
 
 export default connect(
