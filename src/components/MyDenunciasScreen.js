@@ -26,14 +26,17 @@ class MyDenunciasScreen extends React.Component {
   render() {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <GoBackButton navigation={this.props.navigation} />
+        <GoBackButton
+          navigation={this.props.navigation}
+          title="Minhas Denúncias"
+        />
         <FlatList
           data={this.props.denunciasUsuario}
           ListEmptyComponent={
             <EmptyList text="Você ainda não possui nenhuma denuncia cadastrada" />
           }
           renderItem={({ item }) => (
-            <TouchableHighlight style={{ backgroundColor: "white" }}>
+            <TouchableHighlight>
               <View>
                 <View style={styles.listItens}>
                   <FontAwesomeIcon

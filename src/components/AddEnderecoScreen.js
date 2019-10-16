@@ -6,8 +6,7 @@ import {
   Dimensions,
   StyleSheet,
   TouchableOpacity,
-  TextInput,
-  Button
+  TextInput
 } from "react-native";
 import BottomButtons from "./BottomButtons";
 import { addEnderecoUsuario } from "../actions/enderecosUsuario";
@@ -20,7 +19,8 @@ class AddEnderecoScreen extends React.Component {
     text: null,
     nome: null,
     lat: null,
-    lng: null
+    lng: null,
+    endereco: null
   };
 
   setEnderecoPlace(place) {
@@ -29,18 +29,7 @@ class AddEnderecoScreen extends React.Component {
 
   getPlace() {
     let address = this.state.text.replace(/ /g, "+");
-
-    axios
-      .get(
-        "https://maps.googleapis.com/maps/api/geocode/json?address=" +
-          address +
-          "&region=br&key=AIzaSyAvNMSYo05_RNMaBdKEw3UcPl2REfxUpas"
-      )
-      .then(json => {
-        var location = json.data.results[0].geometry.location;
-        this.setState({ lat: location.lat, lng: location.lng });
-        this.registerAndGo(location.lat, location.lng);
-      });
+    this.owner.registerAndGo(address);
   }
 
   registerEndereco() {
@@ -54,19 +43,35 @@ class AddEnderecoScreen extends React.Component {
         lat: position.coords.latitude,
         lng: position.coords.longitude
       });
-      this.registerAndGo(position.coords.latitude, position.coords.longitude);
+      var address = position.coords.latitude + "," + position.coords.longitude;
+      this.registerAndGo(address);
     });
   }
 
-  registerAndGo(lat, lng) {
-    const endereco_usuario = {
-      latitude: this.state.lat == null ? lat : this.state.lat,
-      longitude: this.state.lng == null ? lng : this.state.lng,
-      nome: this.state.nome == null ? "TO-DO" : this.state.nome
-    };
-    this.props.addEnderecoUsuario(endereco_usuario);
+  registerAndGo(endereco) {
+    axios
+      .get(
+        "https://maps.googleapis.com/maps/api/geocode/json?address=" +
+          endereco +
+          "&region=br&key=AIzaSyAvNMSYo05_RNMaBdKEw3UcPl2REfxUpas"
+      )
+      .then(json => {
+        var location = json.data.results[0].geometry.location;
+        var placeLongName =
+          json.data.results[0].address_components[0].long_name +
+          " " +
+          json.data.results[0].address_components[1].long_name;
 
-    this.props.navigation.navigate("Mapa");
+        const endereco_usuario = {
+          latitude: location.lat == null ? this.state.lat : location.lat,
+          longitude: location.lng == null ? this.state.lng : location.lng,
+          nome: this.state.nome == null ? "Não Definido." : this.state.nome,
+          endereco: placeLongName == null ? "Não Encontrado." : placeLongName
+        };
+        this.props.addEnderecoUsuario(endereco_usuario);
+
+        this.props.navigation.goBack();
+      });
   }
 
   render() {

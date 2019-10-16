@@ -31,7 +31,10 @@ class DenunciaScreen extends React.Component {
 
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <GoBackButton navigation={this.props.navigation} />
+        <GoBackButton
+          navigation={this.props.navigation}
+          title="Categoria da Denúncia"
+        />
         <FlatList
           data={this.props.denuncias.filter(
             d => d.tipo_denuncia == this.props.currentTipoDenuncia.id
@@ -40,10 +43,7 @@ class DenunciaScreen extends React.Component {
             <EmptyList text="Ainda não existem Denúncias Cadastradas para esse Tipo de Denúncia." />
           }
           renderItem={({ item }) => (
-            <TouchableHighlight
-              style={{ backgroundColor: "white" }}
-              onPress={() => this.setDenunciaAndGo(item)}
-            >
+            <TouchableHighlight onPress={() => this.setDenunciaAndGo(item)}>
               <View>
                 <View style={styles.listItens}>
                   <FontAwesomeIcon

@@ -27,7 +27,7 @@ class MyPlacesScreen extends React.Component {
     }
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <GoBackButton navigation={this.props.navigation} />
+        <GoBackButton navigation={this.props.navigation} title="Meus Locais" />
         <FlatList
           data={this.props.enderecosUsuario}
           ListEmptyComponent={
@@ -35,7 +35,6 @@ class MyPlacesScreen extends React.Component {
           }
           renderItem={({ item }) => (
             <TouchableHighlight
-              style={{ backgroundColor: "white" }}
               onPress={() => {
                 let coordinates = {
                   latitude: item.latitude,
@@ -51,6 +50,7 @@ class MyPlacesScreen extends React.Component {
                   <FontAwesomeIcon icon="map-marker-alt" size={30} />
                   <View style={styles.itemName}>
                     <Text style={styles.nameText}>{item.nome}</Text>
+                    <Text style={styles.addressText}>{item.endereco}</Text>
                   </View>
                 </View>
                 <View style={styles.division} />
@@ -100,6 +100,10 @@ const styles = StyleSheet.create({
   nameText: {
     fontSize: 15,
     color: "black"
+  },
+  addressText: {
+    fontSize: 12,
+    color: "grey"
   },
   circle: {
     flex: 2,
