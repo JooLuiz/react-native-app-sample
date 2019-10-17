@@ -18,7 +18,21 @@ import {
   faShareAlt,
   faSave,
   faFrown,
-  faMapMarkerAlt
+  faMapMarkerAlt,
+  faCheck,
+  faUniversalAccess,
+  faMeteor,
+  faUserNinja,
+  faCannabis,
+  faSkull,
+  faBolt,
+  faSnowflake,
+  faCloudShowersHeavy,
+  faCloudMeatball,
+  faCarCrash,
+  faTools,
+  faRadiation,
+  faPaw
 } from "@fortawesome/free-solid-svg-icons";
 import { loadUser } from "./src/actions/auth";
 import {
@@ -42,7 +56,21 @@ library.add(
   faShareAlt,
   faSave,
   faFrown,
-  faMapMarkerAlt
+  faMapMarkerAlt,
+  faCheck,
+  faUniversalAccess,
+  faMeteor,
+  faUserNinja,
+  faCannabis,
+  faSkull,
+  faBolt,
+  faSnowflake,
+  faCloudShowersHeavy,
+  faCloudMeatball,
+  faCarCrash,
+  faTools,
+  faRadiation,
+  faPaw
 );
 
 const AppContainer = createAppContainer(AppNavigator);

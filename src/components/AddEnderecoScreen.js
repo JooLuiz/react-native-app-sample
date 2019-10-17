@@ -122,7 +122,7 @@ class AddEnderecoScreen extends React.Component {
           </TouchableOpacity>
         </View>
         <TextInput
-          placeholder="nome"
+          placeholder="Nome"
           onChangeText={nome => this.setState({ nome })}
           value={this.state.nome}
           style={{
