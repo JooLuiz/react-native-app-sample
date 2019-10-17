@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { setPlaceKind } from "../actions/enderecosUsuario";
 import { addDenunciaUsuario } from "../actions/denunciasUsuario";
+import { getAllDenuncias } from "../actions/denunciasUsuario";
 import Geolocation from "@react-native-community/geolocation";
 import axios from "axios";
 import GoBackButton from "./common/GoBackButton";
@@ -58,8 +59,9 @@ class DenunciasUsuarioScreen extends React.Component {
           comentario: this.state.comentario
         };
         this.props.addDenunciaUsuario(usuario_denuncia);
+        this.props.getAllDenuncias();
 
-        this.props.navigation.goBack();
+        this.props.navigation.navigate("Mapa");
       });
   }
 
@@ -186,5 +188,5 @@ const styles = StyleSheet.create({
 
 export default connect(
   mapStateToProps,
-  { addDenunciaUsuario, setPlaceKind }
+  { getAllDenuncias, addDenunciaUsuario, setPlaceKind }
 )(DenunciasUsuarioScreen);
