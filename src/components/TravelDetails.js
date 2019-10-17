@@ -8,49 +8,70 @@ class TravelDetails extends React.Component {
     step: 0
   };
   componentDidMount() {
-    this.watchID = Geolocation.watchPosition(position => {
-      const { latitude, longitude } = position.coords;
-      if (this.props.directionsMessagePoints) {
-        if (
-          this.props.directionsMessagePoints.steps[this.state.step]
-            .start_location.lat == latitude &&
-          this.props.directionsMessagePoints.steps[this.state.step]
-            .start_location.lng == longitude
-        ) {
-          console.warn("if 1");
-          this.setState({
-            step: this.state.step + 1
-          });
-        } else if (
-          this.props.directionsMessagePoints.steps[this.state.step].end_location
-            .lat == latitude &&
-          this.props.directionsMessagePoints.steps[this.state.step].end_location
-            .lng == longitude
-        ) {
-          console.warn("if 2");
-          this.setState({
-            step: this.state.step + 1
+    this.watchID = Geolocation.watchPosition(
+      position => {
+        const { latitude, longitude } = position.coords;
+        console.warn("oi");
+        if (this.props.directionsMessagePoints) {
+          if (
+            this.props.directionsMessagePoints.steps[this.state.step]
+              .start_location.lat == latitude &&
+            this.props.directionsMessagePoints.steps[this.state.step]
+              .start_location.lng == longitude
+          ) {
+            console.warn("if 1");
+            this.setState({
+              step: this.state.step + 1
+            });
+          } else if (
+            this.props.directionsMessagePoints.steps[this.state.step]
+              .end_location.lat == latitude &&
+            this.props.directionsMessagePoints.steps[this.state.step]
+              .end_location.lng == longitude
+          ) {
+            console.warn("if 2");
+            this.setState({
+              step: this.state.step + 1
+            });
+          }
+        } else {
+          console.warn("if 4.1");
+          this.props.directionsMessagePoints.steps.forEach(element, index => {
+            if (
+              element.start_location.lat == latitude &&
+              element.start_location.lat == longitude
+            ) {
+              console.warn("if 4.2");
+              this.setState({ step: index });
+            }
           });
         }
-      } else {
-        console.warn("if 4.1");
-        this.props.directionsMessagePoints.steps.forEach(element, index => {
-          if (
-            element.start_location.lat == latitude &&
-            element.start_location.lat == longitude
-          ) {
-            console.warn("if 4.2");
-            this.setState({ step: index });
-          }
-        });
+      },
+      error => {
+        console.warn(error.message);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 100
       }
-    });
+    );
   }
 
   render() {
     return (
       <View style={styles.travelDetail}>
         <View style={styles.insideDetail}>
+          <Text style={styles.messageDistanceDetail}>
+            {
+              this.props.directionsMessagePoints.steps[this.state.step].distance
+                .text
+            }{" "}
+            - Aproximadamente{" "}
+            {
+              this.props.directionsMessagePoints.steps[this.state.step].duration
+                .text
+            }
+          </Text>
           <Text style={styles.messageDetail}>
             {
               this.props.directionsMessagePoints.steps[this.state.step]
@@ -74,14 +95,24 @@ const styles = StyleSheet.create({
     width: Dimensions.get("window").width,
     backgroundColor: "white"
   },
+  messageDistanceDetail: {
+    top: 10,
+    color: "grey",
+    fontSize: 15,
+    alignSelf: "flex-start",
+    marginRight: Dimensions.get("window").width * 0.07,
+    marginLeft: Dimensions.get("window").width * 0.07
+  },
   messageDetail: {
-    top: 8,
+    top: 20,
     color: "black",
-    fontSize: 16,
-    alignSelf: "center"
+    fontSize: 22,
+    alignSelf: "flex-start",
+    height: Dimensions.get("window").width * 0.29,
+    marginRight: Dimensions.get("window").width * 0.07,
+    marginLeft: Dimensions.get("window").width * 0.07
   },
   division: {
-    top: 11,
     alignSelf: "center",
     width: Dimensions.get("window").width * 0.9,
     borderBottomColor: "grey",

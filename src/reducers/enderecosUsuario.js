@@ -1,12 +1,14 @@
 import {
   GET_ENDERECO_USUARIO,
   SET_CURRENT_ENDERECO_USUARIO,
-  ADD_ENDERECO_USUARIO
+  ADD_ENDERECO_USUARIO,
+  SET_PLACE_KIND
 } from "../actions/types";
 
 const initialState = {
   enderecosUsuario: [],
-  currentEnderecoUsuario: {}
+  currentEnderecoUsuario: {},
+  kind: "current"
 };
 
 export default function(state = initialState, action) {
@@ -25,6 +27,11 @@ export default function(state = initialState, action) {
       return {
         ...state,
         enderecosUsuario: [...state.enderecosUsuario, action.payload]
+      };
+    case SET_PLACE_KIND:
+      return {
+        ...state,
+        kind: action.payload
       };
     default:
       return state;

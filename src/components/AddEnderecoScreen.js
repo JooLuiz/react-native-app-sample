@@ -6,46 +6,27 @@ import {
   Dimensions,
   StyleSheet,
   TouchableOpacity,
-  TextInput,
-  Button
+  TextInput
 } from "react-native";
-import BottomButtons from "./BottomButtons";
-import { addEnderecoUsuario } from "../actions/enderecosUsuario";
+import { addEnderecoUsuario, setPlaceKind } from "../actions/enderecosUsuario";
 import Geolocation from "@react-native-community/geolocation";
 import axios from "axios";
+import GoBackButton from "./common/GoBackButton";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
 class AddEnderecoScreen extends React.Component {
   state = {
-    place: "current",
-    text: null,
     nome: null,
-    lat: null,
-    lng: null
+    endereco: null
   };
 
-  setEnderecoPlace(place) {
-    this.state.place = place;
+  register() {
+    this.props.kind == "current" ? this.getCurrentPosition() : this.getPlace();
   }
 
   getPlace() {
-    let address = this.state.text.replace(/ /g, "+");
-
-    axios
-      .get(
-        "https://maps.googleapis.com/maps/api/geocode/json?address=" +
-          address +
-          "&region=br&key=AIzaSyAvNMSYo05_RNMaBdKEw3UcPl2REfxUpas"
-      )
-      .then(json => {
-        var location = json.data.results[0].geometry.location;
-        this.setState({ lat: location.lat, lng: location.lng });
-        this.registerAndGo(location.lat, location.lng);
-      });
-  }
-
-  registerEndereco() {
-    if (this.state.place == "custom") this.getPlace();
-    else this.getCurrentPosition();
+    let address = this.state.endereco.replace(/ /g, "+");
+    this.registerAndGo(address);
   }
 
   getCurrentPosition() {
@@ -54,19 +35,35 @@ class AddEnderecoScreen extends React.Component {
         lat: position.coords.latitude,
         lng: position.coords.longitude
       });
-      this.registerAndGo(position.coords.latitude, position.coords.longitude);
+      var address = position.coords.latitude + "," + position.coords.longitude;
+      this.registerAndGo(address);
     });
   }
 
-  registerAndGo(lat, lng) {
-    const endereco_usuario = {
-      latitude: this.state.lat == null ? lat : this.state.lat,
-      longitude: this.state.lng == null ? lng : this.state.lng,
-      nome: this.state.nome == null ? "TO-DO" : this.state.nome
-    };
-    this.props.addEnderecoUsuario(endereco_usuario);
+  registerAndGo(endereco) {
+    axios
+      .get(
+        "https://maps.googleapis.com/maps/api/geocode/json?address=" +
+          endereco +
+          "&region=br&key=AIzaSyAvNMSYo05_RNMaBdKEw3UcPl2REfxUpas"
+      )
+      .then(json => {
+        var location = json.data.results[0].geometry.location;
+        var placeLongName =
+          json.data.results[0].address_components[0].long_name +
+          " " +
+          json.data.results[0].address_components[1].long_name;
 
-    this.props.navigation.navigate("Mapa");
+        const endereco_usuario = {
+          latitude: location.lat,
+          longitude: location.lng,
+          nome: this.state.nome,
+          endereco: placeLongName
+        };
+        this.props.addEnderecoUsuario(endereco_usuario);
+
+        this.props.navigation.goBack();
+      });
   }
 
   render() {
@@ -75,107 +72,121 @@ class AddEnderecoScreen extends React.Component {
     }
 
     return (
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <View style={styles.travellingModeView}>
-          <TextInput
-            style={styles.searchInput}
-            placeholder="nome"
-            onChangeText={nome => this.setState({ nome })}
-            value={this.state.nome}
-          />
+      <View>
+        <GoBackButton
+          navigation={this.props.navigation}
+          title="Adição de um Local"
+        />
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            width: Dimensions.get("window").width,
+            backgroundColor: "white"
+          }}
+        >
           <TouchableOpacity
-            style={styles.buttonContainer}
-            onPress={() => this.setEnderecoPlace("current")}
+            onPress={() => this.props.setPlaceKind("current")}
+            style={{
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginHorizontal: Dimensions.get("window").width * 0.03,
+              height: Dimensions.get("window").height * 0.07,
+              backgroundColor: this.props.kind == "current" ? "grey" : "white",
+              width: "50%",
+              borderBottomColor: "grey",
+              borderBottomWidth: 1
+            }}
           >
-            <Text>Utilizar Local Atual</Text>
-            <View style={styles.checkBoxcircle}>
-              {this.state.place === "current" && (
-                <View style={styles.checkedCircle} />
-              )}
-            </View>
+            <Text style={{ top: Dimensions.get("window").height * 0.02 }}>
+              Utilizar Local Atual
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={styles.buttonContainer}
-            onPress={() => this.setEnderecoPlace("custom")}
+            onPress={() => this.props.setPlaceKind("custom")}
+            style={{
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginHorizontal: Dimensions.get("window").width * 0.03,
+              height: Dimensions.get("window").height * 0.07,
+              backgroundColor: this.props.kind == "current" ? "white" : "grey",
+              width: "50%",
+              borderBottomColor: "grey",
+              borderBottomWidth: 1
+            }}
           >
-            <Text>Pesquisar local</Text>
-            <View style={styles.checkBoxcircle}>
-              {this.state.place === "custom" ? (
-                <View style={styles.checkedCircle} />
-              ) : null}
-            </View>
-          </TouchableOpacity>
-          <View>
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Pesquisar local"
-              onChangeText={text => this.setState({ text })}
-              value={this.state.text}
-            />
-          </View>
-          <TouchableOpacity onPress={() => this.registerEndereco()}>
-            <Text>Cadastrar</Text>
+            <Text style={{ top: Dimensions.get("window").height * 0.02 }}>
+              Pesquisar Local
+            </Text>
           </TouchableOpacity>
         </View>
-        <BottomButtons navigation={this.props.navigation} />
+        <TextInput
+          placeholder="Nome"
+          onChangeText={nome => this.setState({ nome })}
+          value={this.state.nome}
+          style={{
+            alignSelf: "center",
+            top: Dimensions.get("window").height * 0.05,
+            height: Dimensions.get("window").height * 0.07,
+            width: Dimensions.get("window").width * 0.9,
+            borderColor: "gray",
+            borderWidth: 1,
+            backgroundColor: "white",
+            borderRadius: 7
+          }}
+        ></TextInput>
+        {this.props.kind == "custom" ? (
+          <TextInput
+            placeholder="Endereço"
+            onChangeText={endereco => this.setState({ endereco })}
+            value={this.state.endereco}
+            style={{
+              alignSelf: "center",
+              top: Dimensions.get("window").height * 0.1,
+              height: Dimensions.get("window").height * 0.07,
+              width: Dimensions.get("window").width * 0.9,
+              borderColor: "gray",
+              borderWidth: 1,
+              backgroundColor: "white",
+              borderRadius: 7
+            }}
+          ></TextInput>
+        ) : null}
+        <View style={styles.addPlaceBottomButtom}>
+          <TouchableOpacity onPress={() => this.register()}>
+            <View style={styles.circle}>
+              <FontAwesomeIcon icon="plus" color={"white"} size={25} />
+            </View>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
 }
 
 const mapStateToProps = state => ({
-  isAuthenticated: state.auth.isAuthenticated
+  isAuthenticated: state.auth.isAuthenticated,
+  kind: state.enderecosUsuario.kind
 });
 
 const styles = StyleSheet.create({
-  listItem: {
-    height: Dimensions.get("window").height * 0.07,
-    width: Dimensions.get("window").width,
-    backgroundColor: "white",
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  travellingModeView: {
-    flex: 1,
+  addPlaceBottomButtom: {
     position: "absolute",
-    top: Dimensions.get("window").height * 0.16999,
-    backgroundColor: "white",
-    borderRadius: 7,
-    width: Dimensions.get("window").width * 0.9
+    top: Dimensions.get("window").height * 0.75,
+    right: Dimensions.get("window").width * 0.12
   },
-  checkBoxcircle: {
-    height: 20,
-    width: 20,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#ACACAC",
+  circle: {
     alignItems: "center",
-    justifyContent: "center"
-  },
-  checkedCircle: {
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    backgroundColor: "#794F9B"
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginHorizontal: Dimensions.get("window").width * 0.03
-  },
-  searchInput: {
-    flex: 1,
-    height: Dimensions.get("window").height * 0.07,
-    width: Dimensions.get("window").width * 0.9,
-    borderColor: "gray",
-    borderWidth: 1,
-    backgroundColor: "white",
-    borderRadius: 7
+    justifyContent: "center",
+    height: Dimensions.get("window").width * 0.17,
+    width: Dimensions.get("window").width * 0.17,
+    borderRadius: 400,
+    backgroundColor: "green"
   }
 });
 
 export default connect(
   mapStateToProps,
-  { addEnderecoUsuario }
+  { addEnderecoUsuario, setPlaceKind }
 )(AddEnderecoScreen);

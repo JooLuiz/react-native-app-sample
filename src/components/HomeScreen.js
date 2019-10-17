@@ -231,9 +231,7 @@ class HomeScreen extends React.Component {
   };
 
   sharePlaceButton() {
-    return this.props.searchedPlace &&
-      this.props.origin &&
-      !this.props.directionsCoords ? (
+    return this.props.searchedPlace && this.props.origin ? (
       <View style={[styles.defaultBottomButton, styles.sharePlaceBottomButtom]}>
         <TouchableOpacity
           onPress={() => {
@@ -260,7 +258,7 @@ class HomeScreen extends React.Component {
   savePlaceButton() {
     return this.props.searchedPlace &&
       this.props.origin &&
-      !this.props.directionsCoords ? (
+      this.props.isAuthenticated ? (
       <View style={[styles.defaultBottomButton, styles.savePlaceBottomButtom]}>
         <TouchableOpacity
           onPress={() => {

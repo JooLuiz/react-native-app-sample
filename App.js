@@ -16,7 +16,23 @@ import {
   faDirections,
   faTrafficLight,
   faShareAlt,
-  faSave
+  faSave,
+  faFrown,
+  faMapMarkerAlt,
+  faCheck,
+  faUniversalAccess,
+  faMeteor,
+  faUserNinja,
+  faCannabis,
+  faSkull,
+  faBolt,
+  faSnowflake,
+  faCloudShowersHeavy,
+  faCloudMeatball,
+  faCarCrash,
+  faTools,
+  faRadiation,
+  faPaw
 } from "@fortawesome/free-solid-svg-icons";
 import { loadUser } from "./src/actions/auth";
 import {
@@ -38,14 +54,30 @@ library.add(
   faDirections,
   faTrafficLight,
   faShareAlt,
-  faSave
+  faSave,
+  faFrown,
+  faMapMarkerAlt,
+  faCheck,
+  faUniversalAccess,
+  faMeteor,
+  faUserNinja,
+  faCannabis,
+  faSkull,
+  faBolt,
+  faSnowflake,
+  faCloudShowersHeavy,
+  faCloudMeatball,
+  faCarCrash,
+  faTools,
+  faRadiation,
+  faPaw
 );
 
 const AppContainer = createAppContainer(AppNavigator);
 
 export default class App extends React.Component {
   componentWillMount() {
-    axios.defaults.baseURL = "http://b07a9176.ngrok.io/api";
+    axios.defaults.baseURL = "http://0b78a19c.ngrok.io/api";
     axios.defaults.timeout = 1500;
     store.dispatch(loadUser());
     store.dispatch(getDenuncias());

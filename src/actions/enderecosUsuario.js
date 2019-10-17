@@ -4,7 +4,8 @@ import {
   SET_CURRENT_ENDERECO_USUARIO,
   ADD_ENDERECO_USUARIO,
   LOADING,
-  LOADED
+  LOADED,
+  SET_PLACE_KIND
 } from "./types";
 import { tokenConfig } from "./auth";
 
@@ -53,5 +54,12 @@ export const setCurrentEnderecoUsuario = denuncia => dispatch => {
   dispatch({
     type: SET_CURRENT_ENDERECO_USUARIO,
     payload: denuncia
+  });
+};
+
+export const setPlaceKind = kind => dispatch => {
+  dispatch({
+    type: SET_PLACE_KIND,
+    payload: kind
   });
 };
