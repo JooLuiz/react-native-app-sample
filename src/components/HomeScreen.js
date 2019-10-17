@@ -140,6 +140,7 @@ class HomeScreen extends React.Component {
         };
         markers[index] = (
           <MapView.Marker
+            key={index}
             coordinate={denunciacoordinate}
             title={item.denuncia.descricao}
             description={item.comentario}
