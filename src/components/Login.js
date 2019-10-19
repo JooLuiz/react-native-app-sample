@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { View, Text, StyleSheet } from "react-native";
+import { ImageBackground, View, Text, StyleSheet } from "react-native";
 import LoginOrCreateForm from "./common/LoginOrCreateForm"
 import GoBackButton from './common/GoBackButton';
 

@@ -19,6 +19,8 @@ const styles = StyleSheet.create({
     backButton:{
         position: 'absolute',
         left: 20,
-        top: 20
+        top: 20,
+        shadowColor: '#000',
+        shadowOffset: {width: 20, height: 0}
     }
 })

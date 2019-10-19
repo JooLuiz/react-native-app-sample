@@ -15,6 +15,7 @@ import BottomButtons from "./BottomButtons";
 import axios from "axios";
 import Polyline from "@mapbox/polyline";
 import { getAllDenuncias } from "../actions/denunciasUsuario";
+import {PermissionsAndroid} from 'react-native';
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -29,6 +30,29 @@ class HomeScreen extends React.Component {
     mode: "driving",
     coords: null
   };
+
+  async requestLocalionPermission() {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: 'Rota Segura precisa da sua localização',
+          message:
+            'Podemos acessar sua localização? ' +
+            'Isso tornará sua experiência melhor',
+          buttonNegative: 'Cancelar',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('Acesso garantido');
+      } else {
+        console.log('Acesso negado');
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  }
 
 
   componentDidMount() {
@@ -310,6 +334,7 @@ class HomeScreen extends React.Component {
   //Component Render
 
   render() {
+    this.requestLocalionPermission();
     return (
       <View style={styles.container}>
         <MapView
@@ -322,7 +347,7 @@ class HomeScreen extends React.Component {
             this._map = ref;
           }}
         >
-          {this.showDenunciasMarker()}
+          
           {this.showMarker()}
           {this.showDirections()}
         </MapView>
