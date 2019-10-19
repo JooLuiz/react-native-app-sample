@@ -1,6 +1,12 @@
 import React from "react";
 import { connect } from "react-redux";
-import { ImageBackground, View, Text, StyleSheet } from "react-native";
+import {
+  ImageBackground,
+  View,
+  Text,
+  StyleSheet,
+  Dimensions
+} from "react-native";
 import LoginOrCreateForm from "./common/LoginOrCreateForm";
 import GoBackButton from "./common/GoBackButton";
 
@@ -10,32 +16,30 @@ class Register extends React.Component {
       return this.props.navigation.goBack();
     }
     return (
-        <View style={styles.container}>
-          <GoBackButton navigation={this.props.navigation}/>
-          <Text style={styles.text}>Cadastro</Text>
+      <View>
+        <GoBackButton navigation={this.props.navigation} title="Cadastro" />
+        <View style={{ top: Dimensions.get("window").height * 0.2 }}>
           <View style={styles.input}>
             <LoginOrCreateForm navigation={this.props.navigation} create />
           </View>
         </View>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
   input: {
-    width: '80%',
+    width: "80%",
+    marginBottom: 50,
+    alignSelf: "center"
   },
   text: {
-    alignItems: 'center',
-    padding: 20,
+    alignItems: "center",
+    alignSelf: "center",
     fontSize: 20
   }
-})
+});
 
 const mapStateToProps = state => ({
   isAuthenticated: state.auth.isAuthenticated

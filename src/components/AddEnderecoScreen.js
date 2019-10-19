@@ -8,18 +8,16 @@ import {
   TouchableOpacity,
   TextInput
 } from "react-native";
-import { setPlaceKind } from "../actions/enderecosUsuario";
-import { addDenunciaUsuario } from "../actions/denunciasUsuario";
-import { getAllDenuncias } from "../actions/denunciasUsuario";
+import { addEnderecoUsuario, setPlaceKind } from "../actions/enderecosUsuario";
 import Geolocation from "@react-native-community/geolocation";
 import axios from "axios";
 import GoBackButton from "./common/GoBackButton";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
-class DenunciasUsuarioScreen extends React.Component {
+class AddEnderecoScreen extends React.Component {
   state = {
-    endereco: null,
-    comentario: null
+    nome: null,
+    endereco: null
   };
 
   register() {
@@ -51,17 +49,20 @@ class DenunciasUsuarioScreen extends React.Component {
       )
       .then(json => {
         var location = json.data.results[0].geometry.location;
+        var placeLongName =
+          json.data.results[0].address_components[0].long_name +
+          " " +
+          json.data.results[0].address_components[1].long_name;
 
-        const usuario_denuncia = {
+        const endereco_usuario = {
           latitude: location.lat,
           longitude: location.lng,
-          denuncia: this.props.currentDenuncia.id,
-          comentario: this.state.comentario
+          nome: this.state.nome,
+          endereco: placeLongName
         };
-        this.props.addDenunciaUsuario(usuario_denuncia);
-        this.props.getAllDenuncias();
+        this.props.addEnderecoUsuario(endereco_usuario);
 
-        this.props.navigation.navigate("Mapa");
+        this.props.navigation.goBack();
       });
   }
 
@@ -74,7 +75,7 @@ class DenunciasUsuarioScreen extends React.Component {
       <View>
         <GoBackButton
           navigation={this.props.navigation}
-          title="Cadastro de Denúncia"
+          title="Adição de um Local"
         />
         <View
           style={{
@@ -121,13 +122,13 @@ class DenunciasUsuarioScreen extends React.Component {
           </TouchableOpacity>
         </View>
         <TextInput
-          placeholder="Comentário"
-          onChangeText={comentario => this.setState({ comentario })}
-          value={this.state.Comentario}
+          placeholder="Nome"
+          onChangeText={nome => this.setState({ nome })}
+          value={this.state.nome}
           style={{
             alignSelf: "center",
             top: Dimensions.get("window").height * 0.05,
-            height: Dimensions.get("window").height * 0.27,
+            height: Dimensions.get("window").height * 0.07,
             width: Dimensions.get("window").width * 0.9,
             borderColor: "gray",
             borderWidth: 1,
@@ -155,7 +156,7 @@ class DenunciasUsuarioScreen extends React.Component {
         <View style={styles.addPlaceBottomButtom}>
           <TouchableOpacity onPress={() => this.register()}>
             <View style={styles.circle}>
-              <FontAwesomeIcon icon="check" color={"white"} size={25} />
+              <FontAwesomeIcon icon="plus" color={"white"} size={25} />
             </View>
           </TouchableOpacity>
         </View>
@@ -166,8 +167,7 @@ class DenunciasUsuarioScreen extends React.Component {
 
 const mapStateToProps = state => ({
   isAuthenticated: state.auth.isAuthenticated,
-  kind: state.enderecosUsuario.kind,
-  currentDenuncia: state.denuncias.currentDenuncia
+  kind: state.enderecosUsuario.kind
 });
 
 const styles = StyleSheet.create({
@@ -188,5 +188,5 @@ const styles = StyleSheet.create({
 
 export default connect(
   mapStateToProps,
-  { getAllDenuncias, addDenunciaUsuario, setPlaceKind }
-)(DenunciasUsuarioScreen);
+  { addEnderecoUsuario, setPlaceKind }
+)(AddEnderecoScreen);

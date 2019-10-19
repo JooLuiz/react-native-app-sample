@@ -7,6 +7,7 @@ import MyDenunciasScreen from "./components/MyDenunciasScreen";
 import TipoDenunciaScreen from "./components/TipoDenunciaScreen";
 import DenunciaScreen from "./components/DenunciaScreen";
 import DenunciasUsuarioScreen from "./components/DenunciasUsuarioScreen";
+import AddEnderecoScreen from "./components/AddEnderecoScreen";
 import SideMenu from "./components/SideMenu";
 import { createStackNavigator, createDrawerNavigator } from "react-navigation";
 
@@ -17,6 +18,10 @@ const BottomNavigator = createStackNavigator(
     TipoDenuncia: { screen: TipoDenunciaScreen, title: "TipoDenuncia" },
     Denuncia: { screen: DenunciaScreen, title: "Denuncia" },
     DenunciasUsuario: { screen: DenunciasUsuarioScreen, title: "Denuncia" },
+    AddEnderecoScreen: {
+      screen: AddEnderecoScreen,
+      title: "Adicionar Endereco"
+    },
     Login: { screen: Login, title: "Login" },
     Register: { screen: Register, title: "Register" }
   },

@@ -1,9 +1,15 @@
 import axios from "axios";
-import { GET_TIPO_DENUNCIA, SET_CURRENT_TIPO_DENUNCIA } from "./types";
+import {
+  GET_TIPO_DENUNCIA,
+  SET_CURRENT_TIPO_DENUNCIA,
+  LOADED,
+  LOADING
+} from "./types";
 import { tokenConfig } from "./auth";
 
 //GET Tipo de Denuncia
 export const getTipoDenuncias = () => (dispatch, getState) => {
+  dispatch({ type: LOADING });
   tokenConfig(getState)
     .then(function(config) {
       axios
@@ -16,7 +22,10 @@ export const getTipoDenuncias = () => (dispatch, getState) => {
         })
         .catch(err => console.warn(err));
     })
-    .catch(error => console.warn(error));
+    .catch(error => console.warn(error))
+    .finally(t => {
+      dispatch({ type: LOADED });
+    });
 };
 
 export const setCurrentTipoDenuncia = tipodenuncia => dispatch => {

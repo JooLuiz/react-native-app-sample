@@ -6,45 +6,60 @@ import {
   StyleSheet,
   TouchableHighlight,
   Dimensions,
-  FlatList,
-  Strong
+  FlatList
 } from "react-native";
 import BottomButtons from "./BottomButtons";
+import { getDenuncias } from "../actions/denuncias";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import EmptyList from "./common/EmptyList";
+import GoBackButton from "./common/GoBackButton";
 
 const voltar = "<-";
 class MyDenunciasScreen extends React.Component {
-  render() {
+  componentWillMount() {
+    this.props.getDenuncias();
     if (!this.props.isAuthenticated) {
-      return this.props.navigation.navigate("Login");
+      this.props.navigation.navigate("Login");
     }
+  }
+
+  render() {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <View style={styles.header}>
-          <TouchableHighlight
-            style={styles.backButton}
-            onPress={() => this.props.navigation.goBack()}
-          >
-            <Text>{voltar}</Text>
-          </TouchableHighlight>
-        </View>
+        <GoBackButton
+          navigation={this.props.navigation}
+          title="Minhas Denúncias"
+        />
         <FlatList
           data={this.props.denunciasUsuario}
           ListEmptyComponent={
-            <View style={styles.listItem}>
-              <Text>Você ainda não realizou nenhuma denúncia</Text>
-            </View>
+            <EmptyList text="Você ainda não possui nenhuma denuncia cadastrada" />
           }
           renderItem={({ item }) => (
             <TouchableHighlight>
-              <View style={styles.listItem}>
-                <Text>
-                  Denuncia:
-                  {
-                    this.props.denuncias.filter(d => d.id == item.denuncia)[0]
-                      .descricao
-                  }
-                </Text>
-                <Text>Comentário:{item.comentario}</Text>
+              <View>
+                <View style={styles.listItens}>
+                  <FontAwesomeIcon
+                    icon={
+                      this.props.denuncias.filter(d => d.id == item.denuncia)[0]
+                        .icone
+                    }
+                    color={"black"}
+                    size={30}
+                  />
+                  <View style={styles.itemName}>
+                    <Text>
+                      Denuncia:
+                      {
+                        this.props.denuncias.filter(
+                          d => d.id == item.denuncia
+                        )[0].descricao
+                      }
+                    </Text>
+                    <Text>Comentário:{item.comentario}</Text>
+                  </View>
+                </View>
+                <View style={styles.division} />
               </View>
             </TouchableHighlight>
           )}
@@ -62,29 +77,34 @@ const mapStateToProps = state => ({
 });
 
 const styles = StyleSheet.create({
-  listItem: {
+  itemName: {
     height: Dimensions.get("window").height * 0.07,
     width: Dimensions.get("window").width,
-    backgroundColor: "white",
     alignItems: "flex-start",
     justifyContent: "flex-start",
-    borderBottomWidth: 0.5
+    left: Dimensions.get("window").width * 0.03
   },
-  header: {
-    height: Dimensions.get("window").height * 0.04,
+  listItens: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
     width: Dimensions.get("window").width,
-    backgroundColor: "white",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-    borderBottomWidth: 0.5
+    height: Dimensions.get("window").height * 0.1,
+    left: Dimensions.get("window").height * 0.025
   },
-  backButton: {
-    height: Dimensions.get("window").height * 0.06,
-    width: Dimensions.get("window").width * 0.2
+  nameText: {
+    fontSize: 15,
+    color: "black"
+  },
+  division: {
+    alignSelf: "center",
+    width: Dimensions.get("window").width * 0.9,
+    borderBottomColor: "grey",
+    borderBottomWidth: 1
   }
 });
 
 export default connect(
   mapStateToProps,
-  null
+  { getDenuncias }
 )(MyDenunciasScreen);

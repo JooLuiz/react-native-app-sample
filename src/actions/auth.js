@@ -7,13 +7,15 @@ import {
   USER_LOADING,
   USER_LOADED,
   AUTH_ERROR,
-  LOGOUT_SUCCESS
+  LOADING,
+  LOADED
 } from "./types";
 import { _retrieveData } from "../reducers/auth";
 
 //CHECK THE TOKEN AND LOAD USER
 export const loadUser = () => (dispatch, getState) => {
   //user loading
+  dispatch({ type: LOADING });
   dispatch({ type: USER_LOADING });
 
   tokenConfig(getState)
@@ -21,8 +23,6 @@ export const loadUser = () => (dispatch, getState) => {
       axios
         .get("/auth/user", config)
         .then(res => {
-          console.warn("responsta");
-          console.warn(res);
           dispatch({
             type: USER_LOADED,
             payload: res.data
@@ -37,14 +37,17 @@ export const loadUser = () => (dispatch, getState) => {
     })
     .catch(function(error) {
       console.warn(error);
+    })
+    .finally(t => {
+      dispatch({ type: LOADED });
     });
 };
 
 export const login = payload => dispatch => {
+  dispatch({ type: LOADING });
   axios
     .post(`/auth/login`, payload)
     .then(response => {
-      console.warn("Login" + response.data.token);
       dispatch({
         type: LOGIN_SUCCESS,
         payload: response.data
@@ -55,10 +58,14 @@ export const login = payload => dispatch => {
       dispatch({
         type: LOGIN_FAIL
       });
+    })
+    .finally(t => {
+      dispatch({ type: LOADED });
     });
 };
 
 export const register = payload => dispatch => {
+  dispatch({ type: LOADING });
   axios
     .post(`/auth/register`, payload)
     .then(response => {
@@ -72,6 +79,9 @@ export const register = payload => dispatch => {
       dispatch({
         type: REGISTER_FAIL
       });
+    })
+    .finally(t => {
+      dispatch({ type: LOADED });
     });
 };
 
@@ -84,7 +94,6 @@ export const tokenConfig = async getState => {
     //Headers
     const config = { headers: { "Content-type": "application/json" } };
 
-    console.warn("TOKEN" + token);
     //if token add to header
     if (token) config.headers["Authorization"] = `Token ${token}`;
     else reject("Error");

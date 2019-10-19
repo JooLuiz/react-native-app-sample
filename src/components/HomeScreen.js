@@ -1,21 +1,30 @@
 import React from "react";
 import { connect } from "react-redux";
-import { setUserCurrentLocation } from "../actions/map";
+import {
+  getPlace,
+  cancelMapOperations,
+  setOrigin,
+  startDirections
+} from "../actions/map";
 import {
   View,
   StyleSheet,
   TextInput,
   Dimensions,
   Text,
-  TouchableOpacity
+  TouchableOpacity,
+  Share
 } from "react-native";
 import MapView from "react-native-maps";
 import Geolocation from "@react-native-community/geolocation";
 import BottomButtons from "./BottomButtons";
-import axios from "axios";
-import Polyline from "@mapbox/polyline";
 import { getAllDenuncias } from "../actions/denunciasUsuario";
 import {PermissionsAndroid} from 'react-native';
+import { addEnderecoUsuario } from "../actions/enderecosUsuario";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faArrowAltCircleLeft } from "@fortawesome/free-regular-svg-icons";
+import SearchedPlaceDetail from "./SearchedPlaceDetail";
+import TravelDetails from "./TravelDetails";
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -23,12 +32,8 @@ class HomeScreen extends React.Component {
   };
 
   state = {
-    text: null,
-    place: null,
-    origin: null,
-    destination: null,
-    mode: "driving",
-    coords: null
+    region: null,
+    text: null
   };
 
   async requestLocalionPermission() {
@@ -54,9 +59,8 @@ class HomeScreen extends React.Component {
     }
   }
 
-
   componentDidMount() {
-    this.watchID = Geolocation.watchPosition(
+    Geolocation.getCurrentPosition(
       position => {
         let region = {
           latitude: position.coords.latitude,
@@ -71,46 +75,11 @@ class HomeScreen extends React.Component {
   }
 
   onRegionChange(region) {
-    this.props.setUserCurrentLocation(region);
+    this.setState({ region: region });
   }
 
   //Direction Functions
 
-  setTravelMode(mode) {
-    this.state.mode = mode;
-  }
-
-  async startDirections() {
-    let originLatLng =
-      this.state.origin.latitude + "," + this.state.origin.longitude;
-    let destinationLatLng =
-      this.state.destination.latitude + "," + this.state.destination.longitude;
-    axios
-      .get(
-        "https://maps.googleapis.com/maps/api/directions/json?origin=" +
-          originLatLng +
-          "&destination=" +
-          destinationLatLng +
-          "&mode=" +
-          this.state.mode +
-          "&key=AIzaSyAvNMSYo05_RNMaBdKEw3UcPl2REfxUpas"
-      )
-      .then(res => {
-        let encodedPoints = res.data.routes[0].overview_polyline.points;
-        encodedPoints = encodedPoints.replace(/\\\\/g, "\\");
-        let points = Polyline.decode(
-          res.data.routes[0].overview_polyline.points
-        );
-
-        let coords = points.map(point => {
-          return {
-            latitude: point[0],
-            longitude: point[1]
-          };
-        });
-        this.setState({ coords: coords });
-      });
-  }
   cancelTravel() {
     Geolocation.getCurrentPosition(position => {
       var origin = {
@@ -119,135 +88,69 @@ class HomeScreen extends React.Component {
         latitudeDelta: 0.0065,
         longitudeDelta: 0.0065
       };
-      this._map.animateToCoordinate(origin, 3000);
-      this.state.place = null;
-      this.state.origin = null;
-      this.state.destination = null;
-      this.state.coords = null;
+      this._map.animateToCoordinate(origin, 2000);
+      this.props.cancelMapOperations();
     });
   }
 
-  //Geocoding Functions
-
-  getPlaceFromName() {
-    if (this.state.text == "" || this.state.text == null) {
-      this.state.place = null;
-    } else {
-      this.getPlace(this.state.text, "address");
-    }
-  }
-
-  getPlaceFromCoordinate(coords) {
-    this.getPlace(coords, "coordinates");
-  }
-
-  getPlace(place, type = "address") {
-    if (!this.state.coords) {
-      let address;
-      if (type === "address") {
-        address = place.replace(/ /g, "+");
-      } else if (type === "coordinates") {
-        address = place.latitude + "," + place.longitude;
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.searchedPlace) {
+      if (nextProps.searchedPlace.coordinates) {
+        this._map.animateToCoordinate(
+          nextProps.searchedPlace.coordinates,
+          2000
+        );
       }
-      axios
-        .get(
-          "https://maps.googleapis.com/maps/api/geocode/json?address=" +
-            address +
-            "&region=br&key=AIzaSyAvNMSYo05_RNMaBdKEw3UcPl2REfxUpas"
-        )
-        .then(json => {
-          var location = json.data.results[0].geometry.location;
-          this.state.place = {
-            latitude: location.lat,
-            longitude: location.lng,
-            latitudeDelta: 0.0065,
-            longitudeDelta: 0.0065
-          };
-          this.state.destination = this.state.place;
-          this._map.animateToCoordinate(this.state.place, 2000);
-          Geolocation.getCurrentPosition(position => {
-            var origin = {
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-              latitudeDelta: 0.0065,
-              longitudeDelta: 0.0065
-            };
-            this.state.origin = origin;
-          });
-        });
     }
+  }
+
+  getPlaceFromCoordinates(coords) {
+    this.props.getPlace(coords, "coordinates");
+    this.props.setOrigin();
+  }
+
+  getPlaceFromName(name) {
+    this.props.getPlace(name, "address");
+    this.props.setOrigin();
   }
 
   //Functions that effect the screen
 
   showDirectionsButton() {
-    return this.state.place &&
-      this.state.origin &&
-      this.state.destination &&
-      !this.state.coords ? (
-      <View style={styles.directionsBottomButtom}>
+    return this.props.searchedPlace && !this.props.directionsCoords ? (
+      <View style={[styles.defaultBottomButton, styles.directionsBottomButtom]}>
         <TouchableOpacity
           onPress={() => {
-            this.startDirections();
+            this.props.startDirections(
+              {
+                origin: this.props.origin,
+                dest: this.props.searchedPlace
+              },
+              this.props.travellingMode
+            );
           }}
         >
-          <Text style={styles.greyCircle} />
+          <View style={[{ backgroundColor: "black" }, styles.circle]}>
+            <FontAwesomeIcon icon="directions" color={"white"} size={25} />
+          </View>
         </TouchableOpacity>
       </View>
     ) : null;
   }
 
-  showTravellingOptions() {
-    return this.state.place &&
-      this.state.origin &&
-      this.state.destination &&
-      !this.state.coords ? (
-      <View style={styles.travellingModeView}>
-        <TouchableOpacity
-          style={styles.buttonContainer}
-          onPress={() => this.setTravelMode("driving")}
-        >
-          <Text>Dirigindo</Text>
-          <View style={styles.checkBoxcircle}>
-            {this.state.mode === "driving" && (
-              <View style={styles.checkedCircle} />
-            )}
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.buttonContainer}
-          onPress={() => this.setTravelMode("transit")}
-        >
-          <Text>Transporte Público</Text>
-          <View style={styles.checkBoxcircle}>
-            {this.state.mode === "transit" && (
-              <View style={styles.checkedCircle} />
-            )}
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.buttonContainer}
-          onPress={() => this.setTravelMode("bicycling")}
-        >
-          <Text>Bibicleta</Text>
-          <View style={styles.checkBoxcircle}>
-            {this.state.mode === "bicycling" && (
-              <View style={styles.checkedCircle} />
-            )}
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.buttonContainer}
-          onPress={() => this.setTravelMode("walking")}
-        >
-          <Text>Andando</Text>
-          <View style={styles.checkBoxcircle}>
-            {this.state.mode === "walking" && (
-              <View style={styles.checkedCircle} />
-            )}
-          </View>
-        </TouchableOpacity>
-      </View>
+  showPlaceDetails() {
+    return this.props.searchedPlace &&
+      this.props.origin &&
+      !this.props.directionsCoords ? (
+      <SearchedPlaceDetail />
+    ) : null;
+  }
+
+  showTravellingMessages() {
+    return this.props.searchedPlace &&
+      this.props.origin &&
+      this.props.directionsCoords ? (
+      <TravelDetails />
     ) : null;
   }
 
@@ -261,10 +164,17 @@ class HomeScreen extends React.Component {
         };
         markers[index] = (
           <MapView.Marker
+            key={index}
             coordinate={denunciacoordinate}
-            title={item.comentario}
+            title={item.denuncia.descricao}
             description={item.comentario}
-          />
+          >
+            <FontAwesomeIcon
+              icon={item.denuncia.icone}
+              color={"black"}
+              size={30}
+            />
+          </MapView.Marker>
         );
       });
     }
@@ -272,19 +182,19 @@ class HomeScreen extends React.Component {
   }
 
   showMarker() {
-    return this.state.place ? (
+    return this.props.searchedPlace ? (
       <MapView.Marker
-        coordinate={this.state.place}
-        title={this.state.text}
-        description={this.state.text}
+        coordinate={this.props.searchedPlace.coordinates}
+        title={this.props.searchedPlace.longName}
+        description={this.props.searchedPlace.shortName}
       />
     ) : null;
   }
 
   showDirections() {
-    return this.state.coords ? (
+    return this.props.directionsCoords ? (
       <MapView.Polyline
-        coordinates={this.state.coords}
+        coordinates={this.props.directionsCoords}
         strokeWidth={2}
         strokeColor="red"
       />
@@ -292,14 +202,14 @@ class HomeScreen extends React.Component {
   }
 
   searchInput() {
-    return !this.state.coords ? (
+    return !this.props.searchedPlace && !this.props.directionsCoords ? (
       <View style={styles.searchInputView}>
         <TextInput
           style={styles.searchInput}
           placeholder="Pesquisar Local"
           onChangeText={text => this.setState({ text })}
           value={this.state.text}
-          onSubmitEditing={() => this.getPlaceFromName()}
+          onSubmitEditing={() => this.getPlaceFromName(this.state.text)}
         />
       </View>
     ) : null;
@@ -307,28 +217,99 @@ class HomeScreen extends React.Component {
 
   denunciaButton() {
     return this.props.isAuthenticated ? (
-      <View style={styles.denunciaBottomButtom}>
+      <View style={[styles.defaultBottomButton, styles.denunciaBottomButtom]}>
         <TouchableOpacity
           onPress={() => {
             this.props.navigation.navigate("TipoDenuncia");
           }}
         >
-          <Text style={styles.circle} />
+          <View style={[{ backgroundColor: "#3B4859" }, styles.circle]}>
+            <FontAwesomeIcon
+              icon="exclamation-triangle"
+              color={"white"}
+              size={25}
+            />
+          </View>
         </TouchableOpacity>
       </View>
     ) : null;
   }
 
-  cancelCoords() {
-    <View style={styles.cancelCoordsButton}>
-      <TouchableOpacity
-        onPress={() => {
-          this.cancelTravel();
-        }}
-      >
-        <Text style={styles.circle} />
-      </TouchableOpacity>
-    </View>;
+  onShare = async () => {
+    try {
+      await Share.share(
+        {
+          message:
+            "Estou utilizando o RotaSegura App.\nVeja Minha Viagem.\nOrigem:" +
+            this.props.origin.longName +
+            ".\nDestino:" +
+            this.props.searchedPlace.longName +
+            "\nhttp://instagram.com/jooluizzz"
+        },
+        {
+          dialogTitle: "RotaSegura App - Compartilhe sua Viagem"
+        }
+      );
+    } catch (error) {
+      console.warn(error.message);
+    }
+  };
+
+  sharePlaceButton() {
+    return this.props.searchedPlace && this.props.origin ? (
+      <View style={[styles.defaultBottomButton, styles.sharePlaceBottomButtom]}>
+        <TouchableOpacity
+          onPress={() => {
+            this.onShare();
+          }}
+        >
+          <View style={[{ backgroundColor: "#2F68B3" }, styles.circle]}>
+            <FontAwesomeIcon icon="share-alt" color={"white"} size={25} />
+          </View>
+        </TouchableOpacity>
+      </View>
+    ) : null;
+  }
+
+  salvarEndereco() {
+    const endereco_usuario = {
+      latitude: this.props.searchedPlace.coordinates.latitude,
+      longitude: this.props.searchedPlace.coordinates.longitude,
+      nome: this.props.searchedPlace.longName
+    };
+    this.props.addEnderecoUsuario(endereco_usuario);
+  }
+
+  savePlaceButton() {
+    return this.props.searchedPlace &&
+      this.props.origin &&
+      this.props.isAuthenticated ? (
+      <View style={[styles.defaultBottomButton, styles.savePlaceBottomButtom]}>
+        <TouchableOpacity
+          onPress={() => {
+            this.salvarEndereco();
+          }}
+        >
+          <View style={[{ backgroundColor: "#DAE524" }, styles.circle]}>
+            <FontAwesomeIcon icon="save" color={"white"} size={25} />
+          </View>
+        </TouchableOpacity>
+      </View>
+    ) : null;
+  }
+
+  cancel() {
+    return this.props.searchedPlace ? (
+      <View style={styles.cancelCoordsButton}>
+        <TouchableOpacity
+          onPress={() => {
+            this.cancelTravel();
+          }}
+        >
+          <FontAwesomeIcon icon={faArrowAltCircleLeft} size={30} />
+        </TouchableOpacity>
+      </View>
+    ) : null;
   }
 
   //Component Render
@@ -339,7 +320,7 @@ class HomeScreen extends React.Component {
       <View style={styles.container}>
         <MapView
           style={styles.map}
-          initialRegion={this.props.userCurrentLocation}
+          initialRegion={this.state.region}
           showsUserLocation={true}
           followUserLocation={true}
           onRegionChange={this.onRegionChange.bind(this)}
@@ -351,21 +332,14 @@ class HomeScreen extends React.Component {
           {this.showMarker()}
           {this.showDirections()}
         </MapView>
-        {this.state.coords ? (
-          <View style={styles.cancelCoordsButton}>
-            <TouchableOpacity
-              onPress={() => {
-                this.cancelTravel();
-              }}
-            >
-              <Text style={styles.cancelCoordsCircle} />
-            </TouchableOpacity>
-          </View>
-        ) : null}
+        {this.cancel()}
         {this.searchInput()}
-        {this.showTravellingOptions()}
         {this.denunciaButton()}
+        {this.sharePlaceButton()}
+        {this.savePlaceButton()}
         {this.showDirectionsButton()}
+        {this.showPlaceDetails()}
+        {this.showTravellingMessages()}
         <BottomButtons navigation={this.props.navigation} />
       </View>
     );
@@ -406,29 +380,31 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 7
   },
-  denunciaBottomButtom: {
+  defaultBottomButton: {
     flex: 1,
     position: "absolute",
-    bottom: Dimensions.get("window").height * 0.15,
-    left: Dimensions.get("window").width * 0.12
+    bottom: Dimensions.get("window").height * 0.13,
+    zIndex: 2
+  },
+  denunciaBottomButtom: {
+    left: Dimensions.get("window").width * 0.07
+  },
+  sharePlaceBottomButtom: {
+    left: Dimensions.get("window").width * 0.3
+  },
+  savePlaceBottomButtom: {
+    right: Dimensions.get("window").width * 0.3
   },
   directionsBottomButtom: {
-    flex: 1,
-    position: "absolute",
-    bottom: Dimensions.get("window").height * 0.15,
-    right: Dimensions.get("window").width * 0.12
+    right: Dimensions.get("window").width * 0.07
   },
   circle: {
+    flex: 2,
+    alignItems: "center",
+    justifyContent: "center",
     height: Dimensions.get("window").width * 0.17,
     width: Dimensions.get("window").width * 0.17,
-    borderRadius: 400,
-    backgroundColor: "red"
-  },
-  greyCircle: {
-    height: Dimensions.get("window").width * 0.17,
-    width: Dimensions.get("window").width * 0.17,
-    borderRadius: 400,
-    backgroundColor: "grey"
+    borderRadius: 400
   },
   flatListStyle: {
     backgroundColor: "white",
@@ -438,20 +414,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center"
-  },
-  travellingModeView: {
-    flex: 1,
-    position: "absolute",
-    top: Dimensions.get("window").height * 0.16999,
-    backgroundColor: "white",
-    borderRadius: 7,
-    width: Dimensions.get("window").width * 0.9
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginHorizontal: Dimensions.get("window").width * 0.03
   },
   checkBoxcircle: {
     height: 20,
@@ -472,7 +434,7 @@ const styles = StyleSheet.create({
     flex: 1,
     position: "absolute",
     top: Dimensions.get("window").height * 0.025,
-    left: Dimensions.get("window").width * 0.07
+    left: Dimensions.get("window").width * 0.05
   },
   cancelCoordsCircle: {
     height: Dimensions.get("window").width * 0.11,
@@ -483,13 +445,26 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => ({
-  userCurrentLocation: state.map.userCurrentLocation,
+  isTravelling: state.map.isTravelling,
+  searchedPlace: state.map.searchedPlace,
+  origin: state.map.origin,
+  destination: state.map.destination,
   isAuthenticated: state.auth.isAuthenticated,
-  denuncias: state.denuncias.denuncias,
-  allDenuncias: state.denunciasUsuario.allDenuncias
+  allDenuncias: state.denunciasUsuario.allDenuncias,
+  directionsCoords: state.map.directionsCoords,
+  directionsDetail: state.map.directionsDetail,
+  directionsMessagePoints: state.map.directionsMessagePoints,
+  travellingMode: state.map.travellingMode
 });
 
 export default connect(
   mapStateToProps,
-  { setUserCurrentLocation, getAllDenuncias }
+  {
+    getAllDenuncias,
+    getPlace,
+    cancelMapOperations,
+    setOrigin,
+    startDirections,
+    addEnderecoUsuario
+  }
 )(HomeScreen);

@@ -36,38 +36,38 @@ class ProfileScreen extends React.Component {
 			</View>
     	);
   	}
-}
 
 const styles = StyleSheet.create({
-  	container:{
-    	flex: 1
-  	},
-  	profile:{
-    	padding: 50,
-		backgroundColor: '#EAE9E9',
-		alignItems: 'center',
-		justifyContent: 'center'
-	},
-	options:{
-		borderBottomWidth: 0.5,
-		padding: 20,
-		justifyContent: 'center'
-	},
-	photo:{
-		borderWidth: 3,
-		borderRadius: 100,
-		borderColor: 'white',
-		backgroundColor: 'black',
-		padding: 80
-	}
+  container: {
+    flex: 1
+  },
+  profile: {
+    padding: 50,
+    backgroundColor: "#EAE9E9",
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  options: {
+    borderBottomWidth: 0.5,
+    padding: 20,
+    justifyContent: "center"
+  },
+  photo: {
+    borderWidth: 3,
+    borderRadius: 100,
+    borderColor: "white",
+    backgroundColor: "black",
+    padding: 80
+  }
 });
 
 const mapStateToProps = state => ({
-  	isAuthenticated: state.auth.isAuthenticated,
-	loadUser: state.auth.loadUser  
+  isAuthenticated: state.auth.isAuthenticated,
+	loadUser: state.auth.loadUser,
+  token: state.auth.token
 });
 
 export default connect(
-  	mapStateToProps,
-  	null
+  mapStateToProps,
+  null
 )(ProfileScreen);
