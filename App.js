@@ -1,4 +1,5 @@
 import React from "react";
+import './src/config/StatusBarConfig';
 import { createAppContainer } from "react-navigation";
 import AppNavigator from "./src/routes";
 import store from "./store";
