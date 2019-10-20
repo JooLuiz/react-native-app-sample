@@ -19,7 +19,7 @@ import MapView from "react-native-maps";
 import Geolocation from "@react-native-community/geolocation";
 import BottomButtons from "./BottomButtons";
 import { getAllDenuncias } from "../actions/denunciasUsuario";
-import {PermissionsAndroid} from 'react-native';
+import { PermissionsAndroid } from "react-native";
 import { addEnderecoUsuario } from "../actions/enderecosUsuario";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faArrowAltCircleLeft } from "@fortawesome/free-regular-svg-icons";
@@ -41,18 +41,18 @@ class HomeScreen extends React.Component {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
         {
-          title: 'Rota Segura precisa da sua localização',
+          title: "Rota Segura precisa da sua localização",
           message:
-            'Podemos acessar sua localização? ' +
-            'Isso tornará sua experiência melhor',
-          buttonNegative: 'Cancelar',
-          buttonPositive: 'OK',
-        },
+            "Podemos acessar sua localização? " +
+            "Isso tornará sua experiência melhor",
+          buttonNegative: "Cancelar",
+          buttonPositive: "OK"
+        }
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('Acesso garantido');
+        console.log("Acesso garantido");
       } else {
-        console.log('Acesso negado');
+        console.log("Acesso negado");
       }
     } catch (err) {
       console.warn(err);
@@ -328,7 +328,7 @@ class HomeScreen extends React.Component {
             this._map = ref;
           }}
         >
-          
+          {this.showDenunciasMarker()}
           {this.showMarker()}
           {this.showDirections()}
         </MapView>
