@@ -43,6 +43,7 @@ import {
 import { getDenuncias } from "./src/actions/denuncias";
 import { getEnderecoUsuario } from "./src/actions/enderecosUsuario";
 import Loader from "./src/components/common/Loader";
+import { PermissionsAndroid } from "react-native";
 
 library.add(
   fab,
@@ -77,6 +78,28 @@ library.add(
 const AppContainer = createAppContainer(AppNavigator);
 
 export default class App extends React.Component {
+  async requestLocalionPermission() {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: "Rota Segura precisa da sua localização",
+          message:
+            "Podemos acessar sua localização? " +
+            "Isso tornará sua experiência melhor",
+          buttonNegative: "Cancelar",
+          buttonPositive: "OK"
+        }
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log("Acesso garantido");
+      } else {
+        console.log("Acesso negado");
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  }
   componentWillMount() {
     axios.defaults.baseURL = "http://6446f880.ngrok.io/api";
     axios.defaults.timeout = 1500;
@@ -85,6 +108,7 @@ export default class App extends React.Component {
     store.dispatch(getAllDenuncias());
     store.dispatch(getDenunciasUsuario());
     store.dispatch(getEnderecoUsuario());
+    this.requestLocalionPermission();
   }
 
   render() {

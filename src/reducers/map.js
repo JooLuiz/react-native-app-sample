@@ -2,7 +2,6 @@ import {
   SET_USER_CURRENT_LOCATION,
   SET_SEARCHED_PLACE,
   SET_ORIGIN,
-  SET_DESTINATION,
   CANCEL_MAP_OPERATIONS,
   SET_DIRECTIONS,
   SET_TRAVELLING_MODE
@@ -13,7 +12,6 @@ const initialState = {
   isTravelling: false,
   searchedPlace: null,
   origin: null,
-  destination: null,
   directionsCoords: null,
   directionsMessagePoints: null,
   directionsDetails: null,
@@ -36,15 +34,9 @@ export default function(state = initialState, action) {
         ...state,
         origin: action.payload.origin
       };
-    case SET_DESTINATION:
-      return {
-        ...state,
-        destination: action.payload.destination
-      };
     case CANCEL_MAP_OPERATIONS:
       return {
         ...state,
-        destination: null,
         origin: null,
         searchedPlace: null,
         directionsCoords: null,

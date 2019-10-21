@@ -39,7 +39,6 @@ export class BottomButtons extends Component {
 }
 const styles = StyleSheet.create({
   navigationBottomButtons: {
-    flex: 1,
     position: "absolute",
     flexDirection: "row",
     alignItems: "center",
@@ -50,7 +49,6 @@ const styles = StyleSheet.create({
     borderTopWidth: 0.3
   },
   navigationButton: {
-    flex: 1,
     height: Dimensions.get("window").width * 0.17,
     width: Dimensions.get("window").width / 3,
     backgroundColor: "white",

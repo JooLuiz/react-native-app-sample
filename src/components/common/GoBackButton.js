@@ -27,8 +27,7 @@ export default class GoBackButton extends Component {
           <Text
             style={{
               color: "white",
-              fontSize: 20,
-              fontStyle: "bold"
+              fontSize: 20
             }}
           >
             {this.props.title}
