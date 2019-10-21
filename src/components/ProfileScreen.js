@@ -6,36 +6,38 @@ import GoBackButton from "./common/GoBackButton";
 import { ScrollView, FlatList } from "react-native-gesture-handler";
 
 class ProfileScreen extends React.Component {
-  	render() {
-    	if (!this.props.isAuthenticated) {
-      		return this.props.navigation.navigate("Login");
-    	}
-    	return (
-			<View style={styles.container}>
-				<GoBackButton navigation={this.props.navigation} />
-				<View style={styles.profile}>
-					<View style={styles.photo}>
-
-					</View>
-					<FlatList
-						data={this.props.loadUser}
-						renderItem={({item}) => 
-							<Text style={{ marginTop: 30, fontSize: 20 }}>
-								{this.props.auth.filter(profile => profile.id == item.username)
-								[0].username}
-							</Text>
-						}
-					/>
-				</View>
-				<ScrollView>
-					<View style={styles.options}>
-						<Text>Profile Screen</Text>
-					</View>
-				</ScrollView>
-				<BottomButtons navigation={this.props.navigation} />
-			</View>
-    	);
-  	}
+  render() {
+    if (!this.props.isAuthenticated) {
+      return this.props.navigation.navigate("Login");
+    }
+    return (
+      <View style={styles.container}>
+        <GoBackButton navigation={this.props.navigation} />
+        <View style={styles.profile}>
+          <View style={styles.photo}></View>
+          <FlatList
+            data={this.props.loadUser}
+            renderItem={({ item }) => (
+              <Text style={{ marginTop: 30, fontSize: 20 }}>
+                {
+                  this.props.auth.filter(
+                    profile => profile.id == item.username
+                  )[0].username
+                }
+              </Text>
+            )}
+          />
+        </View>
+        <ScrollView>
+          <View style={styles.options}>
+            <Text>Profile Screen</Text>
+          </View>
+        </ScrollView>
+        <BottomButtons navigation={this.props.navigation} />
+      </View>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -63,7 +65,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => ({
   isAuthenticated: state.auth.isAuthenticated,
-	loadUser: state.auth.loadUser,
+  loadUser: state.auth.loadUser,
   token: state.auth.token
 });
 
