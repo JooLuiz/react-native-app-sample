@@ -77,6 +77,7 @@ library.add(
 const AppContainer = createAppContainer(AppNavigator);
 
 export default class App extends React.Component {
+
   componentWillMount() {
     axios.defaults.baseURL = "http://6446f880.ngrok.io/api";
     axios.defaults.timeout = 1500;

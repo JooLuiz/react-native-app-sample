@@ -8,7 +8,8 @@ import {
   USER_LOADED,
   AUTH_ERROR,
   LOADING,
-  LOADED
+  LOADED,
+  LOGOUT_SUCCESS
 } from "./types";
 import { _retrieveData } from "../reducers/auth";
 
@@ -83,6 +84,23 @@ export const register = payload => dispatch => {
     .finally(t => {
       dispatch({ type: LOADED });
     });
+};
+
+export const logout = () => (dispatch, getState) => {
+    tokenConfig(getState)
+    .then(function(config){
+      axios
+        .post(`/auth/logout/`, config)
+        .then(res => {
+          dispatch({
+            type: LOGOUT_SUCCESS,
+            payload: res.data
+          });
+        })
+        .catch(error => console.error(error));
+    })
+    .catch(err => console.error(err))
+    
 };
 
 export const tokenConfig = async getState => {

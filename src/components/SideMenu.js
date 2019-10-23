@@ -18,32 +18,46 @@ class SideMenu extends Component {
     this.props.navigation.dispatch(navigateAction);
   };
 
-  render() {
-    return (
-      <View style={styles.container}>
-        <View style={{ padding: 60, backgroundColor: "black" }}></View>
-        <ScrollView>
-          {this.props.isAuthenticated ? (
+  renderSide() {
+    if(this.props.isAuthenticated){
+      return(
+        <View style={{ flex: 1 }}>
+          <View style={{ flexDirection: 'row', paddingTop: 30, paddingBottom: 30, paddingLeft: 20, backgroundColor: "black" }}>
+            <View style={{ 
+              borderWidth: 2,
+              borderRadius: 100,
+              borderColor: "white",
+              padding: 40,
+             }}>
+            </View>
+            <View style={{ left: 20, justifyContent: 'center' }}>
+              <Text style={{ color: 'white', fontWeight: 'bold' }}>{this.props.user.username}</Text>
+              <Text style={{ color: 'white', fontStyle: 'italic' }}>{this.props.denunciasUsuario.length} denúncias</Text>
+            </View>
+          </View>                
+          <ScrollView>
             <View>
-              <View>
-                <TouchableOpacity onPress={this.navigateToScreen("Mapa")}>
-                  <Text style={styles.screens}> Mapa </Text>
-                </TouchableOpacity>
-              </View>
               <View>
                 <TouchableOpacity onPress={this.navigateToScreen("MeusLocais")}>
                   <Text style={styles.screens}> Meus Locais </Text>
                 </TouchableOpacity>
               </View>
               <View>
-                <TouchableOpacity
-                  onPress={this.navigateToScreen("MinhasDenuncias")}
-                >
+                <TouchableOpacity onPress={this.navigateToScreen("MinhasDenuncias")}>
                   <Text style={styles.screens}> Minhas Denuncias </Text>
                 </TouchableOpacity>
               </View>
             </View>
-          ) : (
+          </ScrollView>
+        </View>
+      );
+    } else {
+      return(
+        <View style={{ flex: 1 }}>
+          <View style={{ justifyContent: 'space-around', padding: 50, backgroundColor: "black" }}>
+            <Text style={{ color: 'white' }}>Bem-Vindo ao Rota Segura</Text>
+          </View>                
+          <ScrollView>
             <View>
               <View>
                 <TouchableOpacity onPress={this.navigateToScreen("Login")}>
@@ -52,12 +66,20 @@ class SideMenu extends Component {
               </View>
               <View>
                 <TouchableOpacity onPress={this.navigateToScreen("Register")}>
-                  <Text style={styles.screens}> Cadastre-se </Text>
+                  <Text style={styles.screens}> Cadastro </Text>
                 </TouchableOpacity>
               </View>
             </View>
-          )}
-        </ScrollView>
+          </ScrollView>
+        </View>
+      )
+    }
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        {this.renderSide()}
         <View style={styles.footer}>
           <View style={styles.version}>
             <Text style={{ color: "white", fontStyle: "italic" }}>
@@ -109,7 +131,9 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => ({
-  isAuthenticated: state.auth.isAuthenticated
+  isAuthenticated: state.auth.isAuthenticated,
+  user: state.auth.user,
+  denunciasUsuario: state.denunciasUsuario.denunciasUsuario
 });
 
 export default connect(
