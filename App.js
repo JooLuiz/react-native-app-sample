@@ -43,6 +43,8 @@ import {
 import { getDenuncias } from "./src/actions/denuncias";
 import { getEnderecoUsuario } from "./src/actions/enderecosUsuario";
 import Loader from "./src/components/common/Loader";
+import { notify } from "./src/actions/notifications";
+import Notifications from "./src/components/common/Notifications";
 import { PermissionsAndroid } from "react-native";
 
 library.add(
@@ -103,6 +105,7 @@ export default class App extends React.Component {
   componentWillMount() {
     axios.defaults.baseURL = "http://6446f880.ngrok.io/api";
     axios.defaults.timeout = 1500;
+    store.dispatch(notify("Bem Vindo ao RotaSegura App", "neutral"));
     store.dispatch(loadUser());
     store.dispatch(getDenuncias());
     store.dispatch(getAllDenuncias());
@@ -115,6 +118,7 @@ export default class App extends React.Component {
     return (
       <Provider store={store}>
         <Loader />
+        <Notifications />
         <AppContainer />
       </Provider>
     );

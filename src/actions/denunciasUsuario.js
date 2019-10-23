@@ -4,7 +4,8 @@ import {
   ADD_DENUNCIA_USUARIO,
   GET_ALL_DENUNCIAS,
   LOADING,
-  LOADED
+  LOADED,
+  NOTIFY
 } from "./types";
 import { tokenConfig } from "./auth";
 
@@ -60,8 +61,24 @@ export const addDenunciaUsuario = DenunciaUsuario => (dispatch, getState) => {
             type: ADD_DENUNCIA_USUARIO,
             payload: res.data
           });
+          dispatch({
+            type: NOTIFY,
+            payload: {
+              message: "Denuncia Cadastrada Com Sucesso",
+              type: "success"
+            }
+          });
         })
-        .catch(err => dispatch(console.warn(err)));
+        .catch(err => {
+          dispatch({
+            type: NOTIFY,
+            payload: {
+              message:
+                "Ops, Algo errado Aconteceu,não foi possível concluir a ação",
+              type: "error"
+            }
+          });
+        });
     })
     .finally(t => {
       dispatch({ type: LOADED });

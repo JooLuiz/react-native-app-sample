@@ -5,7 +5,8 @@ import {
   ADD_ENDERECO_USUARIO,
   LOADING,
   LOADED,
-  SET_PLACE_KIND
+  SET_PLACE_KIND,
+  NOTIFY
 } from "./types";
 import { tokenConfig } from "./auth";
 
@@ -24,7 +25,7 @@ export const getEnderecoUsuario = () => (dispatch, getState) => {
         })
         .catch(err => console.warn(err));
     })
-    .catch(err => console.warn(err))
+    .catch(err => console.warn(err.message))
     .finally(t => {
       dispatch({ type: LOADED });
     });
@@ -42,8 +43,24 @@ export const addEnderecoUsuario = EnderecoUsuario => (dispatch, getState) => {
           type: ADD_ENDERECO_USUARIO,
           payload: res.data
         });
+        dispatch({
+          type: NOTIFY,
+          payload: {
+            message: "Local Cadastrado Com Sucesso",
+            type: "success"
+          }
+        });
       })
-      .catch(err => dispatch(console.warn(err)))
+      .catch(err =>
+        dispatch({
+          type: NOTIFY,
+          payload: {
+            message:
+              "Ops, Algo errado Aconteceu,não foi possível concluir a ação",
+            type: "error"
+          }
+        })
+      )
       .finally(t => {
         dispatch({ type: LOADED });
       });
