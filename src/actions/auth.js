@@ -87,20 +87,19 @@ export const register = payload => dispatch => {
 };
 
 export const logout = () => (dispatch, getState) => {
-    tokenConfig(getState)
-    .then(function(config){
+  tokenConfig(getState)
+    .then(function(config) {
       axios
-        .post(`/auth/logout/`, config)
+        .post(`/auth/logout/`, null, config)
         .then(res => {
           dispatch({
             type: LOGOUT_SUCCESS,
             payload: res.data
           });
         })
-        .catch(error => console.error(error));
+        .catch(error => console.warn(error));
     })
-    .catch(err => console.error(err))
-    
+    .catch(err => console.warn(err));
 };
 
 export const tokenConfig = async getState => {
