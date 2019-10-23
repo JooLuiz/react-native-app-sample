@@ -57,20 +57,11 @@ class HomeScreen extends React.Component {
   //Direction Functions
 
   cancelTravel() {
-    Geolocation.getCurrentPosition(position => {
-      var origin = {
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
-        latitudeDelta: 0.0065,
-        longitudeDelta: 0.0065
-      };
-      this._map.animateToCoordinate(origin, 2000);
-      this.props.cancelMapOperations();
-    });
+    this._map.animateToRegion(this.props.origin.coordinates, 2000);
+    this.props.cancelMapOperations();
   }
 
   componentWillReceiveProps(nextProps) {
-    console.warn(nextProps);
     if (nextProps.searchedPlace) {
       if (nextProps.searchedPlace.coordinates) {
         if (
@@ -79,33 +70,16 @@ class HomeScreen extends React.Component {
           nextProps.searchedPlace.coordinates !=
             this.props.searchedPlace.coordinates
         ) {
-          this._map.animateToCoordinate(
-            nextProps.searchedPlace.coordinates,
-            2000
-          );
+          this._map.animateToRegion(nextProps.searchedPlace.coordinates, 2000);
         } else if (this.props.searchedPlace == null) {
-          this._map.animateToCoordinate(
-            nextProps.searchedPlace.coordinates,
-            2000
-          );
+          this._map.animateToRegion(nextProps.searchedPlace.coordinates, 2000);
         }
       }
     }
 
     if (nextProps.directionsCoords) {
       if (this.props.directionsCoords != nextProps.directionsCoords) {
-        Geolocation.getCurrentPosition(
-          position => {
-            let region = {
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-              latitudeDelta: 0.0065,
-              longitudeDelta: 0.0065
-            };
-            this._map.animateToCoordinate(region, 2000);
-          },
-          error => console.log(error)
-        );
+        this._map.animateToRegion(this.props.origin.coordinates, 2000);
       }
     }
   }
@@ -215,7 +189,10 @@ class HomeScreen extends React.Component {
           placeholder="Pesquisar Local"
           onChangeText={text => this.setState({ text })}
           value={this.state.text}
-          onSubmitEditing={() => this.getPlaceFromName(this.state.text)}
+          onSubmitEditing={() => {
+            this.getPlaceFromName(this.state.text);
+            this.setState({ text: null });
+          }}
         />
       </View>
     ) : null;

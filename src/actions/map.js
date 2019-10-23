@@ -43,7 +43,7 @@ export const getPlace = (place, type = "address") => dispatch => {
     });
 };
 
-export const setOrigin = place => dispatch => {
+export const setOrigin = (place, type) => dispatch => {
   dispatch({ type: LOADING });
   if (place) {
     let address;
