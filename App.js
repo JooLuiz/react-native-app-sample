@@ -102,6 +102,7 @@ export default class App extends React.Component {
       console.warn(err);
     }
   }
+
   componentWillMount() {
     axios.defaults.baseURL = "http://6446f880.ngrok.io/api";
     axios.defaults.timeout = 1500;

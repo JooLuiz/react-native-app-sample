@@ -14,7 +14,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import EmptyList from "./common/EmptyList";
 import GoBackButton from "./common/GoBackButton";
 
-const voltar = "<-";
 class MyDenunciasScreen extends React.Component {
   componentWillMount() {
     this.props.getDenuncias();
