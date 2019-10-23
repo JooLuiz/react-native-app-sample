@@ -53,3 +53,7 @@ export const SET_DIRECTIONS = "SET_DIRECTIONS";
 export const SET_TRAVELLING_MODE = "SET_TRAVELLING_MODE";
 
 export const SET_PLACE_KIND = "SET_PLACE_KIND";
+
+export const CHANGE_VISIBILITY = "CHANGE_VISIBILITY";
+
+export const NOTIFY = "NOTIFY";
