@@ -12,7 +12,7 @@ import {
 export default class GoBackButton extends Component {
   render() {
     return (
-      <View style={{ backgroundColor: "#C0CCDA" }}>
+      <View style={{ backgroundColor: "#000000" }}>
         <View style={[styles.header, { flexDirection: "row" }]}>
           <TouchableOpacity
             style={styles.backButton}
@@ -27,8 +27,7 @@ export default class GoBackButton extends Component {
           <Text
             style={{
               color: "white",
-              fontSize: 20,
-              fontStyle: "bold"
+              fontSize: 20
             }}
           >
             {this.props.title}

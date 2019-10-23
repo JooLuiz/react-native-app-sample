@@ -40,7 +40,7 @@ const initialState = {
   token: _retrieveData(),
   isAuthenticated: false,
   isLoading: false,
-  user: null
+  user: {}
 };
 
 export default function(state = initialState, action) {

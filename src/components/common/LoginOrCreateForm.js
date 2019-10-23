@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import {
   TouchableOpacity,
-  Button,
   View,
   Text,
   TextInput,
@@ -56,7 +55,7 @@ class LoginOrCreateForm extends Component {
             placeholder="Email"
             autoCorrect={false}
             onChangeText={this.onEmailChange.bind(this)}
-            style={{ padding: 15 }}
+            style={styles.inputs}
           />
         </View>
       );
@@ -71,7 +70,7 @@ class LoginOrCreateForm extends Component {
             placeholder="CPF"
             autoCorrect={false}
             onChangeText={this.onCPFChange.bind(this)}
-            style={{ padding: 15 }}
+            style={styles.inputs}
           />
         </View>
       );
@@ -82,19 +81,22 @@ class LoginOrCreateForm extends Component {
     const buttonText = this.props.create ? "Registrar" : "Login";
 
     return (
-      <Button onPress={this.handleRequest.bind(this)} title={buttonText} />
+      <TouchableOpacity activeOpacity={0.6} onPress={this.handleRequest.bind(this)}>
+        <View style={styles.button}>
+          <Text style={{ color: 'white' }}>{buttonText}</Text>
+        </View>
+      </TouchableOpacity>
     );
   }
 
   renderCreateLink() {
     if (!this.props.create) {
       return (
-        <Text
-          style={{ color: "blue" }}
-          onPress={() => this.props.navigation.navigate("Register")}
-        >
-          Cadastre-se
-        </Text>
+        <View style={styles.register}>
+          <TouchableOpacity onPress={() => this.props.navigation.navigate("Register")}>
+            <Text style={{ color: 'white' }}>Ainda não possui cadastro? Clique aqui!</Text>
+          </TouchableOpacity>
+        </View>
       );
     }
   }
@@ -145,7 +147,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 100,
     marginBottom: 15,
-    backgroundColor: "#2E64FE"
+    backgroundColor: "#1b90e3",
+    shadowColor: "#000",
+    shadowColor: "#000",
+    shadowOffset: {
+	    width: 0,
+  	  height: 12,
+    },
+    shadowOpacity: 0.80,
+    shadowRadius: 16.00,
+    elevation: 24
   },
   register: {
     padding: 10,
