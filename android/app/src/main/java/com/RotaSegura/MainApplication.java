@@ -1,4 +1,4 @@
-package com.agoravai;
+package com.RotaSegura;
 
 import android.app.Application;
 import android.util.Log;

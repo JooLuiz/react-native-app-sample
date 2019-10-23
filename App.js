@@ -1,5 +1,5 @@
 import React from "react";
-import './src/config/StatusBarConfig';
+import "./src/config/StatusBarConfig";
 import { createAppContainer } from "react-navigation";
 import AppNavigator from "./src/routes";
 import store from "./store";
@@ -77,8 +77,9 @@ library.add(
 const AppContainer = createAppContainer(AppNavigator);
 
 export default class App extends React.Component {
-  componentDidMount() {
-    axios.defaults.baseURL = "http://cd9b5de2.ngrok.io/api";
+
+  componentWillMount() {
+    axios.defaults.baseURL = "http://6446f880.ngrok.io/api";
     axios.defaults.timeout = 1500;
     store.dispatch(loadUser());
     store.dispatch(getDenuncias());
