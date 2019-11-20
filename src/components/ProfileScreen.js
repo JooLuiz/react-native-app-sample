@@ -12,6 +12,7 @@ import {
 import BottomButtons from "./BottomButtons";
 import GoBackButton from "./common/GoBackButton";
 import { logout } from "../actions/auth";
+import { Avatar } from "react-native-paper";
 
 class ProfileScreen extends React.Component {
 	navigateToScreen = route => () => {
@@ -37,6 +38,7 @@ class ProfileScreen extends React.Component {
 				/>
 				<View style={styles.profile}>
 					<View style={styles.photo}>
+						<Avatar.Image size={150} source={{ uri:'https://scontent.fgru15-1.fna.fbcdn.net/v/t1.0-9/s960x960/77233593_2609047322513024_9044118965416099840_o.jpg?_nc_cat=102&_nc_oc=AQkMYH87w5PFrhO81gsFHb1aFowAJ58U4IF0gZdFwTblGpu4cMFxNqz7WihC73mck8Y&_nc_ht=scontent.fgru15-1.fna&oh=fe3ed9d57bd1bef277e9e08c8a179e94&oe=5E6474CF' }} />
 					</View>
 					<View style={{ alignItems: 'center', marginTop: 10 }}>
 						<Text style={{ fontWeight: 'bold', fontStyle: 'italic', fontSize: 25 }}>
@@ -88,8 +90,7 @@ const styles = StyleSheet.create({
   photo: {
     borderWidth: 3,
     borderRadius: 100,
-    borderColor: "white",
-    padding: 80
+    borderColor: "black"
   }
 });
 

@@ -25,6 +25,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faArrowAltCircleLeft } from "@fortawesome/free-regular-svg-icons";
 import SearchedPlaceDetail from "./SearchedPlaceDetail";
 import TravelDetails from "./TravelDetails";
+import { Searchbar } from "react-native-paper";
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -39,15 +40,7 @@ class HomeScreen extends React.Component {
   async requestLocalionPermission() {
     try {
       const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-          title: "Rota Segura precisa da sua localização",
-          message:
-            "Podemos acessar sua localização? " +
-            "Isso tornará sua experiência melhor",
-          buttonNegative: "Cancelar",
-          buttonPositive: "OK"
-        }
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
         console.log("Acesso garantido");
@@ -204,8 +197,9 @@ class HomeScreen extends React.Component {
   searchInput() {
     return !this.props.searchedPlace && !this.props.directionsCoords ? (
       <View style={styles.searchInputView}>
-        <TextInput
+        <Searchbar
           style={styles.searchInput}
+          icon={()=><FontAwesomeIcon icon="search" size={20} color='gray'/>}
           placeholder="Pesquisar Local"
           onChangeText={text => this.setState({ text })}
           value={this.state.text}
@@ -374,11 +368,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     height: Dimensions.get("window").height * 0.07,
-    width: Dimensions.get("window").width * 0.9,
-    borderColor: "gray",
-    borderWidth: 1,
-    backgroundColor: "white",
-    borderRadius: 7
+    width: Dimensions.get("window").width * 0.9
   },
   defaultBottomButton: {
     flex: 1,

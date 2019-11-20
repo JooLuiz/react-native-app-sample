@@ -5,6 +5,7 @@ import LoginOrCreateForm from "./common/LoginOrCreateForm";
 import GoBackButton from "./common/GoBackButton";
 
 class Login extends React.Component {
+
   render() {
     if (this.props.isAuthenticated) {
       return this.props.navigation.goBack();

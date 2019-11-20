@@ -4,9 +4,9 @@ import {
   TouchableOpacity,
   View,
   Text,
-  TextInput,
   StyleSheet
 } from "react-native";
+import { TextInput } from 'react-native-paper';
 import { login, register } from "../../actions/auth";
 
 class LoginOrCreateForm extends Component {
@@ -53,10 +53,18 @@ class LoginOrCreateForm extends Component {
         <View>
           <TextInput
             placeholder="Email"
+            mode='flat'
             autoCorrect={false}
+            autoCapitalize="none"
             onChangeText={this.onEmailChange.bind(this)}
             style={styles.inputs}
           />
+          <HelperText
+            type="error"
+            visible={!this.state.text.includes('@')}
+          >
+            Endereço de e-mail inválido!
+          </HelperText>
         </View>
       );
     }
@@ -68,6 +76,7 @@ class LoginOrCreateForm extends Component {
         <View>
           <TextInput
             placeholder="CPF"
+            mode='flat'
             autoCorrect={false}
             onChangeText={this.onCPFChange.bind(this)}
             style={styles.inputs}
@@ -109,6 +118,7 @@ class LoginOrCreateForm extends Component {
             <TextInput
               placeholder="Nome de Usuário"
               autoCorrect={false}
+              mode='flat'
               autoCapitalize="none"
               onChangeText={this.onUsernameChange.bind(this)}
               style={styles.inputs}
@@ -122,6 +132,7 @@ class LoginOrCreateForm extends Component {
               placeholder="Senha"
               autoCorrect={false}
               autoCapitalize="none"
+              mode='flat'
               onChangeText={this.onPasswordChange.bind(this)}
               style={styles.inputs}
             />
@@ -136,10 +147,7 @@ class LoginOrCreateForm extends Component {
 
 const styles = StyleSheet.create({
   inputs: {
-    backgroundColor: "lightgrey",
-    padding: 10,
-    marginBottom: 15,
-    borderRadius: 100
+    marginBottom: 15
   },
   button: {
     padding: 10,

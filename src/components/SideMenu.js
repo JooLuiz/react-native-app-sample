@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { Avatar } from "react-native-paper";
 
 class SideMenu extends Component {
   navigateToScreen = route => () => {
@@ -23,12 +24,8 @@ class SideMenu extends Component {
       return(
         <View style={{ flex: 1 }}>
           <View style={{ flexDirection: 'row', paddingTop: 30, paddingBottom: 30, paddingLeft: 20, backgroundColor: "black" }}>
-            <View style={{ 
-              borderWidth: 2,
-              borderRadius: 100,
-              borderColor: "white",
-              padding: 40,
-             }}>
+            <View style={{ borderWidth: 2, borderRadius: 100, borderColor: "white" }}>
+              <Avatar.Image source={{ uri:'https://scontent.fgru15-1.fna.fbcdn.net/v/t1.0-9/s960x960/77233593_2609047322513024_9044118965416099840_o.jpg?_nc_cat=102&_nc_oc=AQkMYH87w5PFrhO81gsFHb1aFowAJ58U4IF0gZdFwTblGpu4cMFxNqz7WihC73mck8Y&_nc_ht=scontent.fgru15-1.fna&oh=fe3ed9d57bd1bef277e9e08c8a179e94&oe=5E6474CF' }} />
             </View>
             <View style={{ left: 20, justifyContent: 'center' }}>
               <Text style={{ color: 'white', fontWeight: 'bold' }}>{this.props.user.username}</Text>
