@@ -17,6 +17,9 @@ import GoBackButton from "./common/GoBackButton";
 class MyDenunciasScreen extends React.Component {
   componentWillMount() {
     this.props.getDenuncias();
+    this.props.navigation.addListener("willFocus", () => {
+      if (this.props.isAuthenticated) this.props.getDenuncias();
+    });
   }
 
   render() {

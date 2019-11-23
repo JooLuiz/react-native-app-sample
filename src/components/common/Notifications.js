@@ -1,7 +1,15 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { changeVisibility } from "../../actions/notifications";
-import { StyleSheet, View, Modal, Dimensions, Text } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Modal,
+  Dimensions,
+  Text,
+  TouchableOpacity
+} from "react-native";
 
 class Notifications extends Component {
   render() {
@@ -14,7 +22,7 @@ class Notifications extends Component {
           this.props.changeVisibility(false);
         }}
         onShow={() =>
-          setTimeout(() => this.props.changeVisibility(false), 3000)
+          setTimeout(() => this.props.changeVisibility(false), 50000)
         }
       >
         <View
@@ -30,6 +38,18 @@ class Notifications extends Component {
             }
           ]}
         >
+          <TouchableOpacity
+            style={{
+              top: Dimensions.get("window").height * 0.02,
+              left: Dimensions.get("window").width * 0.88,
+              height: Dimensions.get("window").height * 0.02
+            }}
+            onPress={() => {
+              this.props.changeVisibility(false);
+            }}
+          >
+            <FontAwesomeIcon icon={"times-circle"} color={"white"} size={22} />
+          </TouchableOpacity>
           <Text style={styles.modalTitle}>{this.props.message}</Text>
         </View>
       </Modal>
@@ -62,7 +82,4 @@ const mapStateToProps = state => ({
   type: state.notifications.type
 });
 
-export default connect(
-  mapStateToProps,
-  { changeVisibility }
-)(Notifications);
+export default connect(mapStateToProps, { changeVisibility })(Notifications);

@@ -19,6 +19,9 @@ import { getPlace, setOrigin } from "../actions/map";
 class MyPlacesScreen extends React.Component {
   componentWillMount() {
     this.props.getEnderecoUsuario();
+    this.props.navigation.addListener("willFocus", () => {
+      if (this.props.isAuthenticated) this.props.getEnderecoUsuario();
+    });
   }
 
   render() {

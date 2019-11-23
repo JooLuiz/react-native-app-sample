@@ -9,9 +9,7 @@ import {
 import {
   View,
   StyleSheet,
-  TextInput,
   Dimensions,
-  Text,
   TouchableOpacity,
   Share
 } from "react-native";
@@ -25,6 +23,8 @@ import { faArrowAltCircleLeft } from "@fortawesome/free-regular-svg-icons";
 import SearchedPlaceDetail from "./SearchedPlaceDetail";
 import TravelDetails from "./TravelDetails";
 import { Searchbar } from "react-native-paper";
+import { getDenuncias } from "../actions/denuncias";
+import { getEnderecoUsuario } from "../actions/enderecosUsuario";
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -49,6 +49,13 @@ class HomeScreen extends React.Component {
       },
       error => console.log(error.message)
     );
+    this.props.navigation.addListener("willFocus", () => {
+      this.props.getAllDenuncias();
+      if (this.props.isAuthenticated) {
+        this.props.getEnderecoUsuario();
+        this.props.getDenuncias();
+      }
+    });
   }
 
   onRegionChange(region) {
@@ -187,7 +194,7 @@ class HomeScreen extends React.Component {
       <View style={styles.searchInputView}>
         <Searchbar
           style={styles.searchInput}
-          icon={()=><FontAwesomeIcon icon="search" size={20} color='gray'/>}
+          icon={() => <FontAwesomeIcon icon="search" size={20} color="gray" />}
           placeholder="Pesquisar Local"
           onChangeText={text => this.setState({ text })}
           value={this.state.text}
@@ -437,14 +444,13 @@ const mapStateToProps = state => ({
   travellingMode: state.map.travellingMode
 });
 
-export default connect(
-  mapStateToProps,
-  {
-    getAllDenuncias,
-    getPlace,
-    cancelMapOperations,
-    setOrigin,
-    startDirections,
-    addEnderecoUsuario
-  }
-)(HomeScreen);
+export default connect(mapStateToProps, {
+  getAllDenuncias,
+  getPlace,
+  cancelMapOperations,
+  setOrigin,
+  startDirections,
+  addEnderecoUsuario,
+  getEnderecoUsuario,
+  getDenuncias
+})(HomeScreen);

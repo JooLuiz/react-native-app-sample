@@ -35,7 +35,8 @@ import {
   faTools,
   faRadiation,
   faPaw,
-  faSearch
+  faSearch,
+  faTimesCircle
 } from "@fortawesome/free-solid-svg-icons";
 import { loadUser } from "./src/actions/auth";
 import {
@@ -77,7 +78,8 @@ library.add(
   faTools,
   faRadiation,
   faPaw,
-  faSearch
+  faSearch,
+  faTimesCircle
 );
 
 const AppContainer = createAppContainer(AppNavigator);
@@ -123,6 +125,7 @@ export default class App extends React.Component {
       <PaperProvider>
         <Provider store={store}>
           <Loader />
+          <Notifications />
           <AppContainer />
         </Provider>
       </PaperProvider>
