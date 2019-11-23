@@ -55,7 +55,6 @@ class MyDenunciasScreen extends React.Component {
                     <Text>Comentário:{item.comentario}</Text>
                   </View>
                 </View>
-                <View style={styles.division} />
               </View>
             </TouchableHighlight>
           )}

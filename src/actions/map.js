@@ -2,7 +2,6 @@ import {
   SET_USER_CURRENT_LOCATION,
   SET_SEARCHED_PLACE,
   SET_ORIGIN,
-  SET_DESTINATION,
   LOADING,
   LOADED,
   CANCEL_MAP_OPERATIONS,
@@ -44,7 +43,7 @@ export const getPlace = (place, type = "address") => dispatch => {
     });
 };
 
-export const setOrigin = place => dispatch => {
+export const setOrigin = (place, type) => dispatch => {
   dispatch({ type: LOADING });
   if (place) {
     let address;
@@ -212,17 +211,6 @@ export const cancelMapOperations = () => dispatch => {
   dispatch({ type: LOADING });
   dispatch({
     type: CANCEL_MAP_OPERATIONS
-  });
-  dispatch({ type: LOADED });
-};
-
-export const setDestination = place => dispatch => {
-  dispatch({ type: LOADING });
-  dispatch({
-    type: SET_DESTINATION,
-    payload: {
-      destination: place
-    }
   });
   dispatch({ type: LOADED });
 };

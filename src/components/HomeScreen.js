@@ -19,7 +19,6 @@ import MapView from "react-native-maps";
 import Geolocation from "@react-native-community/geolocation";
 import BottomButtons from "./BottomButtons";
 import { getAllDenuncias } from "../actions/denunciasUsuario";
-import { PermissionsAndroid } from "react-native";
 import { addEnderecoUsuario } from "../actions/enderecosUsuario";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faArrowAltCircleLeft } from "@fortawesome/free-regular-svg-icons";
@@ -37,21 +36,6 @@ class HomeScreen extends React.Component {
     text: null
   };
 
-  async requestLocalionPermission() {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log("Acesso garantido");
-      } else {
-        console.log("Acesso negado");
-      }
-    } catch (err) {
-      console.warn(err);
-    }
-  }
-
   componentDidMount() {
     Geolocation.getCurrentPosition(
       position => {
@@ -63,7 +47,7 @@ class HomeScreen extends React.Component {
         };
         this.onRegionChange(region);
       },
-      error => console.log(error)
+      error => console.log(error.message)
     );
   }
 
@@ -74,25 +58,29 @@ class HomeScreen extends React.Component {
   //Direction Functions
 
   cancelTravel() {
-    Geolocation.getCurrentPosition(position => {
-      var origin = {
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
-        latitudeDelta: 0.0065,
-        longitudeDelta: 0.0065
-      };
-      this._map.animateToCoordinate(origin, 2000);
-      this.props.cancelMapOperations();
-    });
+    this._map.animateToRegion(this.props.origin.coordinates, 2000);
+    this.props.cancelMapOperations();
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.searchedPlace) {
       if (nextProps.searchedPlace.coordinates) {
-        this._map.animateToCoordinate(
-          nextProps.searchedPlace.coordinates,
-          2000
-        );
+        if (
+          this.props.searchedPlace != null &&
+          this.props.searchedPlace.coordinates != null &&
+          nextProps.searchedPlace.coordinates !=
+            this.props.searchedPlace.coordinates
+        ) {
+          this._map.animateToRegion(nextProps.searchedPlace.coordinates, 2000);
+        } else if (this.props.searchedPlace == null) {
+          this._map.animateToRegion(nextProps.searchedPlace.coordinates, 2000);
+        }
+      }
+    }
+
+    if (nextProps.directionsCoords) {
+      if (this.props.directionsCoords != nextProps.directionsCoords) {
+        this._map.animateToRegion(this.props.origin.coordinates, 2000);
       }
     }
   }
@@ -203,7 +191,10 @@ class HomeScreen extends React.Component {
           placeholder="Pesquisar Local"
           onChangeText={text => this.setState({ text })}
           value={this.state.text}
-          onSubmitEditing={() => this.getPlaceFromName(this.state.text)}
+          onSubmitEditing={() => {
+            this.getPlaceFromName(this.state.text);
+            this.setState({ text: null });
+          }}
         />
       </View>
     ) : null;
@@ -309,7 +300,6 @@ class HomeScreen extends React.Component {
   //Component Render
 
   render() {
-    this.requestLocalionPermission();
     return (
       <View style={styles.container}>
         <MapView
@@ -318,6 +308,7 @@ class HomeScreen extends React.Component {
           showsUserLocation={true}
           followUserLocation={true}
           onRegionChange={this.onRegionChange.bind(this)}
+          followsUserLocation={this.props.directionsCoords ? true : false}
           ref={ref => {
             this._map = ref;
           }}
@@ -438,7 +429,6 @@ const mapStateToProps = state => ({
   isTravelling: state.map.isTravelling,
   searchedPlace: state.map.searchedPlace,
   origin: state.map.origin,
-  destination: state.map.destination,
   isAuthenticated: state.auth.isAuthenticated,
   allDenuncias: state.denunciasUsuario.allDenuncias,
   directionsCoords: state.map.directionsCoords,
