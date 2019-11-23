@@ -80,9 +80,8 @@ library.add(
 const AppContainer = createAppContainer(AppNavigator);
 
 export default class App extends React.Component {
-
   componentWillMount() {
-    axios.defaults.baseURL = "http://76f6f528.ngrok.io/api";
+    axios.defaults.baseURL = "http://d94a6aa1.ngrok.io/api";
     axios.defaults.timeout = 1500;
     store.dispatch(loadUser());
     store.dispatch(getDenuncias());
@@ -99,7 +98,6 @@ export default class App extends React.Component {
           <AppContainer />
         </Provider>
       </PaperProvider>
-      
     );
   }
 }

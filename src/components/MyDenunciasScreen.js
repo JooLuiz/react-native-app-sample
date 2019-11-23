@@ -17,9 +17,6 @@ import GoBackButton from "./common/GoBackButton";
 class MyDenunciasScreen extends React.Component {
   componentWillMount() {
     this.props.getDenuncias();
-    if (!this.props.isAuthenticated) {
-      this.props.navigation.navigate("Login");
-    }
   }
 
   render() {
@@ -103,7 +100,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default connect(
-  mapStateToProps,
-  { getDenuncias }
-)(MyDenunciasScreen);
+export default connect(mapStateToProps, { getDenuncias })(MyDenunciasScreen);

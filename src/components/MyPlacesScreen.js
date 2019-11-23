@@ -22,9 +22,6 @@ class MyPlacesScreen extends React.Component {
   }
 
   render() {
-    if (!this.props.isAuthenticated) {
-      return this.props.navigation.navigate("Login");
-    }
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <GoBackButton navigation={this.props.navigation} title="Meus Locais" />
@@ -127,7 +124,8 @@ const mapStateToProps = state => ({
   enderecosUsuario: state.enderecosUsuario.enderecosUsuario
 });
 
-export default connect(
-  mapStateToProps,
-  { getEnderecoUsuario, getPlace, setOrigin }
-)(MyPlacesScreen);
+export default connect(mapStateToProps, {
+  getEnderecoUsuario,
+  getPlace,
+  setOrigin
+})(MyPlacesScreen);

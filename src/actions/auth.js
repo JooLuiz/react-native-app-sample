@@ -87,8 +87,8 @@ export const register = payload => dispatch => {
 };
 
 export const logout = () => (dispatch, getState) => {
-    tokenConfig(getState)
-    .then(function(config){
+  tokenConfig(getState)
+    .then(function(config) {
       axios
         .post(`/auth/logout/`, config)
         .then(res => {
@@ -99,8 +99,7 @@ export const logout = () => (dispatch, getState) => {
         })
         .catch(error => console.error(error));
     })
-    .catch(err => console.error(err))
-    
+    .catch(err => console.error(err));
 };
 
 export const tokenConfig = async getState => {
