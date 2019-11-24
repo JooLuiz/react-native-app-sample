@@ -126,6 +126,7 @@ class AddEnderecoScreen extends React.Component {
           <ScrollView>
             <TextInput
               label="Nome"
+              mode="outlined"
               onChangeText={nome => this.setState({ nome })}
               value={this.state.nome}
               style={styles.inputs}
@@ -133,6 +134,7 @@ class AddEnderecoScreen extends React.Component {
             {this.props.kind == "custom" ? (
               <TextInput
                 label="Endereco"
+                mode="outlined"
                 onChangeText={endereco => this.setState({ endereco })}
                 value={this.state.endereco}
                 style={styles.inputs}
