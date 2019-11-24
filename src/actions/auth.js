@@ -9,7 +9,8 @@ import {
   AUTH_ERROR,
   LOADING,
   LOADED,
-  LOGOUT_SUCCESS
+  LOGOUT_SUCCESS,
+  NOTIFY
 } from "./types";
 import { _retrieveData } from "../reducers/auth";
 
@@ -30,14 +31,13 @@ export const loadUser = () => (dispatch, getState) => {
           });
         })
         .catch(error => {
-          console.warn(error);
           dispatch({
             type: AUTH_ERROR
           });
         });
     })
     .catch(function(error) {
-      console.warn(error);
+      /*TODO*/
     })
     .finally(t => {
       dispatch({ type: LOADED });
@@ -55,10 +55,59 @@ export const login = payload => dispatch => {
       });
     })
     .catch(error => {
-      console.warn(error);
+      var usuarioErrorMessage = "";
+      var senhaErrorMessage = "";
+      var nonFieldErrorMessage = "";
+      if (error.response.data.username) {
+        usuarioErrorMessage += "Usuários: " + error.response.data.username;
+      }
+      if (error.response.data.password) {
+        senhaErrorMessage += "Senha: " + error.response.data.password;
+      }
+      if (error.response.data.non_field_errors) {
+        nonFieldErrorMessage += error.response.data.non_field_errors;
+      }
+
       dispatch({
         type: LOGIN_FAIL
       });
+      if (error.response.status == 400) {
+        if (usuarioErrorMessage != "") {
+          dispatch({
+            type: NOTIFY,
+            payload: {
+              message: usuarioErrorMessage,
+              type: "error"
+            }
+          });
+        }
+        if (senhaErrorMessage != "") {
+          dispatch({
+            type: NOTIFY,
+            payload: {
+              message: senhaErrorMessage,
+              type: "error"
+            }
+          });
+        }
+        if (nonFieldErrorMessage != "") {
+          dispatch({
+            type: NOTIFY,
+            payload: {
+              message: nonFieldErrorMessage,
+              type: "error"
+            }
+          });
+        }
+      } else if (error.response.status == 500 || error.response.status == 502) {
+        dispatch({
+          type: NOTIFY,
+          payload: {
+            message: "Não foi possível conectar com o servidor.",
+            type: "error"
+          }
+        });
+      }
     })
     .finally(t => {
       dispatch({ type: LOADED });
@@ -76,7 +125,7 @@ export const register = payload => dispatch => {
       });
     })
     .catch(error => {
-      console.warn(error);
+      console.log(error.response);
       dispatch({
         type: REGISTER_FAIL
       });
@@ -97,9 +146,9 @@ export const logout = () => (dispatch, getState) => {
             payload: res.data
           });
         })
-        .catch(error => console.warn(error));
+        .catch(/*error => TODO*/);
     })
-    .catch(err => console.warn(err));
+    .catch(/*error => TODO*/);
 };
 
 export const tokenConfig = async getState => {

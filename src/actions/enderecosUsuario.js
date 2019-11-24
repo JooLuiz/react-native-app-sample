@@ -23,9 +23,9 @@ export const getEnderecoUsuario = () => (dispatch, getState) => {
             payload: res.data
           });
         })
-        .catch(err => console.warn(err));
+        .catch(/*err => TODO*/);
     })
-    .catch(err => console.warn(err.message))
+    .catch(/*err => TODO*/)
     .finally(t => {
       dispatch({ type: LOADED });
     });
@@ -46,7 +46,7 @@ export const addEnderecoUsuario = EnderecoUsuario => (dispatch, getState) => {
         dispatch({
           type: NOTIFY,
           payload: {
-            message: "Local Cadastrado Com Sucesso",
+            message: "Local cadastrado com sucesso",
             type: "success"
           }
         });
@@ -56,7 +56,7 @@ export const addEnderecoUsuario = EnderecoUsuario => (dispatch, getState) => {
           type: NOTIFY,
           payload: {
             message:
-              "Ops, Algo errado Aconteceu,não foi possível concluir a ação",
+              "Ops, Algo errado aconteceu e não foi possível concluir a ação",
             type: "error"
           }
         })

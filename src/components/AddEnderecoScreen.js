@@ -6,13 +6,14 @@ import {
   Dimensions,
   StyleSheet,
   TouchableOpacity,
-  TextInput
+  ScrollView
 } from "react-native";
 import { addEnderecoUsuario, setPlaceKind } from "../actions/enderecosUsuario";
 import Geolocation from "@react-native-community/geolocation";
 import axios from "axios";
 import GoBackButton from "./common/GoBackButton";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { TextInput, HelperText } from "react-native-paper";
 
 class AddEnderecoScreen extends React.Component {
   state = {
@@ -72,7 +73,7 @@ class AddEnderecoScreen extends React.Component {
     }
 
     return (
-      <View>
+      <View style={styles.container}>
         <GoBackButton
           navigation={this.props.navigation}
           title="Adição de um Local"
@@ -121,38 +122,24 @@ class AddEnderecoScreen extends React.Component {
             </Text>
           </TouchableOpacity>
         </View>
-        <TextInput
-          placeholder="Nome"
-          onChangeText={nome => this.setState({ nome })}
-          value={this.state.nome}
-          style={{
-            alignSelf: "center",
-            top: Dimensions.get("window").height * 0.05,
-            height: Dimensions.get("window").height * 0.07,
-            width: Dimensions.get("window").width * 0.9,
-            borderColor: "gray",
-            borderWidth: 1,
-            backgroundColor: "white",
-            borderRadius: 7
-          }}
-        ></TextInput>
-        {this.props.kind == "custom" ? (
-          <TextInput
-            placeholder="Endereço"
-            onChangeText={endereco => this.setState({ endereco })}
-            value={this.state.endereco}
-            style={{
-              alignSelf: "center",
-              top: Dimensions.get("window").height * 0.1,
-              height: Dimensions.get("window").height * 0.07,
-              width: Dimensions.get("window").width * 0.9,
-              borderColor: "gray",
-              borderWidth: 1,
-              backgroundColor: "white",
-              borderRadius: 7
-            }}
-          ></TextInput>
-        ) : null}
+        <View style={styles.input}>
+          <ScrollView>
+            <TextInput
+              label="Nome"
+              onChangeText={nome => this.setState({ nome })}
+              value={this.state.nome}
+              style={styles.inputs}
+            ></TextInput>
+            {this.props.kind == "custom" ? (
+              <TextInput
+                label="Endereco"
+                onChangeText={endereco => this.setState({ endereco })}
+                value={this.state.endereco}
+                style={styles.inputs}
+              ></TextInput>
+            ) : null}
+          </ScrollView>
+        </View>
         <View style={styles.addPlaceBottomButtom}>
           <TouchableOpacity onPress={() => this.register()}>
             <View style={styles.circle}>
@@ -183,10 +170,18 @@ const styles = StyleSheet.create({
     width: Dimensions.get("window").width * 0.17,
     borderRadius: 400,
     backgroundColor: "green"
+  },
+  input: {
+    width: "90%",
+    marginBottom: 50,
+    alignSelf: "center",
+    marginTop: Dimensions.get("window").height * 0.05
+  },
+  inputs: {
+    marginBottom: 15
   }
 });
 
-export default connect(
-  mapStateToProps,
-  { addEnderecoUsuario, setPlaceKind }
-)(AddEnderecoScreen);
+export default connect(mapStateToProps, { addEnderecoUsuario, setPlaceKind })(
+  AddEnderecoScreen
+);

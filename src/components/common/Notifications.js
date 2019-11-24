@@ -38,19 +38,25 @@ class Notifications extends Component {
             }
           ]}
         >
-          <TouchableOpacity
-            style={{
-              top: Dimensions.get("window").height * 0.02,
-              left: Dimensions.get("window").width * 0.88,
-              height: Dimensions.get("window").height * 0.02
-            }}
-            onPress={() => {
-              this.props.changeVisibility(false);
-            }}
-          >
-            <FontAwesomeIcon icon={"times-circle"} color={"white"} size={22} />
-          </TouchableOpacity>
-          <Text style={styles.modalTitle}>{this.props.message}</Text>
+          <View>
+            <TouchableOpacity
+              style={{
+                top: Dimensions.get("window").height * 0.02,
+                left: Dimensions.get("window").width * 0.88,
+                height: Dimensions.get("window").height * 0.02
+              }}
+              onPress={() => {
+                this.props.changeVisibility(false);
+              }}
+            >
+              <FontAwesomeIcon
+                icon={"times-circle"}
+                color={"white"}
+                size={22}
+              />
+            </TouchableOpacity>
+            <Text style={styles.modalTitle}>{this.props.message}</Text>
+          </View>
         </View>
       </Modal>
     );

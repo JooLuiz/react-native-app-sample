@@ -15,9 +15,9 @@ export const getDenuncias = () => (dispatch, getState) => {
             payload: res.data
           });
         })
-        .catch(err => console.warn(err));
+        .catch(/*err => TODO*/);
     })
-    .catch(err => console.warn(err))
+    .catch(/*err => TODO*/)
     .finally(t => {
       dispatch({ type: LOADED });
     });

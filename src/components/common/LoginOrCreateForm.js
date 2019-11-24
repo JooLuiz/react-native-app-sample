@@ -1,7 +1,13 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
-import { TextInput } from "react-native-paper";
+import {
+  TouchableOpacity,
+  View,
+  Text,
+  StyleSheet,
+  ScrollView
+} from "react-native";
+import { TextInput, HelperText } from "react-native-paper";
 import { login, register } from "../../actions/auth";
 import { getDenuncias } from "../../actions/denuncias";
 import { getEnderecoUsuario } from "../../actions/enderecosUsuario";
@@ -50,17 +56,27 @@ class LoginOrCreateForm extends Component {
     if (this.props.create) {
       return (
         <View>
+          <HelperText
+            type="error"
+            visible={
+              (!this.state.email.includes("@") && this.state.email != "") ||
+              this.state.email == null ||
+              this.state.email == ""
+            }
+          >
+            {this.state.email == ""
+              ? "o campo E-mail é obrigatório!"
+              : "Endereço de e-mail é inválido!"}
+          </HelperText>
           <TextInput
-            placeholder="Email"
-            mode="flat"
+            label="Email"
+            mode="outlined"
             autoCorrect={false}
             autoCapitalize="none"
             onChangeText={this.onEmailChange.bind(this)}
             style={styles.inputs}
+            value={this.state.email}
           />
-          <HelperText type="error" visible={!this.state.text.includes("@")}>
-            Endereço de e-mail inválido!
-          </HelperText>
         </View>
       );
     }
@@ -70,12 +86,19 @@ class LoginOrCreateForm extends Component {
     if (this.props.create) {
       return (
         <View>
+          <HelperText
+            type="error"
+            visible={this.state.cpf == null || this.state.cpf == ""}
+          >
+            o campo CPF é obrigatório!
+          </HelperText>
           <TextInput
-            placeholder="CPF"
-            mode="flat"
+            label="CPF"
+            mode="outlined"
             autoCorrect={false}
             onChangeText={this.onCPFChange.bind(this)}
             style={styles.inputs}
+            value={this.state.cpf}
           />
         </View>
       );
@@ -118,26 +141,40 @@ class LoginOrCreateForm extends Component {
       <View>
         <View>
           <View>
+            <HelperText
+              type="error"
+              visible={this.state.username == null || this.state.username == ""}
+            >
+              o campo Usuário é obrigatório!
+            </HelperText>
             <TextInput
-              placeholder="Nome de Usuário"
+              label="Usuário"
               autoCorrect={false}
-              mode="flat"
+              mode="outlined"
               autoCapitalize="none"
               onChangeText={this.onUsernameChange.bind(this)}
               style={styles.inputs}
+              value={this.state.username}
             />
           </View>
           {this.renderEmailField()}
           {this.renderCPFField()}
           <View>
+            <HelperText
+              type="error"
+              visible={this.state.password == null || this.state.password == ""}
+            >
+              o campo Senha é obrigatório!
+            </HelperText>
             <TextInput
               secureTextEntry
-              placeholder="Senha"
+              label="Senha"
               autoCorrect={false}
               autoCapitalize="none"
-              mode="flat"
+              mode="outlined"
               onChangeText={this.onPasswordChange.bind(this)}
               style={styles.inputs}
+              value={this.state.password}
             />
           </View>
         </View>
@@ -168,6 +205,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.8,
     shadowRadius: 16.0,
     elevation: 24
+  },
+  container: {
+    justifyContent: "center",
+    marginTop: 0,
+    backgroundColor: "#ffffff"
   },
   register: {
     padding: 10,

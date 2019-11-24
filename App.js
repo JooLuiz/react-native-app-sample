@@ -104,12 +104,12 @@ export default class App extends React.Component {
         console.log("Acesso negado");
       }
     } catch (err) {
-      console.warn(err);
+      /*TODO*/
     }
   }
 
   componentWillMount() {
-    axios.defaults.baseURL = "http://d94a6aa1.ngrok.io/api";
+    axios.defaults.baseURL = "http://b6c3ffef.ngrok.io/api";
     axios.defaults.timeout = 1500;
     store.dispatch(notify("Bem Vindo ao RotaSegura App", "neutral"));
     store.dispatch(loadUser());

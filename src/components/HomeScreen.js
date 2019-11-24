@@ -235,15 +235,14 @@ class HomeScreen extends React.Component {
             "Estou utilizando o RotaSegura App.\nVeja Minha Viagem.\nOrigem:" +
             this.props.origin.longName +
             ".\nDestino:" +
-            this.props.searchedPlace.longName +
-            "\nhttp://instagram.com/jooluizzz"
+            this.props.searchedPlace.longName
         },
         {
           dialogTitle: "RotaSegura App - Compartilhe sua Viagem"
         }
       );
     } catch (error) {
-      console.warn(error.message);
+      /*err => TODO*/
     }
   };
 

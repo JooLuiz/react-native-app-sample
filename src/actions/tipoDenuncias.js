@@ -20,9 +20,9 @@ export const getTipoDenuncias = () => (dispatch, getState) => {
             payload: res.data
           });
         })
-        .catch(err => console.warn(err));
+        .catch(/*err => TODO*/);
     })
-    .catch(error => console.warn(error))
+    .catch(/*err => TODO*/)
     .finally(t => {
       dispatch({ type: LOADED });
     });
