@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
   }
 });
 
-export default connect(
-  mapStateToProps,
-  { getTipoDenuncias, setCurrentTipoDenuncia }
-)(TipoDenunciaScreen);
+export default connect(mapStateToProps, {
+  getTipoDenuncias,
+  setCurrentTipoDenuncia
+})(TipoDenunciaScreen);

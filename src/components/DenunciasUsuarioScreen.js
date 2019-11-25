@@ -125,16 +125,17 @@ class DenunciasUsuarioScreen extends React.Component {
               onChangeText={comentario => this.setState({ comentario })}
               value={this.state.Comentario}
               style={styles.inputs}
+              multiline={true}
+              numberOfLines={4}
             ></TextInput>
-            {this.props.kind == "custom" ? (
-              <TextInput
-                label="Endereço"
-                mode="outlined"
-                onChangeText={endereco => this.setState({ endereco })}
-                value={this.state.endereco}
-                style={styles.inputs}
-              ></TextInput>
-            ) : null}
+            <TextInput
+              label="Endereço"
+              mode="outlined"
+              disabled={this.props.kind !== "custom"}
+              onChangeText={endereco => this.setState({ endereco })}
+              value={this.state.endereco}
+              style={styles.inputs}
+            ></TextInput>
           </ScrollView>
         </View>
         <View style={styles.addPlaceBottomButtom}>
@@ -158,14 +159,14 @@ const mapStateToProps = state => ({
 const styles = StyleSheet.create({
   addPlaceBottomButtom: {
     position: "absolute",
-    top: Dimensions.get("window").height * 0.75,
-    right: Dimensions.get("window").width * 0.12
+    top: Dimensions.get("window").height * 0.85,
+    right: Dimensions.get("window").width * 0.07
   },
   circle: {
     alignItems: "center",
     justifyContent: "center",
-    height: Dimensions.get("window").width * 0.17,
-    width: Dimensions.get("window").width * 0.17,
+    height: Dimensions.get("window").width * 0.15,
+    width: Dimensions.get("window").width * 0.15,
     borderRadius: 400,
     backgroundColor: "green"
   },

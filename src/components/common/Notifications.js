@@ -22,7 +22,7 @@ class Notifications extends Component {
           this.props.changeVisibility(false);
         }}
         onShow={() =>
-          setTimeout(() => this.props.changeVisibility(false), 50000)
+          setTimeout(() => this.props.changeVisibility(false), 3000)
         }
       >
         <View

@@ -68,10 +68,6 @@ class AddEnderecoScreen extends React.Component {
   }
 
   render() {
-    if (!this.props.isAuthenticated) {
-      return this.props.navigation.navigate("Login");
-    }
-
     return (
       <View style={styles.container}>
         <GoBackButton
@@ -131,15 +127,14 @@ class AddEnderecoScreen extends React.Component {
               value={this.state.nome}
               style={styles.inputs}
             ></TextInput>
-            {this.props.kind == "custom" ? (
-              <TextInput
-                label="Endereco"
-                mode="outlined"
-                onChangeText={endereco => this.setState({ endereco })}
-                value={this.state.endereco}
-                style={styles.inputs}
-              ></TextInput>
-            ) : null}
+            <TextInput
+              label="Endereco"
+              mode="outlined"
+              disabled={this.props.kind !== "custom"}
+              onChangeText={endereco => this.setState({ endereco })}
+              value={this.state.endereco}
+              style={styles.inputs}
+            ></TextInput>
           </ScrollView>
         </View>
         <View style={styles.addPlaceBottomButtom}>
@@ -162,14 +157,14 @@ const mapStateToProps = state => ({
 const styles = StyleSheet.create({
   addPlaceBottomButtom: {
     position: "absolute",
-    top: Dimensions.get("window").height * 0.75,
-    right: Dimensions.get("window").width * 0.12
+    top: Dimensions.get("window").height * 0.85,
+    right: Dimensions.get("window").width * 0.07
   },
   circle: {
     alignItems: "center",
     justifyContent: "center",
-    height: Dimensions.get("window").width * 0.17,
-    width: Dimensions.get("window").width * 0.17,
+    height: Dimensions.get("window").width * 0.15,
+    width: Dimensions.get("window").width * 0.15,
     borderRadius: 400,
     backgroundColor: "green"
   },

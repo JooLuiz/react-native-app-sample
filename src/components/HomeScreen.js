@@ -22,9 +22,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faArrowAltCircleLeft } from "@fortawesome/free-regular-svg-icons";
 import SearchedPlaceDetail from "./SearchedPlaceDetail";
 import TravelDetails from "./TravelDetails";
-import { Searchbar } from "react-native-paper";
+import { Searchbar, FAB, Portal } from "react-native-paper";
 import { getDenuncias } from "../actions/denuncias";
 import { getEnderecoUsuario } from "../actions/enderecosUsuario";
+import {
+  getTipoDenuncias,
+  setCurrentTipoDenuncia
+} from "../actions/tipoDenuncias";
+import {} from "react-native-paper";
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -33,7 +38,8 @@ class HomeScreen extends React.Component {
 
   state = {
     region: null,
-    text: null
+    text: null,
+    open: false
   };
 
   componentDidMount() {
@@ -54,6 +60,7 @@ class HomeScreen extends React.Component {
       if (this.props.isAuthenticated) {
         this.props.getEnderecoUsuario();
         this.props.getDenuncias();
+        this.props.getTipoDenuncias();
       }
     });
   }
@@ -207,22 +214,62 @@ class HomeScreen extends React.Component {
     ) : null;
   }
 
+  setTipoDenunciaAndGo(tipoDenuncia) {
+    this.props.setCurrentTipoDenuncia(tipoDenuncia);
+    this.props.navigation.navigate("Denuncia");
+  }
+
   denunciaButton() {
     return this.props.isAuthenticated ? (
-      <View style={[styles.defaultBottomButton, styles.denunciaBottomButtom]}>
-        <TouchableOpacity
-          onPress={() => {
-            this.props.navigation.navigate("TipoDenuncia");
-          }}
-        >
-          <View style={[{ backgroundColor: "#3B4859" }, styles.circle]}>
-            <FontAwesomeIcon
-              icon="exclamation-triangle"
-              color={"white"}
-              size={25}
-            />
-          </View>
-        </TouchableOpacity>
+      <View>
+        <Portal>
+          <FAB.Group
+            ref={ref => {
+              this._fab = ref;
+            }}
+            style={{
+              paddingBottom: Dimensions.get("window").height * 0.1,
+              paddingRight: Dimensions.get("window").width * 0.02
+            }}
+            fabStyle={styles.red}
+            open={this.state.open}
+            visible={true}
+            icon={() =>
+              !this.state.open ? (
+                <FontAwesomeIcon
+                  icon="exclamation-triangle"
+                  color={"black"}
+                  size={25}
+                />
+              ) : (
+                <FontAwesomeIcon
+                  icon={"times-circle"}
+                  color={"black"}
+                  size={25}
+                />
+              )
+            }
+            actions={
+              this.props.tipoDenuncias
+                ? this.props.tipoDenuncias.map(item => {
+                    return {
+                      label: item.descricao,
+                      accessibilityLabel: item.descricao,
+                      icon: () => (
+                        <FontAwesomeIcon
+                          icon={item.icone}
+                          color={"black"}
+                          size={25}
+                        />
+                      ),
+                      onPress: () => this.setTipoDenunciaAndGo.call(this, item)
+                    };
+                  })
+                : []
+            }
+            onStateChange={({ open }) => this.setState({ open })}
+          />
+        </Portal>
       </View>
     ) : null;
   }
@@ -340,6 +387,9 @@ class HomeScreen extends React.Component {
 //StyleSheet Styles
 
 const styles = StyleSheet.create({
+  red: {
+    backgroundColor: "#b50000"
+  },
   container: {
     position: "absolute",
     top: 0,
@@ -370,11 +420,11 @@ const styles = StyleSheet.create({
   defaultBottomButton: {
     flex: 1,
     position: "absolute",
-    bottom: Dimensions.get("window").height * 0.13,
+    bottom: Dimensions.get("window").height * 0.125,
     zIndex: 2
   },
   denunciaBottomButtom: {
-    left: Dimensions.get("window").width * 0.07
+    right: Dimensions.get("window").width * 0.07
   },
   sharePlaceBottomButtom: {
     left: Dimensions.get("window").width * 0.3
@@ -383,14 +433,14 @@ const styles = StyleSheet.create({
     right: Dimensions.get("window").width * 0.3
   },
   directionsBottomButtom: {
-    right: Dimensions.get("window").width * 0.07
+    left: Dimensions.get("window").width * 0.07
   },
   circle: {
     flex: 2,
     alignItems: "center",
     justifyContent: "center",
-    height: Dimensions.get("window").width * 0.17,
-    width: Dimensions.get("window").width * 0.17,
+    height: Dimensions.get("window").width * 0.15,
+    width: Dimensions.get("window").width * 0.15,
     borderRadius: 400
   },
   flatListStyle: {
@@ -440,7 +490,8 @@ const mapStateToProps = state => ({
   directionsCoords: state.map.directionsCoords,
   directionsDetail: state.map.directionsDetail,
   directionsMessagePoints: state.map.directionsMessagePoints,
-  travellingMode: state.map.travellingMode
+  travellingMode: state.map.travellingMode,
+  tipoDenuncias: state.tipoDenuncias.tipoDenuncias
 });
 
 export default connect(mapStateToProps, {
@@ -451,5 +502,7 @@ export default connect(mapStateToProps, {
   startDirections,
   addEnderecoUsuario,
   getEnderecoUsuario,
-  getDenuncias
+  getDenuncias,
+  getTipoDenuncias,
+  setCurrentTipoDenuncia
 })(HomeScreen);

@@ -82,14 +82,14 @@ const styles = StyleSheet.create({
   },
   addPlaceBottomButtom: {
     position: "absolute",
-    bottom: Dimensions.get("window").height * 0.15,
-    right: Dimensions.get("window").width * 0.12
+    bottom: Dimensions.get("window").height * 0.115,
+    right: Dimensions.get("window").width * 0.07
   },
   circle: {
     alignItems: "center",
     justifyContent: "center",
-    height: Dimensions.get("window").width * 0.17,
-    width: Dimensions.get("window").width * 0.17,
+    height: Dimensions.get("window").width * 0.15,
+    width: Dimensions.get("window").width * 0.15,
     borderRadius: 400,
     backgroundColor: "#3B4859"
   }

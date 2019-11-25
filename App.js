@@ -45,6 +45,7 @@ import {
 } from "./src/actions/denunciasUsuario";
 import { getDenuncias } from "./src/actions/denuncias";
 import { getEnderecoUsuario } from "./src/actions/enderecosUsuario";
+import { getTipoDenuncias } from "./src/actions/tipoDenuncias";
 import Loader from "./src/components/common/Loader";
 import { notify } from "./src/actions/notifications";
 import Notifications from "./src/components/common/Notifications";
@@ -113,6 +114,7 @@ export default class App extends React.Component {
     axios.defaults.timeout = 1500;
     store.dispatch(notify("Bem Vindo ao RotaSegura App", "neutral"));
     store.dispatch(loadUser());
+    store.dispatch(getTipoDenuncias());
     store.dispatch(getDenuncias());
     store.dispatch(getAllDenuncias());
     store.dispatch(getDenunciasUsuario());
