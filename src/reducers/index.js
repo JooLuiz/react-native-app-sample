@@ -7,6 +7,7 @@ import denunciasUsuario from "./denunciasUsuario";
 import enderecosUsuario from "./enderecosUsuario";
 import loader from "./loader";
 import notifications from "./notifications";
+import imagens from "./imagens";
 
 export default combineReducers({
   map,
@@ -16,5 +17,6 @@ export default combineReducers({
   denunciasUsuario,
   enderecosUsuario,
   loader,
-  notifications
+  notifications,
+  imagens
 });

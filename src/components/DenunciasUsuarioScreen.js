@@ -6,7 +6,10 @@ import {
   Dimensions,
   StyleSheet,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
+  Image,
+  Button,
+  Modal
 } from "react-native";
 import { setPlaceKind } from "../actions/enderecosUsuario";
 import { addDenunciaUsuario } from "../actions/denunciasUsuario";
@@ -16,6 +19,10 @@ import axios from "axios";
 import GoBackButton from "./common/GoBackButton";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { TextInput, HelperText } from "react-native-paper";
+import { RNCamera } from "react-native-camera";
+
+const windowWidth = Dimensions.get("window").width;
+var IMAGES_PER_ROW = 3;
 
 class DenunciasUsuarioScreen extends React.Component {
   state = {
@@ -66,9 +73,39 @@ class DenunciasUsuarioScreen extends React.Component {
       });
   }
 
+  calculatedSize() {
+    var size = windowWidth / IMAGES_PER_ROW;
+    return { width: size, height: size, margin: 1 };
+  }
+
+  renderImagesInGroupsOf() {
+    return this.props.imagens.map((image, i) => {
+      return (
+        <View
+          style={{
+            flex: 1,
+            position: "relative",
+            flexDirection: "row"
+          }}
+          key={i}
+        >
+          <Image
+            key={i}
+            style={[this.calculatedSize()]}
+            source={{ uri: image.uri }}
+          />
+        </View>
+      );
+    });
+  }
+
+  renderImagesList() {
+    return this.props.paths.length !== 0 ? this.renderImagesInGroupsOf() : null;
+  }
+
   render() {
     return (
-      <View>
+      <View style={styles.container}>
         <GoBackButton
           navigation={this.props.navigation}
           title="Cadastro de Denúncia"
@@ -136,6 +173,11 @@ class DenunciasUsuarioScreen extends React.Component {
               value={this.state.endereco}
               style={styles.inputs}
             ></TextInput>
+            {this.renderImagesList()}
+            <Button
+              title="Fotos"
+              onPress={() => this.props.navigation.navigate("Camera")}
+            ></Button>
           </ScrollView>
         </View>
         <View style={styles.addPlaceBottomButtom}>
@@ -153,7 +195,9 @@ class DenunciasUsuarioScreen extends React.Component {
 const mapStateToProps = state => ({
   isAuthenticated: state.auth.isAuthenticated,
   kind: state.enderecosUsuario.kind,
-  currentDenuncia: state.denuncias.currentDenuncia
+  currentDenuncia: state.denuncias.currentDenuncia,
+  paths: state.imagens.paths,
+  imagens: state.imagens.imagens
 });
 
 const styles = StyleSheet.create({
@@ -178,6 +222,23 @@ const styles = StyleSheet.create({
   },
   inputs: {
     marginBottom: 15
+  },
+  container: {
+    flex: 1
+  },
+  preview: {
+    flex: 1,
+    justifyContent: "flex-end",
+    alignItems: "center"
+  },
+  capture: {
+    flex: 0,
+    backgroundColor: "#fff",
+    borderRadius: 5,
+    padding: 15,
+    paddingHorizontal: 20,
+    alignSelf: "center",
+    margin: 20
   }
 });
 

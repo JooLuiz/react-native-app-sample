@@ -11,6 +11,7 @@ import AddEnderecoScreen from "./components/AddEnderecoScreen";
 import SideMenu from "./components/SideMenu";
 import { createStackNavigator, createDrawerNavigator } from "react-navigation";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
+import CameraScreen from "./components/CameraScreen";
 
 const BottomNavigator = createStackNavigator(
   {
@@ -19,6 +20,7 @@ const BottomNavigator = createStackNavigator(
     TipoDenuncia: { screen: TipoDenunciaScreen, title: "TipoDenuncia" },
     Denuncia: { screen: DenunciaScreen, title: "Denuncia" },
     DenunciasUsuario: { screen: DenunciasUsuarioScreen, title: "Denuncia" },
+    Camera: { screen: CameraScreen, title: "Camera" },
     AddEnderecoScreen: {
       screen: AddEnderecoScreen,
       title: "Adicionar Endereco"
