@@ -1,18 +1,9 @@
 import React from "react";
 import { connect } from "react-redux";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableHighlight,
-  Dimensions,
-  FlatList
-} from "react-native";
-import BottomButtons from "./BottomButtons";
+import { View, StyleSheet, FlatList } from "react-native";
 import { getDenuncias } from "../actions/denuncias";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import EmptyList from "./common/EmptyList";
-import GoBackButton from "./common/GoBackButton";
 import { List } from "react-native-paper";
 
 class MyDenunciasScreen extends React.Component {

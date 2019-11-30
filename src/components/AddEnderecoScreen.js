@@ -11,11 +11,14 @@ import {
 import { addEnderecoUsuario, setPlaceKind } from "../actions/enderecosUsuario";
 import Geolocation from "@react-native-community/geolocation";
 import axios from "axios";
-import GoBackButton from "./common/GoBackButton";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { TextInput, HelperText } from "react-native-paper";
+import { TextInput } from "react-native-paper";
 
 class AddEnderecoScreen extends React.Component {
+  static navigationOptions = {
+    title: "Adicionar Endereço"
+  };
+
   state = {
     nome: null,
     endereco: null
@@ -70,14 +73,10 @@ class AddEnderecoScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <GoBackButton
-          navigation={this.props.navigation}
-          title="Adição de um Local"
-        />
         <View
           style={{
             flexDirection: "row",
-            alignItems: "center",
+            // alignItems: "stretch",
             justifyContent: "center",
             width: Dimensions.get("window").width,
             backgroundColor: "white"
@@ -86,9 +85,9 @@ class AddEnderecoScreen extends React.Component {
           <TouchableOpacity
             onPress={() => this.props.setPlaceKind("current")}
             style={{
-              justifyContent: "space-between",
+              alignSelf: "stretch",
               alignItems: "center",
-              marginHorizontal: Dimensions.get("window").width * 0.03,
+              // marginHorizontal: Dimensions.get("window").width * 0.03,
               height: Dimensions.get("window").height * 0.07,
               backgroundColor: this.props.kind == "current" ? "grey" : "white",
               width: "50%",
@@ -96,16 +95,21 @@ class AddEnderecoScreen extends React.Component {
               borderBottomWidth: 1
             }}
           >
-            <Text style={{ top: Dimensions.get("window").height * 0.02 }}>
+            <Text
+              style={{
+                top: Dimensions.get("window").height * 0.02,
+                alignSelf: "center"
+              }}
+            >
               Utilizar Local Atual
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => this.props.setPlaceKind("custom")}
             style={{
-              justifyContent: "space-between",
+              alignSelf: "stretch",
               alignItems: "center",
-              marginHorizontal: Dimensions.get("window").width * 0.03,
+              // marginHorizontal: Dimensions.get("window").width * 0.03,
               height: Dimensions.get("window").height * 0.07,
               backgroundColor: this.props.kind == "current" ? "white" : "grey",
               width: "50%",
@@ -113,7 +117,12 @@ class AddEnderecoScreen extends React.Component {
               borderBottomWidth: 1
             }}
           >
-            <Text style={{ top: Dimensions.get("window").height * 0.02 }}>
+            <Text
+              style={{
+                top: Dimensions.get("window").height * 0.02,
+                alignSelf: "center"
+              }}
+            >
               Pesquisar Local
             </Text>
           </TouchableOpacity>
@@ -157,7 +166,7 @@ const mapStateToProps = state => ({
 const styles = StyleSheet.create({
   addPlaceBottomButtom: {
     position: "absolute",
-    top: Dimensions.get("window").height * 0.85,
+    top: Dimensions.get("window").height * 0.77,
     right: Dimensions.get("window").width * 0.07
   },
   circle: {

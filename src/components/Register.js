@@ -1,26 +1,17 @@
 import React from "react";
 import { connect } from "react-redux";
-import {
-  ImageBackground,
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  ScrollView
-} from "react-native";
+import { View, StyleSheet, Dimensions, ScrollView } from "react-native";
 import LoginOrCreateForm from "./common/LoginOrCreateForm";
-import GoBackButton from "./common/GoBackButton";
 
 class Register extends React.Component {
+  static navigationOptions = {
+    title: "Cadastro"
+  };
   render() {
-    if (this.props.isAuthenticated) {
-      return this.props.navigation.goBack();
-    }
     return (
       <View style={styles.container}>
         <ScrollView>
           <View>
-            <GoBackButton navigation={this.props.navigation} title="Cadastro" />
             <View>
               <View style={styles.input}>
                 <LoginOrCreateForm navigation={this.props.navigation} create />

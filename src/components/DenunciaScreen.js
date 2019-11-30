@@ -1,21 +1,16 @@
 import React from "react";
 import { connect } from "react-redux";
-import {
-  View,
-  Text,
-  Dimensions,
-  StyleSheet,
-  FlatList,
-  TouchableHighlight
-} from "react-native";
-import BottomButtons from "./BottomButtons";
+import { View, StyleSheet, FlatList } from "react-native";
 import { getDenuncias, setCurrentDenuncia } from "../actions/denuncias";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import EmptyList from "./common/EmptyList";
-import GoBackButton from "./common/GoBackButton";
 import { List } from "react-native-paper";
 
 class DenunciaScreen extends React.Component {
+  static navigationOptions = {
+    title: "Categoria da Denúncia"
+  };
+
   componentWillMount() {
     this.props.getDenuncias();
   }
@@ -28,16 +23,15 @@ class DenunciaScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <GoBackButton
-          navigation={this.props.navigation}
-          title="Categoria da Denúncia"
-        />
         <FlatList
           data={this.props.denuncias.filter(
             d => d.tipo_denuncia == this.props.currentTipoDenuncia.id
           )}
           ListEmptyComponent={
-            <EmptyList text="Ainda não existem Denúncias Cadastradas para esse Tipo de Denúncia." />
+            <EmptyList
+              text="Ainda não existem Categorias de Denúncias Cadastradas para esse Tipo de Denúncia."
+              navigation={this.props.navigation}
+            />
           }
           renderItem={({ item }) => (
             <View>

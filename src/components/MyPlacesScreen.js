@@ -2,21 +2,16 @@ import React from "react";
 import { connect } from "react-redux";
 import {
   View,
-  Text,
   StyleSheet,
-  TouchableHighlight,
   Dimensions,
   FlatList,
   TouchableOpacity
 } from "react-native";
-import BottomButtons from "./BottomButtons";
 import EmptyList from "./common/EmptyList";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { getEnderecoUsuario } from "../actions/enderecosUsuario";
-import GoBackButton from "./common/GoBackButton";
 import { getPlace, setOrigin } from "../actions/map";
 import { List } from "react-native-paper";
-import { faArrowAltCircleLeft } from "@fortawesome/free-regular-svg-icons";
 
 class MyPlacesScreen extends React.Component {
   static navigationOptions = {

@@ -6,11 +6,9 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  ScrollView,
-  ImageBackground
+  ScrollView
 } from "react-native";
 import BottomButtons from "./BottomButtons";
-import GoBackButton from "./common/GoBackButton";
 import { logout } from "../actions/auth";
 import { Avatar } from "react-native-paper";
 

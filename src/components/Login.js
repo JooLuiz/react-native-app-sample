@@ -2,16 +2,15 @@ import React from "react";
 import { connect } from "react-redux";
 import { View, StyleSheet, Dimensions, ScrollView } from "react-native";
 import LoginOrCreateForm from "./common/LoginOrCreateForm";
-import GoBackButton from "./common/GoBackButton";
 
 class Login extends React.Component {
+  static navigationOptions = {
+    title: "Login"
+  };
+
   render() {
-    if (this.props.isAuthenticated) {
-      return this.props.navigation.goBack();
-    }
     return (
       <View style={styles.container}>
-        <GoBackButton navigation={this.props.navigation} title="Login" />
         <ScrollView>
           <View>
             <View>

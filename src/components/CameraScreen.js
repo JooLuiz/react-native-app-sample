@@ -17,6 +17,9 @@ const windowWidth = Dimensions.get("window").width;
 var IMAGES_PER_ROW = 3;
 
 class CameraScreen extends Component {
+  static navigationOptions = {
+    title: "Camera"
+  };
   calculatedSize() {
     var size = windowWidth / IMAGES_PER_ROW;
     return { width: size, height: size, margin: 1 };
@@ -66,7 +69,6 @@ class CameraScreen extends Component {
   render() {
     return (
       <View style={styles.subcontainer}>
-        <GoBackButton navigation={this.props.navigation} title="Câmera" />
         <View style={styles.container}>
           <RNCamera
             ref={ref => {
@@ -87,7 +89,7 @@ class CameraScreen extends Component {
               onPress={this.handleTakePicture.bind(this)}
               style={styles.capture}
             >
-              <Text style={{ fontSize: 14 }}> Tirar Foto </Text>
+              <View style={styles.circle}></View>
             </TouchableOpacity>
           </View>
           {this.renderImagesList()}
@@ -111,6 +113,15 @@ class CameraScreen extends Component {
 }
 
 const styles = StyleSheet.create({
+  circle: {
+    alignItems: "center",
+    justifyContent: "center",
+    height: Dimensions.get("window").width * 0.15,
+    width: Dimensions.get("window").width * 0.15,
+    borderRadius: 400,
+    borderWidth: 2,
+    backgroundColor: "red"
+  },
   container: {
     flex: 1,
     flexDirection: "column",
@@ -126,12 +137,13 @@ const styles = StyleSheet.create({
   },
   capture: {
     flex: 0,
-    backgroundColor: "#fff",
+    backgroundColor: "transparent",
     borderRadius: 5,
     padding: 15,
     paddingHorizontal: 20,
     alignSelf: "center",
-    margin: 20
+    margin: 20,
+    width: Dimensions.get("window").width
   }
 });
 
