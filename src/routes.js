@@ -15,12 +15,14 @@ import CameraScreen from "./components/CameraScreen";
 
 const BottomNavigator = createStackNavigator(
   {
-    Mapa: { screen: HomeScreen, title: "Home" },
+    Mapa: { screen: HomeScreen, title: "Mapa" },
     Profile: { screen: ProfileScreen, title: "Perfil" },
     TipoDenuncia: { screen: TipoDenunciaScreen, title: "TipoDenuncia" },
     Denuncia: { screen: DenunciaScreen, title: "Denuncia" },
     DenunciasUsuario: { screen: DenunciasUsuarioScreen, title: "Denuncia" },
     Camera: { screen: CameraScreen, title: "Camera" },
+    MeusLocais: { screen: MyPlacesScreen, title: "Meus Locais" },
+    MinhasDenuncias: { screen: MyDenunciasScreen, title: "Minhas Denuncias" },
     AddEnderecoScreen: {
       screen: AddEnderecoScreen,
       title: "Adicionar Endereco"
@@ -29,15 +31,19 @@ const BottomNavigator = createStackNavigator(
     Register: { screen: Register, title: "Register" }
   },
   {
-    headerMode: "none"
+    initialRouteName: "Mapa",
+    defaultNavigationOptions: {
+      headerTintColor: "#000000",
+      headerTitleStyle: {
+        fontWeight: "bold"
+      }
+    }
   }
 );
 
 const AppNavigator = createDrawerNavigator(
   {
-    Mapa: BottomNavigator,
-    MeusLocais: { screen: MyPlacesScreen, title: "Meus Locais" },
-    MinhasDenuncias: { screen: MyDenunciasScreen, title: "Minhas Denuncias" }
+    Mapa: BottomNavigator
   },
   {
     contentComponent: SideMenu

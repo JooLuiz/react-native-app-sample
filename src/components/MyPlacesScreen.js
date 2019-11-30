@@ -16,8 +16,13 @@ import { getEnderecoUsuario } from "../actions/enderecosUsuario";
 import GoBackButton from "./common/GoBackButton";
 import { getPlace, setOrigin } from "../actions/map";
 import { List } from "react-native-paper";
+import { faArrowAltCircleLeft } from "@fortawesome/free-regular-svg-icons";
 
 class MyPlacesScreen extends React.Component {
+  static navigationOptions = {
+    title: "Meus Locais"
+  };
+
   componentWillMount() {
     this.props.getEnderecoUsuario();
     this.props.navigation.addListener("willFocus", () => {
@@ -28,7 +33,6 @@ class MyPlacesScreen extends React.Component {
   render() {
     return (
       <View styles={styles.container}>
-        <GoBackButton navigation={this.props.navigation} title="Meus Locais" />
         <FlatList
           data={this.props.enderecosUsuario}
           ListEmptyComponent={
@@ -82,7 +86,7 @@ const styles = StyleSheet.create({
   },
   addPlaceBottomButtom: {
     position: "absolute",
-    bottom: Dimensions.get("window").height * 0.115,
+    bottom: Dimensions.get("window").height * 0.015,
     right: Dimensions.get("window").width * 0.07
   },
   circle: {

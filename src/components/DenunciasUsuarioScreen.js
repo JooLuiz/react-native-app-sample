@@ -66,7 +66,7 @@ class DenunciasUsuarioScreen extends React.Component {
           denuncia: this.props.currentDenuncia.id,
           comentario: this.state.comentario
         };
-        this.props.addDenunciaUsuario(usuario_denuncia);
+        this.props.addDenunciaUsuario(usuario_denuncia, this.props.imagens);
         this.props.getAllDenuncias();
 
         this.props.navigation.navigate("Mapa");
@@ -74,33 +74,66 @@ class DenunciasUsuarioScreen extends React.Component {
   }
 
   calculatedSize() {
-    var size = windowWidth / IMAGES_PER_ROW;
+    var size = (windowWidth * 0.877) / IMAGES_PER_ROW;
     return { width: size, height: size, margin: 1 };
   }
 
-  renderImagesInGroupsOf() {
-    return this.props.imagens.map((image, i) => {
-      return (
-        <View
-          style={{
-            flex: 1,
-            position: "relative",
-            flexDirection: "row"
-          }}
-          key={i}
-        >
+  renderImagesInGroupsOf(min, max) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          position: "relative",
+          flexDirection: "row",
+          margin: 2
+        }}
+        key={min}
+      >
+        {this.props.imagens[min] ? (
           <Image
-            key={i}
+            key={min}
             style={[this.calculatedSize()]}
-            source={{ uri: image.uri }}
+            source={{ uri: this.props.imagens[min].uri }}
           />
-        </View>
-      );
-    });
+        ) : null}
+        {this.props.imagens[max - 1] ? (
+          <Image
+            key={max - 1}
+            style={[this.calculatedSize()]}
+            source={{ uri: this.props.imagens[max - 1].uri }}
+          />
+        ) : null}
+        {this.props.imagens[max] ? (
+          <Image
+            key={max}
+            style={[this.calculatedSize()]}
+            source={{ uri: this.props.imagens[max].uri }}
+          />
+        ) : null}
+      </View>
+    );
   }
 
   renderImagesList() {
-    return this.props.paths.length !== 0 ? this.renderImagesInGroupsOf() : null;
+    if (this.props.paths.length !== 0) {
+      var l = this.props.paths.length;
+      var isDivisible = l % 3;
+      var rows = 0;
+      if (isDivisible == 0) {
+        rows = l / 3;
+      } else {
+        rows = (l + (l % 3)) / 3;
+      }
+      var lista = [];
+      for (var i = 0; i < rows; i++) {
+        lista.push(i);
+      }
+      return lista.map(num =>
+        this.renderImagesInGroupsOf(num * 3, (num + 1) * 3 - 1)
+      );
+    } else {
+      return null;
+    }
   }
 
   render() {
@@ -160,7 +193,7 @@ class DenunciasUsuarioScreen extends React.Component {
               label="Comentário"
               mode="outlined"
               onChangeText={comentario => this.setState({ comentario })}
-              value={this.state.Comentario}
+              value={this.state.comentario}
               style={styles.inputs}
               multiline={true}
               numberOfLines={4}
@@ -173,11 +206,11 @@ class DenunciasUsuarioScreen extends React.Component {
               value={this.state.endereco}
               style={styles.inputs}
             ></TextInput>
-            {this.renderImagesList()}
             <Button
-              title="Fotos"
+              title="Camera"
               onPress={() => this.props.navigation.navigate("Camera")}
             ></Button>
+            {this.renderImagesList()}
           </ScrollView>
         </View>
         <View style={styles.addPlaceBottomButtom}>

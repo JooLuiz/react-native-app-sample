@@ -1,11 +1,5 @@
 import axios from "axios";
-import {
-  SEND_IMAGENS_TO_SERVER,
-  ADD_IMAGE,
-  ADD_PATH,
-  REMOVE_IMAGEM
-} from "./types";
-import { tokenConfig } from "./auth";
+import { ADD_IMAGE, ADD_PATH, REMOVE_IMAGEM } from "./types";
 
 //ADD Denuncia Usuario
 export const addImagem = imagem => dispatch => {

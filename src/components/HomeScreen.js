@@ -33,7 +33,7 @@ import {} from "react-native-paper";
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
-    title: "Home"
+    header: null
   };
 
   state = {

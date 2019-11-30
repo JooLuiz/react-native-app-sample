@@ -5,7 +5,9 @@ import {
   GET_ALL_DENUNCIAS,
   LOADING,
   LOADED,
-  NOTIFY
+  NOTIFY,
+  REMOVE_IMAGEM,
+  SEND_IMAGENS_TO_SERVER
 } from "./types";
 import { tokenConfig } from "./auth";
 
@@ -50,16 +52,49 @@ export const getAllDenuncias = () => (dispatch, getState) => {
 };
 
 //ADD Denuncia Usuario
-export const addDenunciaUsuario = DenunciaUsuario => (dispatch, getState) => {
+export const addDenunciaUsuario = (DenunciaUsuario, imagens) => (
+  dispatch,
+  getState
+) => {
   dispatch({ type: LOADING });
   tokenConfig(getState)
-    .then(function(config) {
+    .then(config => {
       axios
         .post("/usuario_denuncia/", DenunciaUsuario, config)
         .then(res => {
+          console.warn(res.data);
           dispatch({
             type: ADD_DENUNCIA_USUARIO,
             payload: res.data
+          });
+          imagens.forEach((imagem, index) => {
+            const imagesData = new FormData();
+
+            imagesData.append("imagem", {
+              uri: imagem.uri,
+              type: "image/jpeg",
+              name: `${res.data.id}_${index + 1}.jpg`
+            });
+
+            imagesData.append("usuario_denuncia", res.data.id);
+            axios
+              .post("/usuario_denuncia_imagens/", imagesData, config)
+              .then(res => {
+                dispatch({
+                  type: REMOVE_IMAGEM,
+                  payload: imagem
+                });
+              })
+              .catch(() => {
+                dispatch({
+                  type: NOTIFY,
+                  payload: {
+                    message:
+                      "Ops, Algo errado Aconteceu,não foi possível salvar uma foto da sua denúncia",
+                    type: "error"
+                  }
+                });
+              });
           });
           dispatch({
             type: NOTIFY,
@@ -69,7 +104,7 @@ export const addDenunciaUsuario = DenunciaUsuario => (dispatch, getState) => {
             }
           });
         })
-        .catch(err => {
+        .catch(() => {
           dispatch({
             type: NOTIFY,
             payload: {
@@ -82,5 +117,6 @@ export const addDenunciaUsuario = DenunciaUsuario => (dispatch, getState) => {
     })
     .finally(t => {
       dispatch({ type: LOADED });
+      dispatch({ type: SEND_IMAGENS_TO_SERVER });
     });
 };

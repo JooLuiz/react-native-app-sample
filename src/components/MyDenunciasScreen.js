@@ -16,6 +16,10 @@ import GoBackButton from "./common/GoBackButton";
 import { List } from "react-native-paper";
 
 class MyDenunciasScreen extends React.Component {
+  static navigationOptions = {
+    title: "Minhas Denúncias"
+  };
+
   componentWillMount() {
     this.props.getDenuncias();
     this.props.navigation.addListener("willFocus", () => {
@@ -26,10 +30,6 @@ class MyDenunciasScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <GoBackButton
-          navigation={this.props.navigation}
-          title="Minhas Denúncias"
-        />
         <FlatList
           data={this.props.denunciasUsuario}
           ListEmptyComponent={

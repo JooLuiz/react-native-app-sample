@@ -55,7 +55,7 @@ class CameraScreen extends Component {
       };
       const data = await this.camera.takePictureAsync(options);
       this.props.addImagem(data);
-      this.props.addPaths(data.uri);
+      this.props.addPaths({ uri: data.uri });
     }
   };
 
@@ -80,7 +80,6 @@ class CameraScreen extends Component {
               "We need your permission to use your camera phone"
             }
           />
-          {this.renderImagesList()}
           <View
             style={{ flex: 0, flexDirection: "row", justifyContent: "center" }}
           >
@@ -91,18 +90,11 @@ class CameraScreen extends Component {
               <Text style={{ fontSize: 14 }}> Tirar Foto </Text>
             </TouchableOpacity>
           </View>
+          {this.renderImagesList()}
         </View>
       </View>
     );
   }
-
-  changeState = () => {
-    this.setState({ isVisible: true });
-  };
-
-  changeState2 = () => {
-    this.setState({ isVisible: true });
-  };
 
   showResults = () => {
     console.log("VALUE1: " + this.state.value1);
@@ -111,10 +103,9 @@ class CameraScreen extends Component {
 
   takePicture = async function() {
     if (this.camera) {
-      const options = { quality: 0.5, base64: true };
+      const options = { quality: 0.5, base64: false };
       const data = await this.camera.takePictureAsync(options);
       console.log(data.uri);
-      this.setState({ isVisible: false });
     }
   };
 }
