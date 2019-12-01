@@ -23,9 +23,9 @@ export const getDenunciasUsuario = () => (dispatch, getState) => {
           payload: res.data
         });
       })
-      .catch(err =>
-        dispatch(returnErrors(err.response.data, err.response.status))
-      )
+      .catch(err => {
+        //****TODO****
+      })
       .finally(t => {
         dispatch({ type: LOADED });
       });

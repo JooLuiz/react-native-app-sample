@@ -10,7 +10,8 @@ import {
   LOADING,
   LOADED,
   LOGOUT_SUCCESS,
-  NOTIFY
+  NOTIFY,
+  GET_DENUNCIAS_USUARIO
 } from "./types";
 import { _retrieveData } from "../reducers/auth";
 
@@ -49,6 +50,20 @@ export const login = payload => dispatch => {
   axios
     .post(`/auth/login`, payload)
     .then(response => {
+      const config = { headers: { "Content-type": "application/json" } };
+      if (response.data.token)
+        config.headers["Authorization"] = `Token ${response.data.token}`;
+      axios
+        .get("/usuario_denuncia/", config)
+        .then(res => {
+          dispatch({
+            type: GET_DENUNCIAS_USUARIO,
+            payload: res.data
+          });
+        })
+        .catch(err => {
+          //****TODO****
+        });
       dispatch({
         type: LOGIN_SUCCESS,
         payload: response.data

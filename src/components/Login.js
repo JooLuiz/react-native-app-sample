@@ -8,6 +8,12 @@ class Login extends React.Component {
     title: "Login"
   };
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.isAuthenticated) {
+      this.props.navigation.navigate("Mapa");
+    }
+  }
+
   render() {
     return (
       <View style={styles.container}>

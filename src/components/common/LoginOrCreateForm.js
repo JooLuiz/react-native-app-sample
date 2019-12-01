@@ -48,6 +48,7 @@ class LoginOrCreateForm extends Component {
     } else {
       this.props.login(payload);
     }
+    this.props.navigation.navigate("Mapa")
     this.props.getDenuncias();
     this.props.getEnderecoUsuario();
   }

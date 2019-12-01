@@ -50,7 +50,9 @@ class ProfileScreen extends React.Component {
                   fontSize: 25
                 }}
               >
-                {this.props.user.username}
+                {this.props.user && this.props.user.username
+                  ? this.props.user.username
+                  : null}
               </Text>
               <Text>
                 {this.props.denunciasUsuario.length} denúncias realizadas
