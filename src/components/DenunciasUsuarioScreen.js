@@ -8,18 +8,16 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
-  Button,
-  Modal
+  Button
 } from "react-native";
 import { setPlaceKind } from "../actions/enderecosUsuario";
 import { addDenunciaUsuario } from "../actions/denunciasUsuario";
 import { getAllDenuncias } from "../actions/denunciasUsuario";
 import Geolocation from "@react-native-community/geolocation";
 import axios from "axios";
-import GoBackButton from "./common/GoBackButton";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { TextInput, HelperText } from "react-native-paper";
-import { RNCamera } from "react-native-camera";
+import { TextInput } from "react-native-paper";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 const windowWidth = Dimensions.get("window").width;
 var IMAGES_PER_ROW = 3;
@@ -31,7 +29,11 @@ class DenunciasUsuarioScreen extends React.Component {
 
   state = {
     endereco: null,
-    comentario: null
+    comentario: null,
+    datePickerVisible: false,
+    timePickerVisible: false,
+    dateValue: new Date(),
+    timeValue: new Date()
   };
 
   register() {
@@ -64,11 +66,23 @@ class DenunciasUsuarioScreen extends React.Component {
       .then(json => {
         var location = json.data.results[0].geometry.location;
 
+        var dateTimeField = new Date(
+          this.state.dateValue.getFullYear(),
+          this.state.dateValue.getDay(),
+          this.state.dateValue.getMonth(),
+          this.state.timeValue.getHours(),
+          this.state.timeValue.getMinutes(),
+          this.state.timeValue.getSeconds()
+        );
+
+        console.warn(dateTimeField);
+
         const usuario_denuncia = {
           latitude: location.lat,
           longitude: location.lng,
           denuncia: this.props.currentDenuncia.id,
-          comentario: this.state.comentario
+          comentario: this.state.comentario,
+          data_hora: dateTimeField
         };
         this.props.addDenunciaUsuario(usuario_denuncia, this.props.imagens);
         this.props.getAllDenuncias();
@@ -216,6 +230,64 @@ class DenunciasUsuarioScreen extends React.Component {
               value={this.state.endereco}
               style={styles.inputs}
             ></TextInput>
+            <TouchableOpacity
+              onPress={() => this.setState({ datePickerVisible: true })}
+            >
+              <TextInput
+                label="Data"
+                mode="outlined"
+                editable={false}
+                value={this.state.dateValue.toLocaleDateString()}
+                style={styles.inputs}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => this.setState({ timePickerVisible: true })}
+            >
+              <TextInput
+                label="Hora"
+                mode="outlined"
+                editable={false}
+                value={this.state.timeValue.toLocaleTimeString()}
+                style={styles.inputs}
+              />
+            </TouchableOpacity>
+            {this.state.datePickerVisible && (
+              <DateTimePicker
+                mode={"date"}
+                display="spinner"
+                is24Hour={true}
+                value={this.state.dateValue}
+                onChange={(event, value) => {
+                  if (event.type == "set") {
+                    this.setState({
+                      dateValue: value,
+                      datePickerVisible: false
+                    });
+                  } else {
+                    this.setState({ datePickerVisible: false });
+                  }
+                }}
+              />
+            )}
+            {this.state.timePickerVisible && (
+              <DateTimePicker
+                mode={"time"}
+                display="spinner"
+                is24Hour={true}
+                value={this.state.timeValue}
+                onChange={(event, value) => {
+                  if (event.type == "set") {
+                    this.setState({
+                      timeValue: value,
+                      timePickerVisible: false
+                    });
+                  } else {
+                    this.setState({ datePickerVisible: false });
+                  }
+                }}
+              />
+            )}
             <Button
               title="Camera"
               onPress={() => this.props.navigation.navigate("Camera")}

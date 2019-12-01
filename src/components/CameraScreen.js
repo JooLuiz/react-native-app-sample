@@ -114,6 +114,7 @@ class CameraScreen extends Component {
 
 const styles = StyleSheet.create({
   circle: {
+    alignSelf: "center",
     alignItems: "center",
     justifyContent: "center",
     height: Dimensions.get("window").width * 0.15,
@@ -142,6 +143,7 @@ const styles = StyleSheet.create({
     padding: 15,
     paddingHorizontal: 20,
     alignSelf: "center",
+    alignItems: "center",
     margin: 20,
     width: Dimensions.get("window").width
   }

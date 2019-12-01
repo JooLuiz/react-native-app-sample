@@ -10,7 +10,8 @@ import {
   LOADING,
   LOADED,
   LOGOUT_SUCCESS,
-  NOTIFY
+  NOTIFY,
+  GET_DENUNCIAS_USUARIO
 } from "./types";
 import { _retrieveData } from "../reducers/auth";
 
@@ -30,15 +31,13 @@ export const loadUser = () => (dispatch, getState) => {
             payload: res.data
           });
         })
-        .catch(error => {
+        .catch(() => {
           dispatch({
             type: AUTH_ERROR
           });
         });
     })
-    .catch(function(error) {
-      /*TODO*/
-    })
+    .catch(() => dispatch({ type: LOADED }))
     .finally(t => {
       dispatch({ type: LOADED });
     });
@@ -49,6 +48,50 @@ export const login = payload => dispatch => {
   axios
     .post(`/auth/login`, payload)
     .then(response => {
+      console.warn(response.data);
+      const config = { headers: { "Content-type": "application/json" } };
+      if (response.data.token)
+        config.headers["Authorization"] = `Token ${response.data.token}`;
+      axios
+        .get("/usuario_denuncia/", config)
+        .then(res => {
+          dispatch({
+            type: GET_DENUNCIAS_USUARIO,
+            payload: res.data
+          });
+        })
+        .catch(err => {
+          if (err.response.status >= 500) {
+            dispatch({
+              type: NOTIFY,
+              payload: {
+                message: "Não foi possível conectar com o servidor.",
+                type: "error"
+              }
+            });
+          }
+        })
+        .finally(() => {
+          axios
+            .get("/endereco_usuario/", config)
+            .then(res => {
+              dispatch({
+                type: GET_ENDERECO_USUARIO,
+                payload: res.data
+              });
+            })
+            .catch(err => {
+              if (err.response.status >= 500) {
+                dispatch({
+                  type: NOTIFY,
+                  payload: {
+                    message: "Não foi possível conectar com o servidor.",
+                    type: "error"
+                  }
+                });
+              }
+            });
+        });
       dispatch({
         type: LOGIN_SUCCESS,
         payload: response.data
@@ -99,7 +142,7 @@ export const login = payload => dispatch => {
             }
           });
         }
-      } else if (error.response.status == 500 || error.response.status == 502) {
+      } else if (error.response.status >= 500) {
         dispatch({
           type: NOTIFY,
           payload: {
@@ -124,13 +167,12 @@ export const register = payload => dispatch => {
         payload: response.data
       });
     })
-    .catch(error => {
-      console.log(error.response);
+    .catch(() => {
       dispatch({
         type: REGISTER_FAIL
       });
     })
-    .finally(t => {
+    .finally(() => {
       dispatch({ type: LOADED });
     });
 };
@@ -146,9 +188,85 @@ export const logout = () => (dispatch, getState) => {
             payload: res.data
           });
         })
-        .catch(/*error => TODO*/);
+        .catch(err => {
+          if (err.response.status >= 500) {
+            dispatch({
+              type: NOTIFY,
+              payload: {
+                message: "Não foi possível conectar com o servidor.",
+                type: "error"
+              }
+            });
+          }
+        });
     })
-    .catch(/*error => TODO*/);
+    .catch(err => {
+      if (err.response.status >= 500) {
+        dispatch({
+          type: NOTIFY,
+          payload: {
+            message: "Não foi possível conectar com o servidor.",
+            type: "error"
+          }
+        });
+      }
+    });
+};
+
+export const editUser = (user, imagem, type) => (dispatch, getState) => {
+  //user loading
+  dispatch({ type: LOADING });
+  dispatch({ type: USER_LOADING });
+
+  tokenConfig(getState)
+    .then(function(config) {
+      const userData = new FormData();
+
+      userData.append("avatar", {
+        uri: imagem && type == "avatar" ? imagem.uri : user.avatar,
+        type: "image/jpeg",
+        name: `${user.cpf}_avatar.jpg`
+      });
+      userData.append("background", {
+        uri: imagem && type == "background" ? imagem.uri : user.background,
+        type: "image/jpeg",
+        name: `${user.cpf}_background.jpg`
+      });
+
+      userData.append("username", user.username);
+      userData.append("email", user.email);
+      userData.append("password", user.password);
+      userData.append("cpf", user.cpf);
+
+      axios
+        .put("/auth/user/edit/", userData, config)
+        .then(res => {
+          dispatch({
+            type: NOTIFY,
+            payload: {
+              message: "Usuário Alterado com Sucesso",
+              type: "success"
+            }
+          });
+          dispatch({
+            type: USER_LOADED,
+            payload: res.data
+          });
+        })
+        .catch(() => {
+          dispatch({
+            type: NOTIFY,
+            payload: {
+              message: "Não foi possível conectar com o servidor.",
+              type: "error"
+            }
+          });
+        });
+    })
+    .catch(() => dispatch({ type: LOADED }))
+    .finally(t => {
+      dispatch({ type: LOADED });
+    });
 };
 
 export const tokenConfig = async getState => {

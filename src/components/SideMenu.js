@@ -5,7 +5,8 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  TouchableOpacity
+  TouchableOpacity,
+  ImageBackground
 } from "react-native";
 import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -20,18 +21,41 @@ class SideMenu extends Component {
   };
 
   renderSide() {
-    if(this.props.isAuthenticated){
-      return(
+    if (this.props.isAuthenticated) {
+      return (
         <View style={{ flex: 1 }}>
-          <View style={{ flexDirection: 'row', paddingTop: 30, paddingBottom: 30, paddingLeft: 20, backgroundColor: "black" }}>
-            <View style={{ borderWidth: 2, borderRadius: 100, borderColor: "white" }}>
-              <Avatar.Image source={{ uri:'https://scontent.fgru15-1.fna.fbcdn.net/v/t1.0-9/s960x960/77233593_2609047322513024_9044118965416099840_o.jpg?_nc_cat=102&_nc_oc=AQkMYH87w5PFrhO81gsFHb1aFowAJ58U4IF0gZdFwTblGpu4cMFxNqz7WihC73mck8Y&_nc_ht=scontent.fgru15-1.fna&oh=fe3ed9d57bd1bef277e9e08c8a179e94&oe=5E6474CF' }} />
+          <ImageBackground
+            source={{ uri: this.props.user.background }}
+            style={{
+              flexDirection: "row",
+              paddingTop: 30,
+              paddingBottom: 30,
+              paddingLeft: 20,
+              backgroundColor: "black"
+            }}
+          >
+            <View
+              style={{
+                borderWidth: 2,
+                borderRadius: 100,
+                borderColor: "white"
+              }}
+            >
+              <Avatar.Image
+                source={{
+                  uri: this.props.user.avatar
+                }}
+              />
             </View>
-            <View style={{ left: 20, justifyContent: 'center' }}>
-              <Text style={{ color: 'white', fontWeight: 'bold' }}>{this.props.user.username}</Text>
-              <Text style={{ color: 'white', fontStyle: 'italic' }}>{this.props.denunciasUsuario.length} denúncias</Text>
+            <View style={{ left: 20, justifyContent: "center" }}>
+              <Text style={{ color: "white", fontWeight: "bold" }}>
+                {this.props.user.username}
+              </Text>
+              <Text style={{ color: "white", fontStyle: "italic" }}>
+                {this.props.denunciasUsuario.length} denúncias
+              </Text>
             </View>
-          </View>                
+          </ImageBackground>
           <ScrollView>
             <View>
               <View>
@@ -40,8 +64,17 @@ class SideMenu extends Component {
                 </TouchableOpacity>
               </View>
               <View>
-                <TouchableOpacity onPress={this.navigateToScreen("MinhasDenuncias")}>
-                  <Text style={styles.screens}> Minhas Denuncias </Text>
+                <TouchableOpacity
+                  onPress={this.navigateToScreen("MinhasDenuncias")}
+                >
+                  <Text style={styles.screens}> Minhas Denúncias </Text>
+                </TouchableOpacity>
+              </View>
+              <View>
+                <TouchableOpacity
+                  onPress={this.navigateToScreen("DenunciasRecentes")}
+                >
+                  <Text style={styles.screens}> Denúncias Recentes </Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -49,11 +82,17 @@ class SideMenu extends Component {
         </View>
       );
     } else {
-      return(
+      return (
         <View style={{ flex: 1 }}>
-          <View style={{ justifyContent: 'space-around', padding: 50, backgroundColor: "black" }}>
-            <Text style={{ color: 'white' }}>Bem-Vindo ao Rota Segura</Text>
-          </View>                
+          <View
+            style={{
+              justifyContent: "space-around",
+              padding: 50,
+              backgroundColor: "black"
+            }}
+          >
+            <Text style={{ color: "white" }}>Bem-Vindo ao Rota Segura</Text>
+          </View>
           <ScrollView>
             <View>
               <View>
@@ -69,7 +108,7 @@ class SideMenu extends Component {
             </View>
           </ScrollView>
         </View>
-      )
+      );
     }
   }
 
@@ -133,7 +172,4 @@ const mapStateToProps = state => ({
   denunciasUsuario: state.denunciasUsuario.denunciasUsuario
 });
 
-export default connect(
-  mapStateToProps,
-  null
-)(SideMenu);
+export default connect(mapStateToProps, null)(SideMenu);

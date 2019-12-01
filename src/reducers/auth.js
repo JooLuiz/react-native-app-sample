@@ -23,7 +23,6 @@ export const _retrieveData = async () => {
     const valor = await AsyncStorage.getItem("tokenRotaSegura");
     return valor;
   } catch (err) {
-    /*TODO*/
     return null;
   }
 };
