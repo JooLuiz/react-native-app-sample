@@ -1,22 +1,20 @@
 import React from "react";
 import { connect } from "react-redux";
 import { View, StyleSheet, FlatList, Text } from "react-native";
-import { getDenuncias } from "../actions/denuncias";
-import { getDenunciasUsuario } from "../actions/denunciasUsuario";
+import { getAllDenuncias } from "../actions/denunciasUsuario";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import EmptyList from "./common/EmptyList";
 import { List } from "react-native-paper";
 
-class MyDenunciasScreen extends React.Component {
+class DenunciasRecentesScreen extends React.Component {
   static navigationOptions = {
-    title: "Minhas Denúncias"
+    title: "Denúncias Recentes"
   };
 
   componentWillMount() {
-    this.props.getDenuncias();
-    this.props.getDenunciasUsuario();
+    this.props.getAllDenuncias();
     this.props.navigation.addListener("willFocus", () => {
-      if (this.props.isAuthenticated) this.props.getDenunciasUsuario();
+      if (this.props.isAuthenticated) this.props.getAllDenuncias();
     });
   }
 
@@ -24,27 +22,26 @@ class MyDenunciasScreen extends React.Component {
     return (
       <View style={styles.container}>
         <FlatList
-          data={this.props.denunciasUsuario}
+          data={this.props.allDenuncias.filter(t => {
+            var today = new Date();
+            var days = 86400000; //number of milliseconds in a day
+            var fiveDaysAgo = new Date(today - days / 2);
+            var dateTimeT = new Date(t.data_hora);
+            if (dateTimeT > fiveDaysAgo) return t;
+          })}
           ListEmptyComponent={
             <EmptyList text="Você ainda não possui nenhuma denuncia cadastrada" />
           }
           renderItem={({ item }) => (
             <View>
               <List.Item
-                title={
-                  this.props.denuncias.filter(d => d.id == item.denuncia)[0]
-                    .descricao
-                }
+                title={item.denuncia.descricao}
                 description={item.comentario}
                 left={() => (
                   <List.Icon
                     icon={() => (
                       <FontAwesomeIcon
-                        icon={
-                          this.props.denuncias.filter(
-                            d => d.id == item.denuncia
-                          )[0].icone
-                        }
+                        icon={item.denuncia.icone}
                         color={"black"}
                         size={30}
                       />
@@ -67,8 +64,7 @@ class MyDenunciasScreen extends React.Component {
 
 const mapStateToProps = state => ({
   isAuthenticated: state.auth.isAuthenticated,
-  denunciasUsuario: state.denunciasUsuario.denunciasUsuario,
-  denuncias: state.denuncias.denuncias
+  allDenuncias: state.denunciasUsuario.allDenuncias
 });
 
 const styles = StyleSheet.create({
@@ -78,6 +74,6 @@ const styles = StyleSheet.create({
   }
 });
 
-export default connect(mapStateToProps, { getDenuncias, getDenunciasUsuario })(
-  MyDenunciasScreen
+export default connect(mapStateToProps, { getAllDenuncias })(
+  DenunciasRecentesScreen
 );

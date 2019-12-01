@@ -12,17 +12,22 @@ import SideMenu from "./components/SideMenu";
 import { createStackNavigator, createDrawerNavigator } from "react-navigation";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
 import CameraScreen from "./components/CameraScreen";
+import DenunciasRecentesScreen from "./components/DenunciasRecentesScreen";
 
 const BottomNavigator = createStackNavigator(
   {
     Mapa: { screen: HomeScreen, title: "Mapa" },
     Profile: { screen: ProfileScreen, title: "Perfil" },
-    TipoDenuncia: { screen: TipoDenunciaScreen, title: "TipoDenuncia" },
-    Denuncia: { screen: DenunciaScreen, title: "Denuncia" },
-    DenunciasUsuario: { screen: DenunciasUsuarioScreen, title: "Denuncia" },
+    TipoDenuncia: { screen: TipoDenunciaScreen, title: "Tipo de Denúncia" },
+    Denuncia: { screen: DenunciaScreen, title: "Denúncia" },
+    DenunciasUsuario: { screen: DenunciasUsuarioScreen, title: "Denúncia" },
     Camera: { screen: CameraScreen, title: "Camera" },
     MeusLocais: { screen: MyPlacesScreen, title: "Meus Locais" },
-    MinhasDenuncias: { screen: MyDenunciasScreen, title: "Minhas Denuncias" },
+    MinhasDenuncias: { screen: MyDenunciasScreen, title: "Minhas Denúncias" },
+    DenunciasRecentes: {
+      screen: DenunciasRecentesScreen,
+      title: "Denúncias Recentes"
+    },
     AddEnderecoScreen: {
       screen: AddEnderecoScreen,
       title: "Adicionar Endereco"
