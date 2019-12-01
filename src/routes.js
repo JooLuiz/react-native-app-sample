@@ -13,6 +13,8 @@ import { createStackNavigator, createDrawerNavigator } from "react-navigation";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
 import CameraScreen from "./components/CameraScreen";
 import DenunciasRecentesScreen from "./components/DenunciasRecentesScreen";
+import ProfileCameraScreen from "./components/ProfileCameraScreen";
+import BackgroundCameraScreen from "./components/BackgroundCameraScreen";
 
 const BottomNavigator = createStackNavigator(
   {
@@ -22,6 +24,8 @@ const BottomNavigator = createStackNavigator(
     Denuncia: { screen: DenunciaScreen, title: "Denúncia" },
     DenunciasUsuario: { screen: DenunciasUsuarioScreen, title: "Denúncia" },
     Camera: { screen: CameraScreen, title: "Camera" },
+    FotoPerfil: { screen: ProfileCameraScreen, title: "Foto de Perfil" },
+    PlanoFundo: { screen: BackgroundCameraScreen, title: "Plano de Fundo" },
     MeusLocais: { screen: MyPlacesScreen, title: "Meus Locais" },
     MinhasDenuncias: { screen: MyDenunciasScreen, title: "Minhas Denúncias" },
     DenunciasRecentes: {

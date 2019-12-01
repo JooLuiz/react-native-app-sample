@@ -6,7 +6,8 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
+  ImageBackground
 } from "react-native";
 import BottomButtons from "./BottomButtons";
 import { logout } from "../actions/auth";
@@ -32,13 +33,15 @@ class ProfileScreen extends React.Component {
     return (
       <View style={styles.container}>
         <ScrollView>
-          <View style={styles.profile}>
+          <ImageBackground
+            source={{ uri: this.props.user.background }}
+            style={styles.profile}
+          >
             <View style={styles.photo}>
               <Avatar.Image
                 size={150}
                 source={{
-                  uri:
-                    "https://scontent.fgru15-1.fna.fbcdn.net/v/t1.0-9/s960x960/77233593_2609047322513024_9044118965416099840_o.jpg?_nc_cat=102&_nc_oc=AQkMYH87w5PFrhO81gsFHb1aFowAJ58U4IF0gZdFwTblGpu4cMFxNqz7WihC73mck8Y&_nc_ht=scontent.fgru15-1.fna&oh=fe3ed9d57bd1bef277e9e08c8a179e94&oe=5E6474CF"
+                  uri: this.props.user.avatar
                 }}
               />
             </View>
@@ -47,18 +50,19 @@ class ProfileScreen extends React.Component {
                 style={{
                   fontWeight: "bold",
                   fontStyle: "italic",
-                  fontSize: 25
+                  fontSize: 25,
+                  color: "white"
                 }}
               >
                 {this.props.user && this.props.user.username
                   ? this.props.user.username
                   : null}
               </Text>
-              <Text>
+              <Text style={{ color: "white" }}>
                 {this.props.denunciasUsuario.length} denúncias realizadas
               </Text>
             </View>
-          </View>
+          </ImageBackground>
 
           <View style={styles.options}>
             <TouchableOpacity onPress={this.navigateToScreen("MeusLocais")}>
@@ -73,12 +77,21 @@ class ProfileScreen extends React.Component {
             </TouchableOpacity>
           </View>
           <View style={styles.options}>
+            <TouchableOpacity onPress={this.navigateToScreen("FotoPerfil")}>
+              <Text>Mudar Foto de Perfil</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.options}>
+            <TouchableOpacity onPress={this.navigateToScreen("PlanoFundo")}>
+              <Text>Mudar Plano de Fundo</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.options}>
             <TouchableOpacity onPress={this.logout.bind(this)}>
               <Text style={{}}>Logout</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
-        <BottomButtons navigation={this.props.navigation} />
       </View>
     );
   }

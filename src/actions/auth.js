@@ -48,6 +48,7 @@ export const login = payload => dispatch => {
   axios
     .post(`/auth/login`, payload)
     .then(response => {
+      console.warn(response.data);
       const config = { headers: { "Content-type": "application/json" } };
       if (response.data.token)
         config.headers["Authorization"] = `Token ${response.data.token}`;
@@ -209,6 +210,62 @@ export const logout = () => (dispatch, getState) => {
           }
         });
       }
+    });
+};
+
+export const editUser = (user, imagem, type) => (dispatch, getState) => {
+  //user loading
+  dispatch({ type: LOADING });
+  dispatch({ type: USER_LOADING });
+
+  tokenConfig(getState)
+    .then(function(config) {
+      const userData = new FormData();
+
+      userData.append("avatar", {
+        uri: imagem && type == "avatar" ? imagem.uri : user.avatar,
+        type: "image/jpeg",
+        name: `${user.cpf}_avatar.jpg`
+      });
+      userData.append("background", {
+        uri: imagem && type == "background" ? imagem.uri : user.background,
+        type: "image/jpeg",
+        name: `${user.cpf}_background.jpg`
+      });
+
+      userData.append("username", user.username);
+      userData.append("email", user.email);
+      userData.append("password", user.password);
+      userData.append("cpf", user.cpf);
+
+      axios
+        .put("/auth/user/edit/", userData, config)
+        .then(res => {
+          dispatch({
+            type: NOTIFY,
+            payload: {
+              message: "Usuário Alterado com Sucesso",
+              type: "success"
+            }
+          });
+          dispatch({
+            type: USER_LOADED,
+            payload: res.data
+          });
+        })
+        .catch(() => {
+          dispatch({
+            type: NOTIFY,
+            payload: {
+              message: "Não foi possível conectar com o servidor.",
+              type: "error"
+            }
+          });
+        });
+    })
+    .catch(() => dispatch({ type: LOADED }))
+    .finally(t => {
+      dispatch({ type: LOADED });
     });
 };
 

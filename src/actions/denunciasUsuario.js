@@ -43,7 +43,7 @@ export const getDenunciasUsuario = () => (dispatch, getState) => {
 };
 
 //GET ALL Denuncia Usuario
-export const getAllDenuncias = () => (dispatch, getState) => {
+export const getAllDenuncias = () => dispatch => {
   dispatch({ type: LOADING });
   axios
     .get("/all_denuncias/")
@@ -53,9 +53,17 @@ export const getAllDenuncias = () => (dispatch, getState) => {
         payload: res.data
       });
     })
-    .catch(err =>
-      dispatch(returnErrors(err.response.data, err.response.status))
-    )
+    .catch(err => {
+      if (err.response.status >= 500) {
+        dispatch({
+          type: NOTIFY,
+          payload: {
+            message: "Não foi possível conectar com o servidor.",
+            type: "error"
+          }
+        });
+      }
+    })
     .finally(t => {
       dispatch({ type: LOADED });
     });
