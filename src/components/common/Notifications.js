@@ -25,24 +25,25 @@ class Notifications extends Component {
           setTimeout(() => this.props.changeVisibility(false), 3000)
         }
       >
-        <View
-          style={[
-            styles.modalOutiseView,
-            {
-              backgroundColor:
+        <View style={ styles.modalOutiseView }>
+          <View style={
+              {
+              borderWidth: 4,
+              borderTopLeftRadius: 5,
+              borderBottomLeftRadius: 5,
+              borderColor:
                 this.props.type == "success"
                   ? "#008c0c"
                   : this.props.type == "error"
-                  ? "#8c0000"
+                  ? "#F90707"
                   : "#040012"
-            }
-          ]}
-        >
+            }}
+          />
           <View>
             <TouchableOpacity
               style={{
-                top: Dimensions.get("window").height * 0.02,
-                left: Dimensions.get("window").width * 0.88,
+                top: Dimensions.get("window").height * 0.01,
+                left: Dimensions.get("window").width * 0.85,
                 height: Dimensions.get("window").height * 0.02
               }}
               onPress={() => {
@@ -51,8 +52,8 @@ class Notifications extends Component {
             >
               <FontAwesomeIcon
                 icon={"times-circle"}
-                color={"white"}
-                size={22}
+                color={"black"}
+                size={18}
               />
             </TouchableOpacity>
             <Text style={styles.modalTitle}>{this.props.message}</Text>
@@ -65,20 +66,28 @@ class Notifications extends Component {
 
 const styles = StyleSheet.create({
   modalOutiseView: {
-    width: Dimensions.get("window").width,
-    height: Dimensions.get("window").width * 0.3,
-    alignContent: "center",
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    top: 10,
+    width: Dimensions.get("window").width * 0.95,
+    height: Dimensions.get("window").width * 0.2,
+    alignContent: "stretch",
     alignSelf: "center",
-    borderRadius: 7,
-    borderColor: "gray",
-    borderWidth: 1,
-    borderTopWidth: 0
+    justifyContent: 'flex-start',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 12,
+    },
+    shadowOpacity: 0.58,
+    shadowRadius: 16.00,
+    elevation: 24,
+    borderRadius: 5 
   },
   modalTitle: {
-    top: Dimensions.get("window").width * 0.1,
-    alignSelf: "center",
-    color: "white",
-    fontSize: 20
+    left: 5,
+    color: "black",
+    fontSize: 15
   }
 });
 

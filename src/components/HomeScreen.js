@@ -202,6 +202,7 @@ class HomeScreen extends React.Component {
         <Searchbar
           style={styles.searchInput}
           icon={() => <FontAwesomeIcon icon="search" size={20} color="gray" />}
+          clearIcon={() => <FontAwesomeIcon icon="backspace" size={20} color="gray" />}
           placeholder="Pesquisar Local"
           onChangeText={text => this.setState({ text })}
           value={this.state.text}
