@@ -259,11 +259,14 @@ class DenunciasUsuarioScreen extends React.Component {
                 is24Hour={true}
                 value={this.state.dateValue}
                 onChange={(event, value) => {
-                  console.warn(value);
-                  this.setState({
-                    dateValue: value,
-                    datePickerVisible: false
-                  });
+                  if (event.type == "set") {
+                    this.setState({
+                      dateValue: value,
+                      datePickerVisible: false
+                    });
+                  } else {
+                    this.setState({ datePickerVisible: false });
+                  }
                 }}
               />
             )}
@@ -274,11 +277,14 @@ class DenunciasUsuarioScreen extends React.Component {
                 is24Hour={true}
                 value={this.state.timeValue}
                 onChange={(event, value) => {
-                  console.warn(value);
-                  this.setState({
-                    timeValue: value,
-                    timePickerVisible: false
-                  });
+                  if (event.type == "set") {
+                    this.setState({
+                      timeValue: value,
+                      timePickerVisible: false
+                    });
+                  } else {
+                    this.setState({ datePickerVisible: false });
+                  }
                 }}
               />
             )}
