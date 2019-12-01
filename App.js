@@ -113,10 +113,10 @@ export default class App extends React.Component {
     axios.defaults.baseURL = "http://e7762a89.ngrok.io/api";
     axios.defaults.timeout = 1500;
     store.dispatch(notify("Bem Vindo ao RotaSegura App", "neutral"));
+    store.dispatch(getAllDenuncias());
     store.dispatch(loadUser());
     store.dispatch(getTipoDenuncias());
     store.dispatch(getDenuncias());
-    store.dispatch(getAllDenuncias());
     store.dispatch(getDenunciasUsuario());
     store.dispatch(getEnderecoUsuario());
     this.requestLocalionPermission();

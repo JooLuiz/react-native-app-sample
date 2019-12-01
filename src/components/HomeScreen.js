@@ -152,25 +152,38 @@ class HomeScreen extends React.Component {
   showDenunciasMarker() {
     var markers = [];
     if (this.props.allDenuncias != null) {
-      this.props.allDenuncias.forEach(function(item, index) {
+      var today = new Date();
+      var days = 86400000; //number of milliseconds in a day
+      var fiveDaysAgo = new Date(today - 5 * days);
+      this.props.allDenuncias.forEach((item, index) => {
+        var itemDate = new Date(
+          item.data_hora.split("T")[0].split("-")[0],
+          item.data_hora.split("T")[0].split("-")[1],
+          item.data_hora.split("T")[0].split("-")[2],
+          item.data_hora.split("T")[1].split(":")[0],
+          item.data_hora.split("T")[1].split(":")[1]
+        );
+
         let denunciacoordinate = {
           latitude: parseFloat(item.latitude),
           longitude: parseFloat(item.longitude)
         };
-        markers[index] = (
-          <MapView.Marker
-            key={index}
-            coordinate={denunciacoordinate}
-            title={item.denuncia.descricao}
-            description={item.comentario}
-          >
-            <FontAwesomeIcon
-              icon={item.denuncia.icone}
-              color={"black"}
-              size={30}
-            />
-          </MapView.Marker>
-        );
+        if (itemDate > fiveDaysAgo) {
+          markers[index] = (
+            <MapView.Marker
+              key={index}
+              coordinate={denunciacoordinate}
+              title={item.denuncia.descricao}
+              description={item.comentario}
+            >
+              <FontAwesomeIcon
+                icon={item.denuncia.icone}
+                color={"black"}
+                size={30}
+              />
+            </MapView.Marker>
+          );
+        }
       });
     }
     return markers;
@@ -360,7 +373,6 @@ class HomeScreen extends React.Component {
           initialRegion={this.state.region}
           showsUserLocation={true}
           followUserLocation={true}
-          onRegionChange={this.onRegionChange.bind(this)}
           followsUserLocation={this.props.directionsCoords ? true : false}
           ref={ref => {
             this._map = ref;

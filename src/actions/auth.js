@@ -31,15 +31,13 @@ export const loadUser = () => (dispatch, getState) => {
             payload: res.data
           });
         })
-        .catch(error => {
+        .catch(() => {
           dispatch({
             type: AUTH_ERROR
           });
         });
     })
-    .catch(function(error) {
-      /*TODO*/
-    })
+    .catch(() => dispatch({ type: LOADED }))
     .finally(t => {
       dispatch({ type: LOADED });
     });
@@ -62,7 +60,36 @@ export const login = payload => dispatch => {
           });
         })
         .catch(err => {
-          //****TODO****
+          if (err.response.status >= 500) {
+            dispatch({
+              type: NOTIFY,
+              payload: {
+                message: "Não foi possível conectar com o servidor.",
+                type: "error"
+              }
+            });
+          }
+        })
+        .finally(() => {
+          axios
+            .get("/endereco_usuario/", config)
+            .then(res => {
+              dispatch({
+                type: GET_ENDERECO_USUARIO,
+                payload: res.data
+              });
+            })
+            .catch(err => {
+              if (err.response.status >= 500) {
+                dispatch({
+                  type: NOTIFY,
+                  payload: {
+                    message: "Não foi possível conectar com o servidor.",
+                    type: "error"
+                  }
+                });
+              }
+            });
         });
       dispatch({
         type: LOGIN_SUCCESS,
@@ -114,7 +141,7 @@ export const login = payload => dispatch => {
             }
           });
         }
-      } else if (error.response.status == 500 || error.response.status == 502) {
+      } else if (error.response.status >= 500) {
         dispatch({
           type: NOTIFY,
           payload: {
@@ -139,13 +166,12 @@ export const register = payload => dispatch => {
         payload: response.data
       });
     })
-    .catch(error => {
-      console.log(error.response);
+    .catch(() => {
       dispatch({
         type: REGISTER_FAIL
       });
     })
-    .finally(t => {
+    .finally(() => {
       dispatch({ type: LOADED });
     });
 };
@@ -161,9 +187,29 @@ export const logout = () => (dispatch, getState) => {
             payload: res.data
           });
         })
-        .catch(/*error => TODO*/);
+        .catch(err => {
+          if (err.response.status >= 500) {
+            dispatch({
+              type: NOTIFY,
+              payload: {
+                message: "Não foi possível conectar com o servidor.",
+                type: "error"
+              }
+            });
+          }
+        });
     })
-    .catch(/*error => TODO*/);
+    .catch(err => {
+      if (err.response.status >= 500) {
+        dispatch({
+          type: NOTIFY,
+          payload: {
+            message: "Não foi possível conectar com o servidor.",
+            type: "error"
+          }
+        });
+      }
+    });
 };
 
 export const tokenConfig = async getState => {

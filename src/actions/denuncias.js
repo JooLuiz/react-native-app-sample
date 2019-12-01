@@ -1,5 +1,11 @@
 import axios from "axios";
-import { GET_DENUNCIA, SET_CURRENT_DENUNCIA, LOADING, LOADED } from "./types";
+import {
+  GET_DENUNCIA,
+  SET_CURRENT_DENUNCIA,
+  LOADING,
+  LOADED,
+  NOTIFY
+} from "./types";
 import { tokenConfig } from "./auth";
 
 //GET  de Denuncia
@@ -15,9 +21,19 @@ export const getDenuncias = () => (dispatch, getState) => {
             payload: res.data
           });
         })
-        .catch(/*err => TODO*/);
+        .catch(err => {
+          if (err.response.status >= 500) {
+            dispatch({
+              type: NOTIFY,
+              payload: {
+                message: "Não foi possível conectar com o servidor.",
+                type: "error"
+              }
+            });
+          }
+        });
     })
-    .catch(/*err => TODO*/)
+    .catch(() => dispatch({ type: LOADED }))
     .finally(t => {
       dispatch({ type: LOADED });
     });
