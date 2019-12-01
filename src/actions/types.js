@@ -57,3 +57,11 @@ export const SET_PLACE_KIND = "SET_PLACE_KIND";
 export const CHANGE_VISIBILITY = "CHANGE_VISIBILITY";
 
 export const NOTIFY = "NOTIFY";
+
+export const SEND_IMAGENS_TO_SERVER = "SEND_IMAGENS_TO_SERVER";
+
+export const ADD_IMAGE = "ADD_IMAGE";
+
+export const REMOVE_IMAGEM = "REMOVE_IMAGEM";
+
+export const ADD_PATH = "ADD_PATH";

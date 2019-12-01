@@ -9,9 +9,7 @@ import {
 import {
   View,
   StyleSheet,
-  TextInput,
   Dimensions,
-  Text,
   TouchableOpacity,
   Share
 } from "react-native";
@@ -24,15 +22,24 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faArrowAltCircleLeft } from "@fortawesome/free-regular-svg-icons";
 import SearchedPlaceDetail from "./SearchedPlaceDetail";
 import TravelDetails from "./TravelDetails";
+import { Searchbar, FAB, Portal } from "react-native-paper";
+import { getDenuncias } from "../actions/denuncias";
+import { getEnderecoUsuario } from "../actions/enderecosUsuario";
+import {
+  getTipoDenuncias,
+  setCurrentTipoDenuncia
+} from "../actions/tipoDenuncias";
+import {} from "react-native-paper";
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
-    title: "Home"
+    header: null
   };
 
   state = {
     region: null,
-    text: null
+    text: null,
+    open: false
   };
 
   componentDidMount() {
@@ -48,6 +55,14 @@ class HomeScreen extends React.Component {
       },
       error => console.log(error.message)
     );
+    this.props.navigation.addListener("willFocus", () => {
+      this.props.getAllDenuncias();
+      if (this.props.isAuthenticated) {
+        this.props.getEnderecoUsuario();
+        this.props.getDenuncias();
+        this.props.getTipoDenuncias();
+      }
+    });
   }
 
   onRegionChange(region) {
@@ -137,25 +152,38 @@ class HomeScreen extends React.Component {
   showDenunciasMarker() {
     var markers = [];
     if (this.props.allDenuncias != null) {
-      this.props.allDenuncias.forEach(function(item, index) {
+      var today = new Date();
+      var days = 86400000; //number of milliseconds in a day
+      var fiveDaysAgo = new Date(today - 5 * days);
+      this.props.allDenuncias.forEach((item, index) => {
+        var itemDate = new Date(
+          item.data_hora.split("T")[0].split("-")[0],
+          item.data_hora.split("T")[0].split("-")[1],
+          item.data_hora.split("T")[0].split("-")[2],
+          item.data_hora.split("T")[1].split(":")[0],
+          item.data_hora.split("T")[1].split(":")[1]
+        );
+
         let denunciacoordinate = {
           latitude: parseFloat(item.latitude),
           longitude: parseFloat(item.longitude)
         };
-        markers[index] = (
-          <MapView.Marker
-            key={index}
-            coordinate={denunciacoordinate}
-            title={item.denuncia.descricao}
-            description={item.comentario}
-          >
-            <FontAwesomeIcon
-              icon={item.denuncia.icone}
-              color={"black"}
-              size={30}
-            />
-          </MapView.Marker>
-        );
+        if (itemDate > fiveDaysAgo) {
+          markers[index] = (
+            <MapView.Marker
+              key={index}
+              coordinate={denunciacoordinate}
+              title={item.denuncia.descricao}
+              description={item.comentario}
+            >
+              <FontAwesomeIcon
+                icon={item.denuncia.icone}
+                color={"black"}
+                size={30}
+              />
+            </MapView.Marker>
+          );
+        }
       });
     }
     return markers;
@@ -184,8 +212,9 @@ class HomeScreen extends React.Component {
   searchInput() {
     return !this.props.searchedPlace && !this.props.directionsCoords ? (
       <View style={styles.searchInputView}>
-        <TextInput
+        <Searchbar
           style={styles.searchInput}
+          icon={() => <FontAwesomeIcon icon="search" size={20} color="gray" />}
           placeholder="Pesquisar Local"
           onChangeText={text => this.setState({ text })}
           value={this.state.text}
@@ -198,22 +227,62 @@ class HomeScreen extends React.Component {
     ) : null;
   }
 
+  setTipoDenunciaAndGo(tipoDenuncia) {
+    this.props.setCurrentTipoDenuncia(tipoDenuncia);
+    this.props.navigation.navigate("Denuncia");
+  }
+
   denunciaButton() {
     return this.props.isAuthenticated ? (
-      <View style={[styles.defaultBottomButton, styles.denunciaBottomButtom]}>
-        <TouchableOpacity
-          onPress={() => {
-            this.props.navigation.navigate("TipoDenuncia");
-          }}
-        >
-          <View style={[{ backgroundColor: "#3B4859" }, styles.circle]}>
-            <FontAwesomeIcon
-              icon="exclamation-triangle"
-              color={"white"}
-              size={25}
-            />
-          </View>
-        </TouchableOpacity>
+      <View>
+        <Portal>
+          <FAB.Group
+            ref={ref => {
+              this._fab = ref;
+            }}
+            style={{
+              paddingBottom: Dimensions.get("window").height * 0.1,
+              paddingRight: Dimensions.get("window").width * 0.02
+            }}
+            fabStyle={styles.red}
+            open={this.state.open}
+            visible={true}
+            icon={() =>
+              !this.state.open ? (
+                <FontAwesomeIcon
+                  icon="exclamation-triangle"
+                  color={"black"}
+                  size={25}
+                />
+              ) : (
+                <FontAwesomeIcon
+                  icon={"times-circle"}
+                  color={"black"}
+                  size={25}
+                />
+              )
+            }
+            actions={
+              this.props.tipoDenuncias
+                ? this.props.tipoDenuncias.map(item => {
+                    return {
+                      label: item.descricao,
+                      accessibilityLabel: item.descricao,
+                      icon: () => (
+                        <FontAwesomeIcon
+                          icon={item.icone}
+                          color={"black"}
+                          size={25}
+                        />
+                      ),
+                      onPress: () => this.setTipoDenunciaAndGo.call(this, item)
+                    };
+                  })
+                : []
+            }
+            onStateChange={({ open }) => this.setState({ open })}
+          />
+        </Portal>
       </View>
     ) : null;
   }
@@ -226,15 +295,14 @@ class HomeScreen extends React.Component {
             "Estou utilizando o RotaSegura App.\nVeja Minha Viagem.\nOrigem:" +
             this.props.origin.longName +
             ".\nDestino:" +
-            this.props.searchedPlace.longName +
-            "\nhttp://instagram.com/jooluizzz"
+            this.props.searchedPlace.longName
         },
         {
           dialogTitle: "RotaSegura App - Compartilhe sua Viagem"
         }
       );
     } catch (error) {
-      console.warn(error.message);
+      /*err => TODO*/
     }
   };
 
@@ -305,7 +373,6 @@ class HomeScreen extends React.Component {
           initialRegion={this.state.region}
           showsUserLocation={true}
           followUserLocation={true}
-          onRegionChange={this.onRegionChange.bind(this)}
           followsUserLocation={this.props.directionsCoords ? true : false}
           ref={ref => {
             this._map = ref;
@@ -332,6 +399,9 @@ class HomeScreen extends React.Component {
 //StyleSheet Styles
 
 const styles = StyleSheet.create({
+  red: {
+    backgroundColor: "#b50000"
+  },
   container: {
     position: "absolute",
     top: 0,
@@ -357,20 +427,16 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     height: Dimensions.get("window").height * 0.07,
-    width: Dimensions.get("window").width * 0.9,
-    borderColor: "gray",
-    borderWidth: 1,
-    backgroundColor: "white",
-    borderRadius: 7
+    width: Dimensions.get("window").width * 0.9
   },
   defaultBottomButton: {
     flex: 1,
     position: "absolute",
-    bottom: Dimensions.get("window").height * 0.13,
+    bottom: Dimensions.get("window").height * 0.125,
     zIndex: 2
   },
   denunciaBottomButtom: {
-    left: Dimensions.get("window").width * 0.07
+    right: Dimensions.get("window").width * 0.07
   },
   sharePlaceBottomButtom: {
     left: Dimensions.get("window").width * 0.3
@@ -379,14 +445,14 @@ const styles = StyleSheet.create({
     right: Dimensions.get("window").width * 0.3
   },
   directionsBottomButtom: {
-    right: Dimensions.get("window").width * 0.07
+    left: Dimensions.get("window").width * 0.07
   },
   circle: {
     flex: 2,
     alignItems: "center",
     justifyContent: "center",
-    height: Dimensions.get("window").width * 0.17,
-    width: Dimensions.get("window").width * 0.17,
+    height: Dimensions.get("window").width * 0.15,
+    width: Dimensions.get("window").width * 0.15,
     borderRadius: 400
   },
   flatListStyle: {
@@ -436,17 +502,19 @@ const mapStateToProps = state => ({
   directionsCoords: state.map.directionsCoords,
   directionsDetail: state.map.directionsDetail,
   directionsMessagePoints: state.map.directionsMessagePoints,
-  travellingMode: state.map.travellingMode
+  travellingMode: state.map.travellingMode,
+  tipoDenuncias: state.tipoDenuncias.tipoDenuncias
 });
 
-export default connect(
-  mapStateToProps,
-  {
-    getAllDenuncias,
-    getPlace,
-    cancelMapOperations,
-    setOrigin,
-    startDirections,
-    addEnderecoUsuario
-  }
-)(HomeScreen);
+export default connect(mapStateToProps, {
+  getAllDenuncias,
+  getPlace,
+  cancelMapOperations,
+  setOrigin,
+  startDirections,
+  addEnderecoUsuario,
+  getEnderecoUsuario,
+  getDenuncias,
+  getTipoDenuncias,
+  setCurrentTipoDenuncia
+})(HomeScreen);

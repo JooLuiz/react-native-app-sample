@@ -4,10 +4,13 @@ import {
   TouchableOpacity,
   View,
   Text,
-  TextInput,
-  StyleSheet
+  StyleSheet,
+  ScrollView
 } from "react-native";
+import { TextInput, HelperText } from "react-native-paper";
 import { login, register } from "../../actions/auth";
+import { getDenuncias } from "../../actions/denuncias";
+import { getEnderecoUsuario } from "../../actions/enderecosUsuario";
 
 class LoginOrCreateForm extends Component {
   state = {
@@ -45,17 +48,33 @@ class LoginOrCreateForm extends Component {
     } else {
       this.props.login(payload);
     }
+    this.props.navigation.navigate("Mapa");
   }
 
   renderEmailField() {
     if (this.props.create) {
       return (
         <View>
+          <HelperText
+            type="error"
+            visible={
+              (!this.state.email.includes("@") && this.state.email != "") ||
+              this.state.email == null ||
+              this.state.email == ""
+            }
+          >
+            {this.state.email == ""
+              ? "o campo E-mail é obrigatório!"
+              : "Endereço de e-mail é inválido!"}
+          </HelperText>
           <TextInput
-            placeholder="Email"
+            label="Email"
+            mode="outlined"
             autoCorrect={false}
+            autoCapitalize="none"
             onChangeText={this.onEmailChange.bind(this)}
             style={styles.inputs}
+            value={this.state.email}
           />
         </View>
       );
@@ -66,11 +85,19 @@ class LoginOrCreateForm extends Component {
     if (this.props.create) {
       return (
         <View>
+          <HelperText
+            type="error"
+            visible={this.state.cpf == null || this.state.cpf == ""}
+          >
+            o campo CPF é obrigatório!
+          </HelperText>
           <TextInput
-            placeholder="CPF"
+            label="CPF"
+            mode="outlined"
             autoCorrect={false}
             onChangeText={this.onCPFChange.bind(this)}
             style={styles.inputs}
+            value={this.state.cpf}
           />
         </View>
       );
@@ -81,9 +108,12 @@ class LoginOrCreateForm extends Component {
     const buttonText = this.props.create ? "Registrar" : "Login";
 
     return (
-      <TouchableOpacity activeOpacity={0.6} onPress={this.handleRequest.bind(this)}>
+      <TouchableOpacity
+        activeOpacity={0.6}
+        onPress={this.handleRequest.bind(this)}
+      >
         <View style={styles.button}>
-          <Text style={{ color: 'white' }}>{buttonText}</Text>
+          <Text style={{ color: "white" }}>{buttonText}</Text>
         </View>
       </TouchableOpacity>
     );
@@ -93,8 +123,12 @@ class LoginOrCreateForm extends Component {
     if (!this.props.create) {
       return (
         <View style={styles.register}>
-          <TouchableOpacity onPress={() => this.props.navigation.navigate("Register")}>
-            <Text style={{ color: 'white' }}>Ainda não possui cadastro? Clique aqui!</Text>
+          <TouchableOpacity
+            onPress={() => this.props.navigation.navigate("Register")}
+          >
+            <Text style={{ color: "white" }}>
+              Ainda não possui cadastro? Clique aqui!
+            </Text>
           </TouchableOpacity>
         </View>
       );
@@ -106,24 +140,40 @@ class LoginOrCreateForm extends Component {
       <View>
         <View>
           <View>
+            <HelperText
+              type="error"
+              visible={this.state.username == null || this.state.username == ""}
+            >
+              o campo Usuário é obrigatório!
+            </HelperText>
             <TextInput
-              placeholder="Nome de Usuário"
+              label="Usuário"
               autoCorrect={false}
+              mode="outlined"
               autoCapitalize="none"
               onChangeText={this.onUsernameChange.bind(this)}
               style={styles.inputs}
+              value={this.state.username}
             />
           </View>
           {this.renderEmailField()}
           {this.renderCPFField()}
           <View>
+            <HelperText
+              type="error"
+              visible={this.state.password == null || this.state.password == ""}
+            >
+              o campo Senha é obrigatório!
+            </HelperText>
             <TextInput
               secureTextEntry
-              placeholder="Senha"
+              label="Senha"
               autoCorrect={false}
               autoCapitalize="none"
+              mode="outlined"
               onChangeText={this.onPasswordChange.bind(this)}
               style={styles.inputs}
+              value={this.state.password}
             />
           </View>
         </View>
@@ -136,10 +186,7 @@ class LoginOrCreateForm extends Component {
 
 const styles = StyleSheet.create({
   inputs: {
-    backgroundColor: "lightgrey",
-    padding: 10,
-    marginBottom: 15,
-    borderRadius: 100
+    marginBottom: 15
   },
   button: {
     padding: 10,
@@ -151,12 +198,17 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowColor: "#000",
     shadowOffset: {
-	    width: 0,
-  	  height: 12,
+      width: 0,
+      height: 12
     },
-    shadowOpacity: 0.80,
-    shadowRadius: 16.00,
+    shadowOpacity: 0.8,
+    shadowRadius: 16.0,
     elevation: 24
+  },
+  container: {
+    justifyContent: "center",
+    marginTop: 0,
+    backgroundColor: "#ffffff"
   },
   register: {
     padding: 10,
@@ -168,7 +220,9 @@ const styles = StyleSheet.create({
   }
 });
 
-export default connect(
-  null,
-  { login, register }
-)(LoginOrCreateForm);
+export default connect(null, {
+  login,
+  register,
+  getDenuncias,
+  getEnderecoUsuario
+})(LoginOrCreateForm);

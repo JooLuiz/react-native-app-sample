@@ -15,9 +15,11 @@ import {
 } from "../actions/tipoDenuncias";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import EmptyList from "./common/EmptyList";
-import GoBackButton from "./common/GoBackButton";
 
 class TipoDenunciaScreen extends React.Component {
+  static navigationOptions = {
+    title: "Tipo de Denúncias"
+  };
   componentWillMount() {
     this.props.getTipoDenuncias();
   }
@@ -34,14 +36,13 @@ class TipoDenunciaScreen extends React.Component {
 
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <GoBackButton
-          navigation={this.props.navigation}
-          title="Tipo de Denúncia"
-        />
         <FlatList
           data={this.props.tipoDenuncias}
           ListEmptyComponent={
-            <EmptyList text="Ainda não existem Tipos de Denúncia Cadastradas." />
+            <EmptyList
+              text="Ainda não existem Tipos de Denúncia Cadastradas."
+              navigation={this.props.navigation}
+            />
           }
           renderItem={({ item }) => (
             <TouchableHighlight onPress={() => this.setTipoDenunciaAndGo(item)}>
@@ -100,7 +101,7 @@ const styles = StyleSheet.create({
   }
 });
 
-export default connect(
-  mapStateToProps,
-  { getTipoDenuncias, setCurrentTipoDenuncia }
-)(TipoDenunciaScreen);
+export default connect(mapStateToProps, {
+  getTipoDenuncias,
+  setCurrentTipoDenuncia
+})(TipoDenunciaScreen);

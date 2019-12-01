@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Dimensions
 } from "react-native";
+import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
 export class BottomButtons extends Component {
@@ -28,7 +29,11 @@ export class BottomButtons extends Component {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navigationButton}
-          onPress={() => this.props.navigation.navigate("Profile")}
+          onPress={() =>
+            this.props.isAuthenticated
+              ? this.props.navigation.navigate("Profile")
+              : this.props.navigation.navigate("Login")
+          }
         >
           <FontAwesomeIcon icon="user" color={"black"} size={20} />
           <Text style={{ color: "black" }}>Perfil</Text>
@@ -58,4 +63,8 @@ const styles = StyleSheet.create({
   }
 });
 
-export default BottomButtons;
+const mapStateToProps = state => ({
+  isAuthenticated: state.auth.isAuthenticated
+});
+
+export default connect(mapStateToProps, null)(BottomButtons);

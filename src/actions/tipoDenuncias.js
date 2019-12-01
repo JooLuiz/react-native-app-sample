@@ -3,7 +3,8 @@ import {
   GET_TIPO_DENUNCIA,
   SET_CURRENT_TIPO_DENUNCIA,
   LOADED,
-  LOADING
+  LOADING,
+  NOTIFY
 } from "./types";
 import { tokenConfig } from "./auth";
 
@@ -20,10 +21,20 @@ export const getTipoDenuncias = () => (dispatch, getState) => {
             payload: res.data
           });
         })
-        .catch(err => console.warn(err));
+        .catch(err => {
+          if (err.response.status >= 500) {
+            dispatch({
+              type: NOTIFY,
+              payload: {
+                message: "Não foi possível conectar com o servidor.",
+                type: "error"
+              }
+            });
+          }
+        });
     })
-    .catch(error => console.warn(error))
-    .finally(t => {
+    .catch(() => dispatch({ type: LOADED }))
+    .finally(() => {
       dispatch({ type: LOADED });
     });
 };

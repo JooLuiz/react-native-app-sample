@@ -4,6 +4,7 @@ import { createAppContainer } from "react-navigation";
 import AppNavigator from "./src/routes";
 import store from "./store";
 import { Provider } from "react-redux";
+import { Provider as PaperProvider } from "react-native-paper";
 import axios from "axios";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
@@ -33,7 +34,9 @@ import {
   faCarCrash,
   faTools,
   faRadiation,
-  faPaw
+  faPaw,
+  faSearch,
+  faTimesCircle
 } from "@fortawesome/free-solid-svg-icons";
 import { loadUser } from "./src/actions/auth";
 import {
@@ -42,6 +45,7 @@ import {
 } from "./src/actions/denunciasUsuario";
 import { getDenuncias } from "./src/actions/denuncias";
 import { getEnderecoUsuario } from "./src/actions/enderecosUsuario";
+import { getTipoDenuncias } from "./src/actions/tipoDenuncias";
 import Loader from "./src/components/common/Loader";
 import { notify } from "./src/actions/notifications";
 import Notifications from "./src/components/common/Notifications";
@@ -74,7 +78,9 @@ library.add(
   faCarCrash,
   faTools,
   faRadiation,
-  faPaw
+  faPaw,
+  faSearch,
+  faTimesCircle
 );
 
 const AppContainer = createAppContainer(AppNavigator);
@@ -99,17 +105,18 @@ export default class App extends React.Component {
         console.log("Acesso negado");
       }
     } catch (err) {
-      console.warn(err);
+      /*TODO*/
     }
   }
 
   componentWillMount() {
-    axios.defaults.baseURL = "http://6446f880.ngrok.io/api";
+    axios.defaults.baseURL = "http://e7762a89.ngrok.io/api";
     axios.defaults.timeout = 1500;
     store.dispatch(notify("Bem Vindo ao RotaSegura App", "neutral"));
-    store.dispatch(loadUser());
-    store.dispatch(getDenuncias());
     store.dispatch(getAllDenuncias());
+    store.dispatch(loadUser());
+    store.dispatch(getTipoDenuncias());
+    store.dispatch(getDenuncias());
     store.dispatch(getDenunciasUsuario());
     store.dispatch(getEnderecoUsuario());
     this.requestLocalionPermission();
@@ -117,11 +124,13 @@ export default class App extends React.Component {
 
   render() {
     return (
-      <Provider store={store}>
-        <Loader />
-        <Notifications />
-        <AppContainer />
-      </Provider>
+      <PaperProvider>
+        <Provider store={store}>
+          <Loader />
+          <Notifications />
+          <AppContainer />
+        </Provider>
+      </PaperProvider>
     );
   }
 }

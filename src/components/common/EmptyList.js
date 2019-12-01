@@ -1,13 +1,26 @@
-import React, { Component } from "react";
+import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { StyleSheet, View, Dimensions, Text } from "react-native";
+import { StyleSheet, View, Dimensions, Text, Button } from "react-native";
 
 export default class EmptyList extends React.Component {
   render() {
     return (
       <View style={styles.emptyItem}>
         <FontAwesomeIcon icon="frown" size={150} />
-        <Text>{this.props.text}</Text>
+        <Text
+          style={{
+            alignSelf: "center",
+            textAlign: "center",
+            width: Dimensions.get("window").width * 0.6
+          }}
+        >
+          {this.props.text}
+        </Text>
+        <Button
+          style={{ width: Dimensions.get("window").width * 0.6 }}
+          onPress={() => this.props.navigation.goBack()}
+          title="Voltar"
+        ></Button>
       </View>
     );
   }

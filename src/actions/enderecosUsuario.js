@@ -23,9 +23,19 @@ export const getEnderecoUsuario = () => (dispatch, getState) => {
             payload: res.data
           });
         })
-        .catch(err => console.warn(err));
+        .catch(err => {
+          if (err.response.status >= 500) {
+            dispatch({
+              type: NOTIFY,
+              payload: {
+                message: "Não foi possível conectar com o servidor.",
+                type: "error"
+              }
+            });
+          }
+        });
     })
-    .catch(err => console.warn(err.message))
+    .catch(() => dispatch({ type: LOADED }))
     .finally(t => {
       dispatch({ type: LOADED });
     });
@@ -35,36 +45,28 @@ export const getEnderecoUsuario = () => (dispatch, getState) => {
 
 export const addEnderecoUsuario = EnderecoUsuario => (dispatch, getState) => {
   dispatch({ type: LOADING });
-  tokenConfig(getState).then(function(config) {
-    axios
-      .post("/endereco_usuario/", EnderecoUsuario, config)
-      .then(res => {
-        dispatch({
-          type: ADD_ENDERECO_USUARIO,
-          payload: res.data
-        });
-        dispatch({
-          type: NOTIFY,
-          payload: {
-            message: "Local Cadastrado Com Sucesso",
-            type: "success"
-          }
-        });
-      })
-      .catch(err =>
-        dispatch({
-          type: NOTIFY,
-          payload: {
-            message:
-              "Ops, Algo errado Aconteceu,não foi possível concluir a ação",
-            type: "error"
-          }
+  tokenConfig(getState)
+    .then(function(config) {
+      axios
+        .post("/endereco_usuario/", EnderecoUsuario, config)
+        .then(res => {
+          dispatch({
+            type: ADD_ENDERECO_USUARIO,
+            payload: res.data
+          });
+          dispatch({
+            type: NOTIFY,
+            payload: {
+              message: "Local cadastrado com sucesso",
+              type: "success"
+            }
+          });
         })
-      )
-      .finally(t => {
-        dispatch({ type: LOADED });
-      });
-  });
+        .finally(t => {
+          dispatch({ type: LOADED });
+        });
+    })
+    .catch(() => dispatch({ type: LOADED }));
 };
 
 export const setCurrentEnderecoUsuario = denuncia => dispatch => {
