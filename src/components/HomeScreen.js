@@ -30,6 +30,7 @@ import {
   setCurrentTipoDenuncia
 } from "../actions/tipoDenuncias";
 import {} from "react-native-paper";
+import { loading, loaded } from "../actions/loader";
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -43,6 +44,7 @@ class HomeScreen extends React.Component {
   };
 
   componentDidMount() {
+    this.props.loading();
     Geolocation.getCurrentPosition(
       position => {
         let region = {
@@ -55,13 +57,16 @@ class HomeScreen extends React.Component {
       },
       error => console.log(error.message)
     );
+    this.props.loaded();
     this.props.navigation.addListener("willFocus", () => {
+      this.props.loading();
       this.props.getAllDenuncias();
       if (this.props.isAuthenticated) {
         this.props.getEnderecoUsuario();
         this.props.getDenuncias();
         this.props.getTipoDenuncias();
       }
+      this.props.loaded();
     });
   }
 
@@ -100,13 +105,17 @@ class HomeScreen extends React.Component {
   }
 
   getPlaceFromCoordinates(coords) {
+    this.props.loading();
     this.props.getPlace(coords, "coordinates");
     this.props.setOrigin();
+    this.props.loaded();
   }
 
   getPlaceFromName(name) {
+    this.props.loading();
     this.props.getPlace(name, "address");
     this.props.setOrigin();
+    this.props.loaded();
   }
 
   //Functions that effect the screen
@@ -516,5 +525,7 @@ export default connect(mapStateToProps, {
   getEnderecoUsuario,
   getDenuncias,
   getTipoDenuncias,
-  setCurrentTipoDenuncia
+  setCurrentTipoDenuncia,
+  loading,
+  loaded
 })(HomeScreen);
