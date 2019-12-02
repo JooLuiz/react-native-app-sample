@@ -9,9 +9,9 @@ import {
   ScrollView,
   Dimensions
 } from "react-native";
-import GoBackButton from "./common/GoBackButton";
 import { RNCamera } from "react-native-camera";
 import { addImagem, addPaths } from "../actions/imagens";
+import { loading, loaded } from "../actions/loader";
 
 const windowWidth = Dimensions.get("window").width;
 var IMAGES_PER_ROW = 3;
@@ -56,9 +56,11 @@ class CameraScreen extends Component {
         quality: 0.5,
         base64: true
       };
+      this.props.loading();
       const data = await this.camera.takePictureAsync(options);
       this.props.addImagem(data);
       this.props.addPaths({ uri: data.uri });
+      this.props.loaded();
     }
   };
 
@@ -156,5 +158,7 @@ const mapStateToProps = state => ({
 
 export default connect(mapStateToProps, {
   addImagem,
-  addPaths
+  addPaths,
+  loading,
+  loaded
 })(CameraScreen);

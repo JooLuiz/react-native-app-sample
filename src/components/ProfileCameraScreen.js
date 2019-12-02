@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { RNCamera } from "react-native-camera";
 import { editUser } from "../actions/auth";
+import { loading, loaded } from "../actions/loader";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -52,8 +53,10 @@ class ProfileCameraScreen extends Component {
         quality: 0.5,
         base64: true
       };
+      this.props.loading();
       const data = await this.camera.takePictureAsync(options);
       this.setState({ imagem: data });
+      this.props.loaded();
     }
   };
 
@@ -174,4 +177,6 @@ const mapStateToProps = state => ({
   user: state.auth.user
 });
 
-export default connect(mapStateToProps, { editUser })(ProfileCameraScreen);
+export default connect(mapStateToProps, { editUser, loading, loaded })(
+  ProfileCameraScreen
+);
