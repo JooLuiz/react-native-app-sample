@@ -38,7 +38,13 @@ import {
   faSearch,
   faTimesCircle,
   faSignOutAlt,
-  faBackspace
+  faBackspace,
+  faUserCircle,
+  faImages,
+  faCar,
+  faBus,
+  faBicycle,
+  faWalking
 } from "@fortawesome/free-solid-svg-icons";
 import { loadUser } from "./src/actions/auth";
 import {
@@ -84,7 +90,13 @@ library.add(
   faSearch,
   faTimesCircle,
   faSignOutAlt,
-  faBackspace
+  faBackspace,
+  faUserCircle,
+  faImages,
+  faCar,
+  faBus,
+  faBicycle,
+  faWalking
 );
 
 const AppContainer = createAppContainer(AppNavigator);
@@ -114,7 +126,7 @@ export default class App extends React.Component {
   }
 
   componentWillMount() {
-    axios.defaults.baseURL = "http://366162b4.ngrok.io/api";
+    axios.defaults.baseURL = "http://137120ed.ngrok.io/api";
     axios.defaults.timeout = 1500;
     store.dispatch(notify("Bem Vindo ao RotaSegura App", "neutral"));
     store.dispatch(getAllDenuncias());

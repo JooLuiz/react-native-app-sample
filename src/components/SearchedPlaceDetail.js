@@ -9,7 +9,9 @@ import {
   Modal,
   TextInput
 } from "react-native";
+import { Chip } from 'react-native-paper';
 import { setOrigin, setTravellingMode, getPlace } from "../actions/map";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
 class SearchedPlaceDetail extends React.Component {
   state = {
@@ -21,54 +23,34 @@ class SearchedPlaceDetail extends React.Component {
   showTravellingOptions() {
     return (
       <View style={styles.travellingModeView}>
-        <TouchableOpacity
-          style={[
-            styles.buttonContainer,
-            {
-              backgroundColor:
-                this.props.travellingMode === "driving" ? "grey" : "white"
-            }
-          ]}
+        <Chip
+          icon={() => <FontAwesomeIcon icon="car" />}
+          selected={this.props.travellingMode === "driving" ? true : false}
           onPress={() => this.props.setTravellingMode("driving")}
         >
-          <Text>Dirigindo</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.buttonContainer,
-            {
-              backgroundColor:
-                this.props.travellingMode === "transit" ? "grey" : "white"
-            }
-          ]}
+          Dirigindo
+        </Chip>
+        <Chip
+          icon={() => <FontAwesomeIcon icon="bus" />}
+          selected={this.props.travellingMode === "transit" ? true : false}
           onPress={() => this.props.setTravellingMode("transit")}
         >
-          <Text>Transporte Público</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.buttonContainer,
-            {
-              backgroundColor:
-                this.props.travellingMode === "bicycling" ? "grey" : "white"
-            }
-          ]}
+          Público
+        </Chip>
+        <Chip
+          icon={() => <FontAwesomeIcon icon="bicycle" />}
+          selected={this.props.travellingMode === "bicycling" ? true : false}
           onPress={() => this.props.setTravellingMode("bicycling")}
         >
-          <Text>Bicicleta</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.buttonContainer,
-            {
-              backgroundColor:
-                this.props.travellingMode === "walking" ? "grey" : "white"
-            }
-          ]}
+          Bike
+        </Chip>
+        <Chip
+          icon={() => <FontAwesomeIcon icon="walking" />}
+          selected={this.props.travellingMode === "walking" ? true : false}
           onPress={() => this.props.setTravellingMode("walking")}
         >
-          <Text>Andando</Text>
-        </TouchableOpacity>
+          Andando
+        </Chip>
       </View>
     );
   }

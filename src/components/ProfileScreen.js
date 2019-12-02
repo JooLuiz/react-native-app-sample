@@ -5,7 +5,6 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
   ScrollView,
   ImageBackground
 } from "react-native";
@@ -80,16 +79,20 @@ class ProfileScreen extends React.Component {
                            />}
             onPress={this.navigateToScreen("MinhasDenuncias")}
           />
-          <View style={styles.options}>
-            <TouchableOpacity onPress={this.navigateToScreen("FotoPerfil")}>
-              <Text>Mudar Foto de Perfil</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.options}>
-            <TouchableOpacity onPress={this.navigateToScreen("PlanoFundo")}>
-              <Text>Mudar Plano de Fundo</Text>
-            </TouchableOpacity>
-          </View>
+          <List.Item
+            title="Mudar Foto de Perfil"
+            left={props => <List.Icon {...props} 
+                              icon={() => <FontAwesomeIcon icon="user-circle" size={28} />} 
+                           />}
+            onPress={this.navigateToScreen("FotoPerfil")}
+          />
+          <List.Item
+            title="Mudar Plano de fundo"
+            left={props => <List.Icon {...props} 
+                              icon={() => <FontAwesomeIcon icon="images" size={28} />} 
+                           />}
+            onPress={this.navigateToScreen("PlanoFundo")}
+          />
           <List.Item
             titleStyle={{ color: '#E61D1D' }}
             title="Logout"
@@ -104,8 +107,8 @@ class ProfileScreen extends React.Component {
                            />}
             onPress={this.logout.bind(this)}
           />
-          <BottomButtons navigation={this.props.navigation} />
         </ScrollView>
+        <BottomButtons navigation={this.props.navigation} />
       </View>
     );
   }
