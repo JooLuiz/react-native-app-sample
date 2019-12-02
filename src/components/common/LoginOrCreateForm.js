@@ -7,7 +7,7 @@ import {
   StyleSheet,
   ScrollView
 } from "react-native";
-import { TextInput, HelperText } from "react-native-paper";
+import { TextInput, HelperText, Button } from "react-native-paper";
 import { login, register } from "../../actions/auth";
 import { getDenuncias } from "../../actions/denuncias";
 import { getEnderecoUsuario } from "../../actions/enderecosUsuario";
@@ -64,12 +64,14 @@ class LoginOrCreateForm extends Component {
             }
           >
             {this.state.email == ""
-              ? "o campo E-mail é obrigatório!"
+              ? "O campo E-mail é obrigatório!"
               : "Endereço de e-mail é inválido!"}
           </HelperText>
           <TextInput
             label="Email"
             mode="outlined"
+            underlineColor={"#3A35CD"}
+            selectionColor={"#3A35CD"}
             autoCorrect={false}
             autoCapitalize="none"
             onChangeText={this.onEmailChange.bind(this)}
@@ -89,11 +91,13 @@ class LoginOrCreateForm extends Component {
             type="error"
             visible={this.state.cpf == null || this.state.cpf == ""}
           >
-            o campo CPF é obrigatório!
+            O campo CPF é obrigatório!
           </HelperText>
           <TextInput
             label="CPF"
             mode="outlined"
+            underlineColor={"#3A35CD"}
+            selectionColor={"#3A35CD"}
             autoCorrect={false}
             onChangeText={this.onCPFChange.bind(this)}
             style={styles.inputs}
@@ -108,29 +112,27 @@ class LoginOrCreateForm extends Component {
     const buttonText = this.props.create ? "Registrar" : "Login";
 
     return (
-      <TouchableOpacity
-        activeOpacity={0.6}
+      <Button
+        mode="contained"
         onPress={this.handleRequest.bind(this)}
+        color={'#3A35CD'}
       >
-        <View style={styles.button}>
-          <Text style={{ color: "white" }}>{buttonText}</Text>
-        </View>
-      </TouchableOpacity>
+        {buttonText}
+      </Button>
     );
   }
 
   renderCreateLink() {
     if (!this.props.create) {
       return (
-        <View style={styles.register}>
-          <TouchableOpacity
+          <Button
+            style={{ marginTop: 15 }}
+            color={'#2DAE42'}
+            mode="contained"
             onPress={() => this.props.navigation.navigate("Register")}
           >
-            <Text style={{ color: "white" }}>
-              Ainda não possui cadastro? Clique aqui!
-            </Text>
-          </TouchableOpacity>
-        </View>
+              Faça seu registro!
+          </Button>
       );
     }
   }
@@ -144,12 +146,14 @@ class LoginOrCreateForm extends Component {
               type="error"
               visible={this.state.username == null || this.state.username == ""}
             >
-              o campo Usuário é obrigatório!
+              O campo Usuário é obrigatório!
             </HelperText>
             <TextInput
               label="Usuário"
               autoCorrect={false}
               mode="outlined"
+              underlineColor={"#3A35CD"}
+              selectionColor={"#3A35CD"}
               autoCapitalize="none"
               onChangeText={this.onUsernameChange.bind(this)}
               style={styles.inputs}
@@ -163,11 +167,13 @@ class LoginOrCreateForm extends Component {
               type="error"
               visible={this.state.password == null || this.state.password == ""}
             >
-              o campo Senha é obrigatório!
+              O campo Senha é obrigatório!
             </HelperText>
             <TextInput
               secureTextEntry
               label="Senha"
+              underlineColor={"#3A35CD"}
+              selectionColor={"#3A35CD"}
               autoCorrect={false}
               autoCapitalize="none"
               mode="outlined"
@@ -188,35 +194,10 @@ const styles = StyleSheet.create({
   inputs: {
     marginBottom: 15
   },
-  button: {
-    padding: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 100,
-    marginBottom: 15,
-    backgroundColor: "#1b90e3",
-    shadowColor: "#000",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 12
-    },
-    shadowOpacity: 0.8,
-    shadowRadius: 16.0,
-    elevation: 24
-  },
   container: {
     justifyContent: "center",
     marginTop: 0,
     backgroundColor: "#ffffff"
-  },
-  register: {
-    padding: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 100,
-    marginBottom: 15,
-    backgroundColor: "#04B431"
   }
 });
 

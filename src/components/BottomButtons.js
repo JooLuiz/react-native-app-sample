@@ -44,14 +44,21 @@ export class BottomButtons extends Component {
 }
 const styles = StyleSheet.create({
   navigationBottomButtons: {
-    position: "absolute",
+    position: "relative",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     bottom: 0,
     backgroundColor: "#ffffff",
-    borderTopColor: "black",
-    borderTopWidth: 0.3
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 12,
+    },
+    shadowOpacity: 0.58,
+    shadowRadius: 16.00,
+    elevation: 24
+
   },
   navigationButton: {
     height: Dimensions.get("window").width * 0.17,

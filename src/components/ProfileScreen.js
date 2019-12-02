@@ -11,7 +11,8 @@ import {
 } from "react-native";
 import BottomButtons from "./BottomButtons";
 import { logout } from "../actions/auth";
-import { Avatar } from "react-native-paper";
+import { Avatar, List } from "react-native-paper"; 
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
 class ProfileScreen extends React.Component {
   static navigationOptions = {
@@ -63,19 +64,22 @@ class ProfileScreen extends React.Component {
               </Text>
             </View>
           </ImageBackground>
-
-          <View style={styles.options}>
-            <TouchableOpacity onPress={this.navigateToScreen("MeusLocais")}>
-              <Text>Meus Locais</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.options}>
-            <TouchableOpacity
-              onPress={this.navigateToScreen("MinhasDenuncias")}
-            >
-              <Text>Minhas Denúncias</Text>
-            </TouchableOpacity>
-          </View>
+          <List.Item
+            title="Meus Locais"
+            description="Cadastre os locais que você mais gosta!"
+            left={props => <List.Icon {...props} 
+                              icon={() => <FontAwesomeIcon icon="map-marker-alt" size={28} />} 
+                           />}
+            onPress={this.navigateToScreen("MeusLocais")}
+          />
+          <List.Item
+            title="Minhas Denúncias"
+            description="Consulte as denúncias que você já realizou"
+            left={props => <List.Icon {...props} 
+                              icon={() => <FontAwesomeIcon icon="exclamation-triangle" size={28} />} 
+                           />}
+            onPress={this.navigateToScreen("MinhasDenuncias")}
+          />
           <View style={styles.options}>
             <TouchableOpacity onPress={this.navigateToScreen("FotoPerfil")}>
               <Text>Mudar Foto de Perfil</Text>
@@ -86,11 +90,21 @@ class ProfileScreen extends React.Component {
               <Text>Mudar Plano de Fundo</Text>
             </TouchableOpacity>
           </View>
-          <View style={styles.options}>
-            <TouchableOpacity onPress={this.logout.bind(this)}>
-              <Text style={{}}>Logout</Text>
-            </TouchableOpacity>
-          </View>
+          <List.Item
+            titleStyle={{ color: '#E61D1D' }}
+            title="Logout"
+            descriptionStyle={{ color: '#FA6262' }}
+            description="Faça Logout do Rota Segura App"
+            left={props => <List.Icon {...props} 
+                              icon={() => <FontAwesomeIcon 
+                                            icon="sign-out-alt" 
+                                            color={'#E61D1D'} 
+                                            size={28} 
+                                          />} 
+                           />}
+            onPress={this.logout.bind(this)}
+          />
+          <BottomButtons navigation={this.props.navigation} />
         </ScrollView>
       </View>
     );
