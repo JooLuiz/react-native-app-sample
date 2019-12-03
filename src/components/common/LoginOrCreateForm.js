@@ -102,7 +102,7 @@ class LoginOrCreateForm extends Component {
           <TextInput
             label="Email"
             mode="outlined"
-            underlineColor={"#3A35CD"}
+            style={{ backgroundColor:"#3A35CD"}}
             selectionColor={"#3A35CD"}
             autoCorrect={false}
             autoCapitalize="none"
@@ -130,7 +130,7 @@ class LoginOrCreateForm extends Component {
           <TextInput
             label="CPF"
             mode="outlined"
-            underlineColor={"#3A35CD"}
+            style={{ backgroundColor:"#3A35CD"}}
             selectionColor={"#3A35CD"}
             autoCorrect={false}
             onChangeText={this.onCPFChange.bind(this)}
@@ -190,7 +190,7 @@ class LoginOrCreateForm extends Component {
               label="Usuário"
               autoCorrect={false}
               mode="outlined"
-              underlineColor={"#3A35CD"}
+              style={{ backgroundColor:"#3A35CD"}}
               selectionColor={"#3A35CD"}
               autoCapitalize="none"
               onChangeText={this.onUsernameChange.bind(this)}
@@ -214,7 +214,7 @@ class LoginOrCreateForm extends Component {
             <TextInput
               secureTextEntry
               label="Senha"
-              underlineColor={"#3A35CD"}
+              style={{ backgroundColor:"#3A35CD"}}
               selectionColor={"#3A35CD"}
               autoCorrect={false}
               autoCapitalize="none"

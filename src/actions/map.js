@@ -44,41 +44,46 @@ export const getPlace = (place, type = "address") => dispatch => {
 };
 
 export const setOrigin = (place, type) => dispatch => {
-  dispatch({ type: LOADING });
-  if (place) {
-    let address;
-    if (type === "address") {
-      address = place.replace(/ /g, "+");
-    } else if (type === "coordinates") {
-      address = place.latitude + "," + place.longitude;
-    }
-    googleGeocoding(address)
-      .then(function(res) {
-        dispatch({
-          type: SET_ORIGIN,
-          payload: {
-            origin: res
-          }
+  return new Promise((resolve, reject) => {
+    dispatch({ type: LOADING });
+    if (place) {
+      let address;
+      if (type === "address") {
+        address = place.replace(/ /g, "+");
+      } else if (type === "coordinates") {
+        address = place.latitude + "," + place.longitude;
+      }
+      googleGeocoding(address)
+        .then(function(res) {
+          resolve(res);
+          dispatch({
+            type: SET_ORIGIN,
+            payload: {
+              origin: res
+            }
+          });
+        })
+        .finally(t => {
+          dispatch({ type: LOADED });
         });
-      })
-      .finally(t => {
+    } else {
+      Geolocation.getCurrentPosition(position => {
+        let address =
+          position.coords.latitude + "," + position.coords.longitude;
+        googleGeocoding(address).then(function(res) {
+          resolve(res);
+          dispatch({
+            type: SET_ORIGIN,
+            payload: {
+              origin: res
+            }
+          });
+        });
+      }).finally(t => {
         dispatch({ type: LOADED });
       });
-  } else {
-    Geolocation.getCurrentPosition(position => {
-      let address = position.coords.latitude + "," + position.coords.longitude;
-      googleGeocoding(address).then(function(res) {
-        dispatch({
-          type: SET_ORIGIN,
-          payload: {
-            origin: res
-          }
-        });
-      });
-    }).finally(t => {
-      dispatch({ type: LOADED });
-    });
-  }
+    }
+  });
 };
 
 export const googleGeocoding = async address => {

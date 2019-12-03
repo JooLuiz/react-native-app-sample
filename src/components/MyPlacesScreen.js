@@ -44,8 +44,9 @@ class MyPlacesScreen extends React.Component {
                     longitude: item.longitude
                   };
                   this.props.getPlace(coordinates, "coordinates");
-                  this.props.setOrigin();
-                  this.props.navigation.navigate("Mapa");
+                  this.props.setOrigin().then(() => {
+                    this.props.navigation.navigate("Mapa");
+                  });
                 }}
                 left={() => (
                   <List.Icon
