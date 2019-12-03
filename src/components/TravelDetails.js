@@ -11,43 +11,70 @@ class TravelDetails extends React.Component {
     this.watchID = Geolocation.watchPosition(
       position => {
         let { latitude, longitude } = position.coords;
-        let latitudeMinorRange = latitude - 0.000025;
-        let latitudeMajorRange = latitude + 0.000025;
-        let longitudeMinorRange = longitude - 0.000025;
-        let longitudeMajorRange = longitude + 0.000025;
-        console.warn("oi");
+        let latitudeMinorRange = latitude - 0.005525;
+        let latitudeMajorRange = latitude + 0.005525;
+        let longitudeMinorRange = longitude - 0.005525;
+        let longitudeMajorRange = longitude + 0.005525;
+        let abslatitudeMinorRange = Math.abs(latitudeMinorRange);
+        let abslatitudeMajorRange = Math.abs(latitudeMajorRange);
+        let abslongitudeMinorRange = Math.abs(longitudeMinorRange);
+        let abslongitudeMajorRange = Math.abs(longitudeMajorRange);
+
+        if (abslongitudeMajorRange < abslongitudeMinorRange) {
+          let aux = abslongitudeMinorRange;
+          abslongitudeMinorRange = abslongitudeMajorRange;
+          abslongitudeMajorRange = aux;
+        }
+
+        if (abslatitudeMajorRange < abslatitudeMinorRange) {
+          let aux = abslatitudeMinorRange;
+          abslatitudeMinorRange = abslatitudeMajorRange;
+          abslatitudeMajorRange = aux;
+        }
         if (this.props.directionsMessagePoints) {
-          console.warn("Cai Aqui 1");
           if (
-            this.props.directionsMessagePoints.steps[this.state.step + 1]
-              .start_location.lat >= latitudeMinorRange &&
-            this.props.directionsMessagePoints.steps[this.state.step + 1]
-              .start_location.lat <= latitudeMajorRange &&
-            this.props.directionsMessagePoints.steps[this.state.step + 1]
-              .start_location.lng >= longitudeMinorRange &&
-            this.props.directionsMessagePoints.steps[this.state.step + 1]
-              .start_location.lng <= longitudeMajorRange
+            Math.abs(
+              this.props.directionsMessagePoints.steps[this.state.step + 1]
+                .start_location.lat
+            ) > abslatitudeMinorRange &&
+            Math.abs(
+              this.props.directionsMessagePoints.steps[this.state.step + 1]
+                .start_location.lat
+            ) < abslatitudeMajorRange &&
+            Math.abs(
+              this.props.directionsMessagePoints.steps[this.state.step + 1]
+                .start_location.lng
+            ) > abslongitudeMinorRange &&
+            Math.abs(
+              this.props.directionsMessagePoints.steps[this.state.step + 1]
+                .start_location.lng
+            ) < abslongitudeMajorRange
           ) {
-            console.warn("if 1");
             this.setState({
               step: this.state.step + 1
             });
           } else if (
-            this.props.directionsMessagePoints.steps[this.state.step]
-              .end_location.lat >= latitudeMinorRange &&
-            this.props.directionsMessagePoints.steps[this.state.step]
-              .end_location.lat <= latitudeMajorRange &&
-            this.props.directionsMessagePoints.steps[this.state.step]
-              .end_location.lng >= longitudeMinorRange &&
-            this.props.directionsMessagePoints.steps[this.state.step]
-              .end_location.lng <= longitudeMajorRange
+            Math.abs(
+              this.props.directionsMessagePoints.steps[this.state.step]
+                .end_location.lat
+            ) >= abslatitudeMinorRange &&
+            Math.abs(
+              this.props.directionsMessagePoints.steps[this.state.step]
+                .end_location.lat
+            ) <= abslatitudeMajorRange &&
+            Math.abs(
+              this.props.directionsMessagePoints.steps[this.state.step]
+                .end_location.lng
+            ) >= abslongitudeMinorRange &&
+            Math.abs(
+              this.props.directionsMessagePoints.steps[this.state.step]
+                .end_location.lng
+            ) <= abslongitudeMajorRange
           ) {
-            console.warn("if 2");
             this.setState({
               step: this.state.step + 1
             });
           } else {
-            console.warn("if 4.1");
             for (
               x = 0;
               x < this.props.directionsMessagePoints.steps.length;
@@ -55,15 +82,14 @@ class TravelDetails extends React.Component {
             ) {
               var element = this.props.directionsMessagePoints.steps[x];
               if (
-                element.start_location.lat >= latitudeMinorRange &&
-                element.start_location.lat <= latitudeMajorRange &&
-                element.start_location.lat >= longitudeMinorRange &&
-                element.start_location.lat <= longitudeMajorRange
+                Math.abs(element.start_location.lat) >= abslatitudeMinorRange &&
+                Math.abs(element.start_location.lat) <= abslatitudeMajorRange &&
+                Math.abs(element.start_location.lat) >=
+                  abslongitudeMinorRange &&
+                Math.abs(element.start_location.lat) <= abslongitudeMajorRange
               ) {
-                console.warn("if 4.2");
                 this.setState({ step: index });
               } else {
-                console.warn("if 4.3");
               }
             }
           }
@@ -150,7 +176,4 @@ const mapStateToProps = state => ({
   directionsMessagePoints: state.map.directionsMessagePoints
 });
 
-export default connect(
-  mapStateToProps,
-  null
-)(TravelDetails);
+export default connect(mapStateToProps, null)(TravelDetails);

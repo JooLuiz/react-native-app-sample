@@ -132,7 +132,8 @@ class HomeScreen extends React.Component {
                 origin: this.props.origin,
                 dest: this.props.searchedPlace
               },
-              this.props.travellingMode
+              this.props.travellingMode,
+              this.props.allDenuncias
             );
           }}
         >

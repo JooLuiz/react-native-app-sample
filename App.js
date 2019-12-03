@@ -44,7 +44,8 @@ import {
   faCar,
   faBus,
   faBicycle,
-  faWalking
+  faWalking,
+  faCamera
 } from "@fortawesome/free-solid-svg-icons";
 import { loadUser } from "./src/actions/auth";
 import {
@@ -96,7 +97,8 @@ library.add(
   faCar,
   faBus,
   faBicycle,
-  faWalking
+  faWalking,
+  faCamera
 );
 
 const AppContainer = createAppContainer(AppNavigator);

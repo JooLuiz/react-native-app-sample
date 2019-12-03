@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
   },
   addPlaceBottomButtom: {
     position: "absolute",
-    bottom: Dimensions.get("window").height * 0.015,
+    top: Dimensions.get("window").height * 0.77,
     right: Dimensions.get("window").width * 0.07
   },
   circle: {

@@ -20,11 +20,8 @@ export default function(state = initialState, action) {
     case REMOVE_IMAGEM:
       return {
         ...state,
-        imagens: [
-          ...state.imagens.filter(
-            i => i != action.payload || i.uri != action.payload
-          )
-        ]
+        imagens: state.imagens.filter(i => i.uri != action.payload),
+        paths: state.paths.filter(i => i != action.payload)
       };
     case ADD_IMAGE:
       return {
