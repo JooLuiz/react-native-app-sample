@@ -34,8 +34,14 @@ class DenunciasRecentesScreen extends React.Component {
               mesPraUsar = mes - 1;
             }
             var fiveDaysAgo = new Date(anoPraUsar, mesPraUsar, today.getDate());
-            var dateTimeT = new Date(t.data_hora);
-            if (dateTimeT < fiveDaysAgo) return t;
+            var itemDate = new Date(
+              t.data_hora.split("T")[0].split("-")[0],
+              t.data_hora.split("T")[0].split("-")[1],
+              t.data_hora.split("T")[0].split("-")[2],
+              t.data_hora.split("T")[1].split(":")[0],
+              t.data_hora.split("T")[1].split(":")[1]
+            );
+            if (itemDate.getTime() < fiveDaysAgo.getTime()) return t;
           })}
           ListEmptyComponent={
             <EmptyList text="Você ainda não possui nenhuma denuncia cadastrada" />

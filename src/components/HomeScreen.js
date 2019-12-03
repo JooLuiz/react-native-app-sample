@@ -164,8 +164,16 @@ class HomeScreen extends React.Component {
     var markers = [];
     if (this.props.allDenuncias != null) {
       var today = new Date();
-      var days = 86400000; //number of milliseconds in a day
-      var fiveDaysAgo = new Date(today - 5 * days);
+      var mesPraUsar;
+      var anoPraUsar = today.getFullYear();
+      var mes = today.getMonth();
+      if (mes == 1) {
+        mesPraUsar = 12;
+        anoPraUsar = today.getFullYear() - 1;
+      } else {
+        mesPraUsar = mes - 1;
+      }
+      var fiveDaysAgo = new Date(anoPraUsar, mesPraUsar, today.getDate());
       this.props.allDenuncias.forEach((item, index) => {
         var itemDate = new Date(
           item.data_hora.split("T")[0].split("-")[0],
