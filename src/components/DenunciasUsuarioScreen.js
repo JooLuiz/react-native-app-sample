@@ -24,6 +24,14 @@ import ImagePicker from "react-native-image-picker";
 const windowWidth = Dimensions.get("window").width;
 var IMAGES_PER_ROW = 3;
 
+const options = {
+  title: "Imagens das Denúncias",
+  storageOptions: {
+    skipBackup: true,
+    path: "images"
+  }
+};
+
 class DenunciasUsuarioScreen extends React.Component {
   static navigationOptions = {
     title: "Realizar uma Denúncia"
@@ -86,12 +94,13 @@ class DenunciasUsuarioScreen extends React.Component {
           comentario: this.state.comentario,
           data_hora: dateTimeField
         };
-        this.props.addDenunciaUsuario(usuario_denuncia, this.props.imagens).then(() => {
-          this.props.getAllDenuncias().then(() => {
-            this.props.navigation.navigate("Mapa");
+        this.props
+          .addDenunciaUsuario(usuario_denuncia, this.props.imagens)
+          .then(() => {
+            this.props.getAllDenuncias().then(() => {
+              this.props.navigation.navigate("Mapa");
+            });
           });
-        });
-        
       });
   }
 
@@ -164,8 +173,9 @@ class DenunciasUsuarioScreen extends React.Component {
       assetType: "Photos"
     };
     ImagePicker.launchImageLibrary(options, response => {
-      this.props.addImagem({ uri: respose.uri });
-      this.props.addPath(response.uri);
+      console.warn(this.props.kind);
+      this.props.addImagem({ uri: response.uri });
+      this.props.addPaths(response.uri);
     });
   }
 
