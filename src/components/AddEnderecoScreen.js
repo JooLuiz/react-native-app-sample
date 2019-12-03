@@ -64,9 +64,9 @@ class AddEnderecoScreen extends React.Component {
           nome: this.state.nome,
           endereco: placeLongName
         };
-        this.props.addEnderecoUsuario(endereco_usuario);
-
-        this.props.navigation.goBack();
+        this.props.addEnderecoUsuario(endereco_usuario).then(() => {
+          this.props.navigation.goBack();
+        });
       });
   }
 

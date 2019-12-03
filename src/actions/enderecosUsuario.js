@@ -48,29 +48,35 @@ export const getEnderecoUsuario = () => (dispatch, getState) => {
 //ADD Endereco Usuario
 
 export const addEnderecoUsuario = EnderecoUsuario => (dispatch, getState) => {
-  dispatch({ type: LOADING });
-  tokenConfig(getState)
-    .then(function(config) {
-      axios
-        .post("/endereco_usuario/", EnderecoUsuario, config)
-        .then(res => {
-          dispatch({
-            type: ADD_ENDERECO_USUARIO,
-            payload: res.data
+  return new Promise((resolve, reject) => {
+    dispatch({ type: LOADING });
+    tokenConfig(getState)
+      .then(function(config) {
+        axios
+          .post("/endereco_usuario/", EnderecoUsuario, config)
+          .then(res => {
+            resolve(res.data);
+            dispatch({
+              type: ADD_ENDERECO_USUARIO,
+              payload: res.data
+            });
+            dispatch({
+              type: NOTIFY,
+              payload: {
+                message: "Local cadastrado com sucesso",
+                type: "success"
+              }
+            });
+          })
+          .catch(() => {
+            reject("erro");
+          })
+          .finally(t => {
+            dispatch({ type: LOADED });
           });
-          dispatch({
-            type: NOTIFY,
-            payload: {
-              message: "Local cadastrado com sucesso",
-              type: "success"
-            }
-          });
-        })
-        .finally(t => {
-          dispatch({ type: LOADED });
-        });
-    })
-    .catch(() => dispatch({ type: LOADED }));
+      })
+      .catch(() => dispatch({ type: LOADED }));
+  });
 };
 
 export const setCurrentEnderecoUsuario = denuncia => dispatch => {
