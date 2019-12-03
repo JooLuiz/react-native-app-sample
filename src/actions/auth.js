@@ -56,7 +56,6 @@ export const login = payload => dispatch => {
     axios
       .post(`/auth/login`, payload)
       .then(response => {
-        console.warn(response.data);
         resolve(response.data);
         dispatch({
           type: NOTIFY,
@@ -210,7 +209,9 @@ export const register = payload => dispatch => {
           type: NOTIFY,
           payload: {
             message:
-              "Olá " + response.usuario + ", é um prazer te ver por aqui!",
+              "Olá " +
+              response.data.username +
+              ", é um prazer te ver por aqui!",
             type: "success"
           }
         });
@@ -219,7 +220,7 @@ export const register = payload => dispatch => {
           payload: response.data
         });
       })
-      .catch((res) => {
+      .catch(res => {
         reject("Error");
         dispatch({
           type: REGISTER_FAIL
