@@ -166,6 +166,15 @@ class DenunciasUsuarioScreen extends React.Component {
       return null;
     }
   }
+  
+  chooseFromGalery() {
+    ImagePicker.launchImageLibrary(options, response => {
+      console.warn(this.props.kind);
+      if (!response.didCancel) {
+        this.setState({ imagem: { uri: response.uri } });
+      }
+    });
+  }
 
   getPhotosAndSave() {
     params = {
