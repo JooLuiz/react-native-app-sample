@@ -40,7 +40,8 @@ class HomeScreen extends React.Component {
   state = {
     region: null,
     text: null,
-    open: false
+    open: false,
+    denunciasList: []
   };
 
   componentDidMount() {
@@ -61,6 +62,7 @@ class HomeScreen extends React.Component {
     this.props.navigation.addListener("willFocus", () => {
       this.props.loading();
       this.props.getAllDenuncias();
+      this.setState({ text: "" });
       if (this.props.isAuthenticated) {
         this.props.getEnderecoUsuario();
         this.props.getDenuncias();
@@ -177,7 +179,7 @@ class HomeScreen extends React.Component {
           latitude: parseFloat(item.latitude),
           longitude: parseFloat(item.longitude)
         };
-        if (itemDate > fiveDaysAgo) {
+        if (itemDate < fiveDaysAgo) {
           markers[index] = (
             <MapView.Marker
               key={index}
@@ -224,7 +226,9 @@ class HomeScreen extends React.Component {
         <Searchbar
           style={styles.searchInput}
           icon={() => <FontAwesomeIcon icon="search" size={20} color="gray" />}
-          clearIcon={() => <FontAwesomeIcon icon="backspace" size={20} color="gray" />}
+          clearIcon={() => (
+            <FontAwesomeIcon icon="backspace" size={20} color="gray" />
+          )}
           placeholder="Pesquisar Local"
           onChangeText={text => this.setState({ text })}
           value={this.state.text}

@@ -17,7 +17,11 @@ class LoginOrCreateForm extends Component {
     username: "",
     password: "",
     email: "",
-    cpf: ""
+    cpf: "",
+    usernameEmpty: false,
+    passwordEmpty: false,
+    emailEmpty: false,
+    cpfEmpty: false
   };
 
   onUsernameChange(text) {
@@ -37,36 +41,64 @@ class LoginOrCreateForm extends Component {
   }
 
   handleRequest() {
-    const payload = {
-      username: this.state.username,
-      password: this.state.password
-    };
-    if (this.props.create) {
-      payload.email = this.state.email;
-      payload.cpf = this.state.cpf;
-      this.props.register(payload);
+    if (
+      this.state.username.trim() === "" ||
+      this.state.password.trim() === "" ||
+      (this.props.create && this.state.email.trim() == "") ||
+      (this.props.create && this.state.cpf.trim() == "")
+    ) {
+      if (this.state.username.trim() === "") {
+        this.setState({ usernameEmpty: true });
+      }
+
+      if (this.state.password.trim() === "") {
+        this.setState({ passwordEmpty: true });
+      }
+
+      if (this.props.create && this.state.email.trim() === "") {
+        this.setState({ emailEmpty: true });
+      }
+
+      if (this.props.create && this.state.cpf.trim() === "") {
+        this.setState({ cpfEmpty: true });
+      }
     } else {
-      this.props.login(payload);
+      const payload = {
+        username: this.state.username,
+        password: this.state.password
+      };
+      if (this.props.create) {
+        payload.email = this.state.email;
+        payload.cpf = this.state.cpf;
+        this.props
+          .register(payload)
+          .then(() => this.props.navigation.navigate("Mapa"));
+      } else {
+        this.props.login(payload).then(() => {
+          this.props.navigation.navigate("Mapa");
+        });
+      }
     }
-    this.props.navigation.navigate("Mapa");
   }
 
   renderEmailField() {
     if (this.props.create) {
       return (
         <View>
-          <HelperText
-            type="error"
-            visible={
-              (!this.state.email.includes("@") && this.state.email != "") ||
-              this.state.email == null ||
-              this.state.email == ""
-            }
-          >
-            {this.state.email == ""
-              ? "O campo E-mail é obrigatório!"
-              : "Endereço de e-mail é inválido!"}
-          </HelperText>
+          {this.state.emailEmpty ? (
+            <HelperText
+              type="error"
+              visible={
+                (!this.state.email.includes("@") && this.state.email != "") ||
+                this.state.email == null ||
+                this.state.email == ""
+              }
+            >
+              {this.state.email == ""
+                ? "O campo E-mail é obrigatório!"
+                : "Endereço de e-mail é inválido!"}
+            </HelperText>
+          ) : null}
           <TextInput
             label="Email"
             mode="outlined"
@@ -87,12 +119,14 @@ class LoginOrCreateForm extends Component {
     if (this.props.create) {
       return (
         <View>
-          <HelperText
-            type="error"
-            visible={this.state.cpf == null || this.state.cpf == ""}
-          >
-            O campo CPF é obrigatório!
-          </HelperText>
+          {this.state.cpfEmpty ? (
+            <HelperText
+              type="error"
+              visible={this.state.cpf == null || this.state.cpf == ""}
+            >
+              O campo CPF é obrigatório!
+            </HelperText>
+          ) : null}
           <TextInput
             label="CPF"
             mode="outlined"
@@ -115,7 +149,7 @@ class LoginOrCreateForm extends Component {
       <Button
         mode="contained"
         onPress={this.handleRequest.bind(this)}
-        color={'#3A35CD'}
+        color={"#3A35CD"}
       >
         {buttonText}
       </Button>
@@ -125,14 +159,14 @@ class LoginOrCreateForm extends Component {
   renderCreateLink() {
     if (!this.props.create) {
       return (
-          <Button
-            style={{ marginTop: 15 }}
-            color={'#2DAE42'}
-            mode="contained"
-            onPress={() => this.props.navigation.navigate("Register")}
-          >
-              Faça seu registro!
-          </Button>
+        <Button
+          style={{ marginTop: 15 }}
+          color={"#2DAE42"}
+          mode="contained"
+          onPress={() => this.props.navigation.navigate("Register")}
+        >
+          Faça seu registro!
+        </Button>
       );
     }
   }
@@ -142,12 +176,16 @@ class LoginOrCreateForm extends Component {
       <View>
         <View>
           <View>
-            <HelperText
-              type="error"
-              visible={this.state.username == null || this.state.username == ""}
-            >
-              O campo Usuário é obrigatório!
-            </HelperText>
+            {this.state.usernameEmpty ? (
+              <HelperText
+                type="error"
+                visible={
+                  this.state.username == null || this.state.username == ""
+                }
+              >
+                O campo Usuário é obrigatório!
+              </HelperText>
+            ) : null}
             <TextInput
               label="Usuário"
               autoCorrect={false}
@@ -163,12 +201,16 @@ class LoginOrCreateForm extends Component {
           {this.renderEmailField()}
           {this.renderCPFField()}
           <View>
-            <HelperText
-              type="error"
-              visible={this.state.password == null || this.state.password == ""}
-            >
-              O campo Senha é obrigatório!
-            </HelperText>
+            {this.state.passwordEmpty ? (
+              <HelperText
+                type="error"
+                visible={
+                  this.state.password == null || this.state.password == ""
+                }
+              >
+                O campo Senha é obrigatório!
+              </HelperText>
+            ) : null}
             <TextInput
               secureTextEntry
               label="Senha"

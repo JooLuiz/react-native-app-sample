@@ -12,33 +12,37 @@ import { tokenConfig } from "./auth";
 
 //GET  de Denuncia
 export const getEnderecoUsuario = () => (dispatch, getState) => {
-  dispatch({ type: LOADING });
-  tokenConfig(getState)
-    .then(function(config) {
-      axios
-        .get("/endereco_usuario/", config)
-        .then(res => {
-          dispatch({
-            type: GET_ENDERECO_USUARIO,
-            payload: res.data
-          });
-        })
-        .catch(err => {
-          if (err.response.status >= 500) {
+  return new Promise((resolve, reject) => {
+    dispatch({ type: LOADING });
+    tokenConfig(getState)
+      .then(function(config) {
+        axios
+          .get("/endereco_usuario/", config)
+          .then(res => {
+            resolve(res);
             dispatch({
-              type: NOTIFY,
-              payload: {
-                message: "Não foi possível conectar com o servidor.",
-                type: "error"
-              }
+              type: GET_ENDERECO_USUARIO,
+              payload: res.data
             });
-          }
-        });
-    })
-    .catch(() => dispatch({ type: LOADED }))
-    .finally(t => {
-      dispatch({ type: LOADED });
-    });
+          })
+          .catch(err => {
+            reject("Erro");
+            if (err.response.status >= 500) {
+              dispatch({
+                type: NOTIFY,
+                payload: {
+                  message: "Não foi possível conectar com o servidor.",
+                  type: "error"
+                }
+              });
+            }
+          });
+      })
+      .catch(() => dispatch({ type: LOADED }))
+      .finally(t => {
+        dispatch({ type: LOADED });
+      });
+  });
 };
 
 //ADD Endereco Usuario

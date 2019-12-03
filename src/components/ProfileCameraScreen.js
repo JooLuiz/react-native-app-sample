@@ -71,7 +71,7 @@ class ProfileCameraScreen extends Component {
   }
 
   confirm() {
-    this.props.editUser(this.props.user, this.state.imagem, "avatar");
+    this.props.editUser(this.props.user, this.state.imagem, "avatar").then(() => this.props.navigation.navigate("Profile"));
   }
 
   renderCameraButtonOrConfirm() {
