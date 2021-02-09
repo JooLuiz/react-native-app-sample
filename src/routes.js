@@ -10,7 +10,6 @@ import DenunciasUsuarioScreen from "./components/DenunciasUsuarioScreen";
 import AddEnderecoScreen from "./components/AddEnderecoScreen";
 import SideMenu from "./components/SideMenu";
 import { createStackNavigator, createDrawerNavigator } from "react-navigation";
-import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
 import CameraScreen from "./components/CameraScreen";
 import DenunciasRecentesScreen from "./components/DenunciasRecentesScreen";
 import ProfileCameraScreen from "./components/ProfileCameraScreen";
@@ -56,17 +55,6 @@ const AppNavigator = createDrawerNavigator(
   },
   {
     contentComponent: SideMenu
-  }
-);
-
-const TabNavigator = createMaterialBottomTabNavigator(
-  {
-    Mapa: { screen: HomeScreen, title: "Home" },
-    Profile: { screen: ProfileScreen, title: "Perfil" }
-  },
-  {
-    initialRouteName: "Mapa",
-    activeColor: "white"
   }
 );
 

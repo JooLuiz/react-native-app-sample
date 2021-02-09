@@ -64,9 +64,9 @@ class AddEnderecoScreen extends React.Component {
           nome: this.state.nome,
           endereco: placeLongName
         };
-        this.props.addEnderecoUsuario(endereco_usuario);
-
-        this.props.navigation.goBack();
+        this.props.addEnderecoUsuario(endereco_usuario).then(() => {
+          this.props.navigation.goBack();
+        });
       });
   }
 
@@ -89,7 +89,7 @@ class AddEnderecoScreen extends React.Component {
               alignItems: "center",
               // marginHorizontal: Dimensions.get("window").width * 0.03,
               height: Dimensions.get("window").height * 0.07,
-              backgroundColor: this.props.kind == "current" ? "grey" : "white",
+              backgroundColor: this.props.kind == "current" ? "blue" : "white",
               width: "50%",
               borderBottomColor: "grey",
               borderBottomWidth: 1
@@ -98,7 +98,8 @@ class AddEnderecoScreen extends React.Component {
             <Text
               style={{
                 top: Dimensions.get("window").height * 0.02,
-                alignSelf: "center"
+                alignSelf: "center",
+                color: this.props.kind == "current" ? "white" : "black"
               }}
             >
               Utilizar Local Atual
@@ -111,7 +112,7 @@ class AddEnderecoScreen extends React.Component {
               alignItems: "center",
               // marginHorizontal: Dimensions.get("window").width * 0.03,
               height: Dimensions.get("window").height * 0.07,
-              backgroundColor: this.props.kind == "current" ? "white" : "grey",
+              backgroundColor: this.props.kind == "current" ? "white" : "blue",
               width: "50%",
               borderBottomColor: "grey",
               borderBottomWidth: 1
@@ -120,7 +121,8 @@ class AddEnderecoScreen extends React.Component {
             <Text
               style={{
                 top: Dimensions.get("window").height * 0.02,
-                alignSelf: "center"
+                alignSelf: "center",
+                color: this.props.kind == "current" ? "black" : "white"
               }}
             >
               Pesquisar Local

@@ -8,16 +8,38 @@ import {
   TouchableOpacity,
   ImageBackground
 } from "react-native";
+import { getDenuncias } from "../actions/denuncias";
+import {
+  getDenunciasUsuario,
+  getAllDenuncias
+} from "../actions/denunciasUsuario";
 import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { Avatar } from "react-native-paper";
+import { getEnderecoUsuario } from "../actions/enderecosUsuario";
 
 class SideMenu extends Component {
   navigateToScreen = route => () => {
     const navigateAction = NavigationActions.navigate({
       routeName: route
     });
-    this.props.navigation.dispatch(navigateAction);
+    if (route == "MinhasDenuncias") {
+      this.props.getDenuncias().then(() => {
+        this.props.getDenunciasUsuario().then(() => {
+          this.props.navigation.dispatch(navigateAction);
+        });
+      });
+    } else if ((route = "DenunciasRecentes")) {
+      this.props.getAllDenuncias().then(() => {
+        this.props.navigation.dispatch(navigateAction);
+      });
+    } else if (route == "MeusLocais") {
+      this.props.getEnderecoUsuario().then(() => {
+        this.props.navigation.dispatch(navigateAction);
+      });
+    } else {
+      this.props.navigation.dispatch(navigateAction);
+    }
   };
 
   renderSide() {
@@ -172,4 +194,9 @@ const mapStateToProps = state => ({
   denunciasUsuario: state.denunciasUsuario.denunciasUsuario
 });
 
-export default connect(mapStateToProps, null)(SideMenu);
+export default connect(mapStateToProps, {
+  getDenuncias,
+  getDenunciasUsuario,
+  getAllDenuncias,
+  getEnderecoUsuario
+})(SideMenu);

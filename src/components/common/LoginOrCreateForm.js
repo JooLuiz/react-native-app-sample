@@ -7,7 +7,7 @@ import {
   StyleSheet,
   ScrollView
 } from "react-native";
-import { TextInput, HelperText } from "react-native-paper";
+import { TextInput, HelperText, Button } from "react-native-paper";
 import { login, register } from "../../actions/auth";
 import { getDenuncias } from "../../actions/denuncias";
 import { getEnderecoUsuario } from "../../actions/enderecosUsuario";
@@ -17,7 +17,11 @@ class LoginOrCreateForm extends Component {
     username: "",
     password: "",
     email: "",
-    cpf: ""
+    cpf: "",
+    usernameEmpty: false,
+    passwordEmpty: false,
+    emailEmpty: false,
+    cpfEmpty: false
   };
 
   onUsernameChange(text) {
@@ -37,39 +41,69 @@ class LoginOrCreateForm extends Component {
   }
 
   handleRequest() {
-    const payload = {
-      username: this.state.username,
-      password: this.state.password
-    };
-    if (this.props.create) {
-      payload.email = this.state.email;
-      payload.cpf = this.state.cpf;
-      this.props.register(payload);
+    if (
+      this.state.username.trim() === "" ||
+      this.state.password.trim() === "" ||
+      (this.props.create && this.state.email.trim() == "") ||
+      (this.props.create && this.state.cpf.trim() == "")
+    ) {
+      if (this.state.username.trim() === "") {
+        this.setState({ usernameEmpty: true });
+      }
+
+      if (this.state.password.trim() === "") {
+        this.setState({ passwordEmpty: true });
+      }
+
+      if (this.props.create && this.state.email.trim() === "") {
+        this.setState({ emailEmpty: true });
+      }
+
+      if (this.props.create && this.state.cpf.trim() === "") {
+        this.setState({ cpfEmpty: true });
+      }
     } else {
-      this.props.login(payload);
+      const payload = {
+        username: this.state.username,
+        password: this.state.password
+      };
+      if (this.props.create) {
+        payload.email = this.state.email;
+        payload.cpf = this.state.cpf;
+        this.props
+          .register(payload)
+          .then(() => this.props.navigation.navigate("Mapa"));
+      } else {
+        this.props.login(payload).then(() => {
+          this.props.navigation.navigate("Mapa");
+        });
+      }
     }
-    this.props.navigation.navigate("Mapa");
   }
 
   renderEmailField() {
     if (this.props.create) {
       return (
         <View>
-          <HelperText
-            type="error"
-            visible={
-              (!this.state.email.includes("@") && this.state.email != "") ||
-              this.state.email == null ||
-              this.state.email == ""
-            }
-          >
-            {this.state.email == ""
-              ? "o campo E-mail é obrigatório!"
-              : "Endereço de e-mail é inválido!"}
-          </HelperText>
+          {this.state.emailEmpty ? (
+            <HelperText
+              type="error"
+              visible={
+                (!this.state.email.includes("@") && this.state.email != "") ||
+                this.state.email == null ||
+                this.state.email == ""
+              }
+            >
+              {this.state.email == ""
+                ? "O campo E-mail é obrigatório!"
+                : "Endereço de e-mail é inválido!"}
+            </HelperText>
+          ) : null}
           <TextInput
             label="Email"
             mode="outlined"
+            style={{ backgroundColor:"#3A35CD"}}
+            selectionColor={"#3A35CD"}
             autoCorrect={false}
             autoCapitalize="none"
             onChangeText={this.onEmailChange.bind(this)}
@@ -85,15 +119,19 @@ class LoginOrCreateForm extends Component {
     if (this.props.create) {
       return (
         <View>
-          <HelperText
-            type="error"
-            visible={this.state.cpf == null || this.state.cpf == ""}
-          >
-            o campo CPF é obrigatório!
-          </HelperText>
+          {this.state.cpfEmpty ? (
+            <HelperText
+              type="error"
+              visible={this.state.cpf == null || this.state.cpf == ""}
+            >
+              O campo CPF é obrigatório!
+            </HelperText>
+          ) : null}
           <TextInput
             label="CPF"
             mode="outlined"
+            style={{ backgroundColor:"#3A35CD"}}
+            selectionColor={"#3A35CD"}
             autoCorrect={false}
             onChangeText={this.onCPFChange.bind(this)}
             style={styles.inputs}
@@ -108,29 +146,27 @@ class LoginOrCreateForm extends Component {
     const buttonText = this.props.create ? "Registrar" : "Login";
 
     return (
-      <TouchableOpacity
-        activeOpacity={0.6}
+      <Button
+        mode="contained"
         onPress={this.handleRequest.bind(this)}
+        color={"#3A35CD"}
       >
-        <View style={styles.button}>
-          <Text style={{ color: "white" }}>{buttonText}</Text>
-        </View>
-      </TouchableOpacity>
+        {buttonText}
+      </Button>
     );
   }
 
   renderCreateLink() {
     if (!this.props.create) {
       return (
-        <View style={styles.register}>
-          <TouchableOpacity
-            onPress={() => this.props.navigation.navigate("Register")}
-          >
-            <Text style={{ color: "white" }}>
-              Ainda não possui cadastro? Clique aqui!
-            </Text>
-          </TouchableOpacity>
-        </View>
+        <Button
+          style={{ marginTop: 15 }}
+          color={"#2DAE42"}
+          mode="contained"
+          onPress={() => this.props.navigation.navigate("Register")}
+        >
+          Faça seu registro!
+        </Button>
       );
     }
   }
@@ -140,16 +176,22 @@ class LoginOrCreateForm extends Component {
       <View>
         <View>
           <View>
-            <HelperText
-              type="error"
-              visible={this.state.username == null || this.state.username == ""}
-            >
-              o campo Usuário é obrigatório!
-            </HelperText>
+            {this.state.usernameEmpty ? (
+              <HelperText
+                type="error"
+                visible={
+                  this.state.username == null || this.state.username == ""
+                }
+              >
+                O campo Usuário é obrigatório!
+              </HelperText>
+            ) : null}
             <TextInput
               label="Usuário"
               autoCorrect={false}
               mode="outlined"
+              style={{ backgroundColor:"#3A35CD"}}
+              selectionColor={"#3A35CD"}
               autoCapitalize="none"
               onChangeText={this.onUsernameChange.bind(this)}
               style={styles.inputs}
@@ -159,15 +201,21 @@ class LoginOrCreateForm extends Component {
           {this.renderEmailField()}
           {this.renderCPFField()}
           <View>
-            <HelperText
-              type="error"
-              visible={this.state.password == null || this.state.password == ""}
-            >
-              o campo Senha é obrigatório!
-            </HelperText>
+            {this.state.passwordEmpty ? (
+              <HelperText
+                type="error"
+                visible={
+                  this.state.password == null || this.state.password == ""
+                }
+              >
+                O campo Senha é obrigatório!
+              </HelperText>
+            ) : null}
             <TextInput
               secureTextEntry
               label="Senha"
+              style={{ backgroundColor:"#3A35CD"}}
+              selectionColor={"#3A35CD"}
               autoCorrect={false}
               autoCapitalize="none"
               mode="outlined"
@@ -188,35 +236,10 @@ const styles = StyleSheet.create({
   inputs: {
     marginBottom: 15
   },
-  button: {
-    padding: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 100,
-    marginBottom: 15,
-    backgroundColor: "#1b90e3",
-    shadowColor: "#000",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 12
-    },
-    shadowOpacity: 0.8,
-    shadowRadius: 16.0,
-    elevation: 24
-  },
   container: {
     justifyContent: "center",
     marginTop: 0,
     backgroundColor: "#ffffff"
-  },
-  register: {
-    padding: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 100,
-    marginBottom: 15,
-    backgroundColor: "#04B431"
   }
 });
 

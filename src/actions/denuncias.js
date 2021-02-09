@@ -10,18 +10,20 @@ import { tokenConfig } from "./auth";
 
 //GET  de Denuncia
 export const getDenuncias = () => (dispatch, getState) => {
-  dispatch({ type: LOADING });
-  tokenConfig(getState)
-    .then(function(config) {
+  return new Promise((resolve, reject) => {
+    dispatch({ type: LOADING });
+    tokenConfig(getState).then(function(config) {
       axios
         .get("/denuncias/", config)
         .then(res => {
+          resolve(res.data);
           dispatch({
             type: GET_DENUNCIA,
             payload: res.data
           });
         })
         .catch(err => {
+          reject("Erro");
           if (err.response.status >= 500) {
             dispatch({
               type: NOTIFY,
@@ -32,7 +34,8 @@ export const getDenuncias = () => (dispatch, getState) => {
             });
           }
         });
-    })
+    });
+  })
     .catch(() => dispatch({ type: LOADED }))
     .finally(t => {
       dispatch({ type: LOADED });

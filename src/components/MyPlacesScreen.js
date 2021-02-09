@@ -44,8 +44,9 @@ class MyPlacesScreen extends React.Component {
                     longitude: item.longitude
                   };
                   this.props.getPlace(coordinates, "coordinates");
-                  this.props.setOrigin();
-                  this.props.navigation.navigate("Mapa");
+                  this.props.setOrigin().then(() => {
+                    this.props.navigation.navigate("Mapa");
+                  });
                 }}
                 left={() => (
                   <List.Icon
@@ -81,7 +82,7 @@ const styles = StyleSheet.create({
   },
   addPlaceBottomButtom: {
     position: "absolute",
-    bottom: Dimensions.get("window").height * 0.015,
+    top: Dimensions.get("window").height * 0.77,
     right: Dimensions.get("window").width * 0.07
   },
   circle: {

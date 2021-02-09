@@ -16,11 +16,6 @@ export default class EmptyList extends React.Component {
         >
           {this.props.text}
         </Text>
-        <Button
-          style={{ width: Dimensions.get("window").width * 0.6 }}
-          onPress={() => this.props.navigation.goBack()}
-          title="Voltar"
-        ></Button>
       </View>
     );
   }

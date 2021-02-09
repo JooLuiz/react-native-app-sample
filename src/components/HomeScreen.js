@@ -30,6 +30,7 @@ import {
   setCurrentTipoDenuncia
 } from "../actions/tipoDenuncias";
 import {} from "react-native-paper";
+import { loading, loaded } from "../actions/loader";
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -39,10 +40,12 @@ class HomeScreen extends React.Component {
   state = {
     region: null,
     text: null,
-    open: false
+    open: false,
+    denunciasList: []
   };
 
   componentDidMount() {
+    this.props.loading();
     Geolocation.getCurrentPosition(
       position => {
         let region = {
@@ -55,13 +58,17 @@ class HomeScreen extends React.Component {
       },
       error => console.log(error.message)
     );
+    this.props.loaded();
     this.props.navigation.addListener("willFocus", () => {
+      this.props.loading();
       this.props.getAllDenuncias();
+      this.setState({ text: "" });
       if (this.props.isAuthenticated) {
         this.props.getEnderecoUsuario();
         this.props.getDenuncias();
         this.props.getTipoDenuncias();
       }
+      this.props.loaded();
     });
   }
 
@@ -100,13 +107,17 @@ class HomeScreen extends React.Component {
   }
 
   getPlaceFromCoordinates(coords) {
+    this.props.loading();
     this.props.getPlace(coords, "coordinates");
     this.props.setOrigin();
+    this.props.loaded();
   }
 
   getPlaceFromName(name) {
+    this.props.loading();
     this.props.getPlace(name, "address");
     this.props.setOrigin();
+    this.props.loaded();
   }
 
   //Functions that effect the screen
@@ -121,7 +132,8 @@ class HomeScreen extends React.Component {
                 origin: this.props.origin,
                 dest: this.props.searchedPlace
               },
-              this.props.travellingMode
+              this.props.travellingMode,
+              this.props.allDenuncias
             );
           }}
         >
@@ -153,8 +165,16 @@ class HomeScreen extends React.Component {
     var markers = [];
     if (this.props.allDenuncias != null) {
       var today = new Date();
-      var days = 86400000; //number of milliseconds in a day
-      var fiveDaysAgo = new Date(today - 5 * days);
+      var mesPraUsar;
+      var anoPraUsar = today.getFullYear();
+      var mes = today.getMonth();
+      if (mes == 1) {
+        mesPraUsar = 12;
+        anoPraUsar = today.getFullYear() - 1;
+      } else {
+        mesPraUsar = mes - 1;
+      }
+      var fiveDaysAgo = new Date(anoPraUsar, mesPraUsar, today.getDate());
       this.props.allDenuncias.forEach((item, index) => {
         var itemDate = new Date(
           item.data_hora.split("T")[0].split("-")[0],
@@ -168,7 +188,7 @@ class HomeScreen extends React.Component {
           latitude: parseFloat(item.latitude),
           longitude: parseFloat(item.longitude)
         };
-        if (itemDate > fiveDaysAgo) {
+        if (itemDate < fiveDaysAgo) {
           markers[index] = (
             <MapView.Marker
               key={index}
@@ -215,6 +235,9 @@ class HomeScreen extends React.Component {
         <Searchbar
           style={styles.searchInput}
           icon={() => <FontAwesomeIcon icon="search" size={20} color="gray" />}
+          clearIcon={() => (
+            <FontAwesomeIcon icon="backspace" size={20} color="gray" />
+          )}
           placeholder="Pesquisar Local"
           onChangeText={text => this.setState({ text })}
           value={this.state.text}
@@ -516,5 +539,7 @@ export default connect(mapStateToProps, {
   getEnderecoUsuario,
   getDenuncias,
   getTipoDenuncias,
-  setCurrentTipoDenuncia
+  setCurrentTipoDenuncia,
+  loading,
+  loaded
 })(HomeScreen);

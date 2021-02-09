@@ -10,10 +10,20 @@ import {
 } from "react-native";
 import { RNCamera } from "react-native-camera";
 import { editUser } from "../actions/auth";
+import { loading, loaded } from "../actions/loader";
+import ImagePicker from "react-native-image-picker";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
+const options = {
+  title: "Plano de fundo",
+  storageOptions: {
+    skipBackup: true,
+    path: "images"
+  }
+};
 class BackgroundCameraScreen extends Component {
   static navigationOptions = {
     title: "Plano de Fundo"
@@ -52,8 +62,10 @@ class BackgroundCameraScreen extends Component {
         quality: 0.5,
         base64: true
       };
+      this.props.loading();
       const data = await this.camera.takePictureAsync(options);
       this.setState({ imagem: data });
+      this.props.loaded();
     }
   };
 
@@ -68,15 +80,44 @@ class BackgroundCameraScreen extends Component {
   }
 
   confirm() {
-    this.props.editUser(this.props.user, this.state.imagem, "background");
+    this.props
+      .editUser(this.props.user, this.state.imagem, "background")
+      .then(() => this.props.navigation.navigate("Profile"));
+  }
+
+  chooseFromGalery() {
+    ImagePicker.launchImageLibrary(options, response => {
+      console.warn(this.props.kind);
+      if (!response.didCancel) {
+        this.setState({ imagem: { uri: response.uri } });
+      }
+    });
   }
 
   renderCameraButtonOrConfirm() {
     return this.state.imagem == null ? (
       <View style={{ flex: 0, flexDirection: "row", justifyContent: "center" }}>
         <TouchableOpacity
+          onPress={this.chooseFromGalery.bind(this)}
+          style={[
+            styles.afterCapture,
+            {
+              backgroundColor: "blue",
+              width: Dimensions.get("window").width * 0.1,
+              height: Dimensions.get("window").width * 0.1,
+              top: Dimensions.get("window").width * 0.1,
+              padding: 0,
+              paddingHorizontal: 0,
+              alignItens: "center",
+              justifyContent: "center"
+            }
+          ]}
+        >
+          <FontAwesomeIcon icon="images" size={28} />
+        </TouchableOpacity>
+        <TouchableOpacity
           onPress={this.handleTakePicture.bind(this)}
-          style={styles.capture}
+          style={styles.afterCapture}
         >
           <View style={styles.circle}></View>
         </TouchableOpacity>
@@ -87,13 +128,15 @@ class BackgroundCameraScreen extends Component {
           onPress={this.takeAnother.bind(this)}
           style={[{ backgroundColor: "red" }, styles.afterCapture]}
         >
-          <Text>Tirar outra foto?</Text>
+          <FontAwesomeIcon icon="times-circle" size={28} />
+          {/* <Text>Tirar outra foto?</Text> */}
         </TouchableOpacity>
         <TouchableOpacity
           onPress={this.confirm.bind(this)}
           style={[{ backgroundColor: "green" }, styles.afterCapture]}
         >
-          <Text>Confirmar</Text>
+          <FontAwesomeIcon icon="check" size={28} />
+          {/* <Text>Confirmar</Text> */}
         </TouchableOpacity>
       </View>
     );
@@ -174,4 +217,6 @@ const mapStateToProps = state => ({
   user: state.auth.user
 });
 
-export default connect(mapStateToProps, { editUser })(BackgroundCameraScreen);
+export default connect(mapStateToProps, { editUser, loading, loaded })(
+  BackgroundCameraScreen
+);

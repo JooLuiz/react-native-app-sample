@@ -9,8 +9,7 @@ import com.facebook.react.bridge.JavaScriptExecutorFactory;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
-import com.facebook.soloader.SoLoader;
-import org.reactnative.camera.RNCameraPackage;
+import com.facebook.soloader.SoLoader;
 
 import java.util.List;
 

@@ -15,3 +15,10 @@ export const addPaths = path => dispatch => {
     payload: path
   });
 };
+
+export const removeImage = image => dispatch => {
+  dispatch({
+    type: REMOVE_IMAGEM,
+    payload: image
+  });
+};

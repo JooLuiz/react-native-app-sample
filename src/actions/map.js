@@ -6,7 +6,8 @@ import {
   LOADED,
   CANCEL_MAP_OPERATIONS,
   SET_DIRECTIONS,
-  SET_TRAVELLING_MODE
+  SET_TRAVELLING_MODE,
+  NOTIFY
 } from "./types";
 import axios from "axios";
 import Geolocation from "@react-native-community/geolocation";
@@ -44,41 +45,46 @@ export const getPlace = (place, type = "address") => dispatch => {
 };
 
 export const setOrigin = (place, type) => dispatch => {
-  dispatch({ type: LOADING });
-  if (place) {
-    let address;
-    if (type === "address") {
-      address = place.replace(/ /g, "+");
-    } else if (type === "coordinates") {
-      address = place.latitude + "," + place.longitude;
-    }
-    googleGeocoding(address)
-      .then(function(res) {
-        dispatch({
-          type: SET_ORIGIN,
-          payload: {
-            origin: res
-          }
+  return new Promise((resolve, reject) => {
+    dispatch({ type: LOADING });
+    if (place) {
+      let address;
+      if (type === "address") {
+        address = place.replace(/ /g, "+");
+      } else if (type === "coordinates") {
+        address = place.latitude + "," + place.longitude;
+      }
+      googleGeocoding(address)
+        .then(function(res) {
+          resolve(res);
+          dispatch({
+            type: SET_ORIGIN,
+            payload: {
+              origin: res
+            }
+          });
+        })
+        .finally(t => {
+          dispatch({ type: LOADED });
         });
-      })
-      .finally(t => {
+    } else {
+      Geolocation.getCurrentPosition(position => {
+        let address =
+          position.coords.latitude + "," + position.coords.longitude;
+        googleGeocoding(address).then(function(res) {
+          resolve(res);
+          dispatch({
+            type: SET_ORIGIN,
+            payload: {
+              origin: res
+            }
+          });
+        });
+      }).finally(t => {
         dispatch({ type: LOADED });
       });
-  } else {
-    Geolocation.getCurrentPosition(position => {
-      let address = position.coords.latitude + "," + position.coords.longitude;
-      googleGeocoding(address).then(function(res) {
-        dispatch({
-          type: SET_ORIGIN,
-          payload: {
-            origin: res
-          }
-        });
-      });
-    }).finally(t => {
-      dispatch({ type: LOADED });
-    });
-  }
+    }
+  });
 };
 
 export const googleGeocoding = async address => {
@@ -119,16 +125,28 @@ export const googleGeocoding = async address => {
   });
 };
 
-export const startDirections = (points, mode) => dispatch => {
+export const startDirections = (points, mode, all_denuncias) => dispatch => {
   dispatch({ type: LOADING });
-  googleDirections(points, mode)
+  googleDirections(points, mode, all_denuncias)
     .then(function(res) {
+      if (res.perigos > 0) {
+        dispatch({
+          type: NOTIFY,
+          payload: {
+            message:
+              "Está viagem tem um total de " +
+              res.perigos +
+              " perigos em seu caminho, fique atento.",
+            type: "neutral"
+          }
+        });
+      }
       dispatch({
         type: SET_DIRECTIONS,
         payload: {
-          coords: res.coords,
-          directionsDetail: res.directionsDetail,
-          directionsMessagePoints: res.directionsMessagePoints
+          coords: res.rota.coords,
+          directionsDetail: res.rota.directionsDetail,
+          directionsMessagePoints: res.rota.directionsMessagePoints
         }
       });
     })
@@ -137,8 +155,9 @@ export const startDirections = (points, mode) => dispatch => {
     });
 };
 
-export const googleDirections = async (points, mode) => {
+export const googleDirections = async (points, mode, all_denuncias) => {
   return new Promise((resolve, reject) => {
+    var perigos = 0;
     let originLatLng =
       points.origin.coordinates.latitude +
       "," +
@@ -161,6 +180,40 @@ export const googleDirections = async (points, mode) => {
         let encodedPoints = res.data.routes[0].overview_polyline.points;
         encodedPoints = encodedPoints.replace(/\\\\/g, "\\");
         let points = Polyline.decode(encodedPoints);
+
+        all_denuncias.map(denuncia => {
+          let latitudeMinorRange = denuncia.latitude - 0.005525;
+          let latitudeMajorRange = denuncia.latitude + 0.005525;
+          let longitudeMinorRange = denuncia.longitude - 0.005525;
+          let longitudeMajorRange = denuncia.longitude + 0.005525;
+          let abslatitudeMinorRange = Math.abs(latitudeMinorRange);
+          let abslatitudeMajorRange = Math.abs(latitudeMajorRange);
+          let abslongitudeMinorRange = Math.abs(longitudeMinorRange);
+          let abslongitudeMajorRange = Math.abs(longitudeMajorRange);
+
+          if (abslongitudeMajorRange < abslongitudeMinorRange) {
+            let aux = abslongitudeMinorRange;
+            abslongitudeMinorRange = abslongitudeMajorRange;
+            abslongitudeMajorRange = aux;
+          }
+
+          if (abslatitudeMajorRange < abslatitudeMinorRange) {
+            let aux = abslatitudeMinorRange;
+            abslatitudeMinorRange = abslatitudeMajorRange;
+            abslatitudeMajorRange = aux;
+          }
+
+          points.map(point => {
+            if (
+              Math.abs(point[0]) > abslatitudeMinorRange &&
+              Math.abs(point[0]) < abslatitudeMajorRange &&
+              Math.abs(point[1]) > abslongitudeMinorRange &&
+              Math.abs(point[1]) < abslongitudeMajorRange
+            ) {
+              perigos = perigos + 1;
+            }
+          });
+        });
 
         let coords = points.map(point => {
           return {
@@ -190,7 +243,7 @@ export const googleDirections = async (points, mode) => {
           directionsDetail,
           directionsMessagePoints
         };
-        resolve(finalResult);
+        resolve({ rota: finalResult, perigos: perigos });
       })
       .catch(e => {
         reject(e);

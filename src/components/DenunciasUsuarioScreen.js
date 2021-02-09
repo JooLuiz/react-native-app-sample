@@ -18,9 +18,19 @@ import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { TextInput } from "react-native-paper";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { addImagem, addPaths, removeImage } from "../actions/imagens";
+import ImagePicker from "react-native-image-picker";
 
 const windowWidth = Dimensions.get("window").width;
 var IMAGES_PER_ROW = 3;
+
+const options = {
+  title: "Imagens das Denúncias",
+  storageOptions: {
+    skipBackup: true,
+    path: "images"
+  }
+};
 
 class DenunciasUsuarioScreen extends React.Component {
   static navigationOptions = {
@@ -84,10 +94,13 @@ class DenunciasUsuarioScreen extends React.Component {
           comentario: this.state.comentario,
           data_hora: dateTimeField
         };
-        this.props.addDenunciaUsuario(usuario_denuncia, this.props.imagens);
-        this.props.getAllDenuncias();
-
-        this.props.navigation.navigate("Mapa");
+        this.props
+          .addDenunciaUsuario(usuario_denuncia, this.props.imagens)
+          .then(() => {
+            this.props.getAllDenuncias().then(() => {
+              this.props.navigation.navigate("Mapa");
+            });
+          });
       });
   }
 
@@ -108,25 +121,46 @@ class DenunciasUsuarioScreen extends React.Component {
         key={min}
       >
         {this.props.imagens[min] ? (
-          <Image
-            key={min}
-            style={[this.calculatedSize()]}
-            source={{ uri: this.props.imagens[min].uri }}
-          />
+          <TouchableOpacity
+            onLongPress={() => {
+              console.warn(this.props.imagens[min].uri);
+              this.props.removeImage(this.props.imagens[min].uri);
+            }}
+          >
+            <Image
+              key={min}
+              style={[this.calculatedSize()]}
+              source={{ uri: this.props.imagens[min].uri }}
+            />
+          </TouchableOpacity>
         ) : null}
         {this.props.imagens[max - 1] ? (
-          <Image
-            key={max - 1}
-            style={[this.calculatedSize()]}
-            source={{ uri: this.props.imagens[max - 1].uri }}
-          />
+          <TouchableOpacity
+            onLongPress={() => {
+              console.warn(this.props.imagens[max - 1].uri);
+              this.props.removeImage(this.props.imagens[max - 1].uri);
+            }}
+          >
+            <Image
+              key={max - 1}
+              style={[this.calculatedSize()]}
+              source={{ uri: this.props.imagens[max - 1].uri }}
+            />
+          </TouchableOpacity>
         ) : null}
         {this.props.imagens[max] ? (
-          <Image
-            key={max}
-            style={[this.calculatedSize()]}
-            source={{ uri: this.props.imagens[max].uri }}
-          />
+          <TouchableOpacity
+            onLongPress={() => {
+              console.warn(this.props.imagens[max].uri);
+              this.props.removeImage(this.props.imagens[max].uri);
+            }}
+          >
+            <Image
+              key={max}
+              style={[this.calculatedSize()]}
+              source={{ uri: this.props.imagens[max].uri }}
+            />
+          </TouchableOpacity>
         ) : null}
       </View>
     );
@@ -154,6 +188,37 @@ class DenunciasUsuarioScreen extends React.Component {
     }
   }
 
+  chooseFromGalery() {
+    ImagePicker.launchImageLibrary(options, response => {
+      console.warn(this.props.kind);
+      if (!response.didCancel) {
+        this.setState({ imagem: { uri: response.uri } });
+      }
+    });
+  }
+
+  getPhotosAndSave() {
+    params = {
+      first: 40,
+      assetType: "Photos"
+    };
+    ImagePicker.launchImageLibrary(options, response => {
+      console.warn(this.props.kind);
+      if (!response.didCancel) {
+        this.props.addImagem({ uri: response.uri });
+        this.props.addPaths(response.uri);
+      }
+    });
+  }
+
+  renderImagesDeleteAction() {
+    return this.props.imagens.length !== 0 ? (
+      <Text style={{ margin: 4, fontSize: 11, color: "grey", alignSelf: "center" }}>
+        Clique e segure as fotos que deseja remover
+      </Text>
+    ) : null;
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -173,7 +238,7 @@ class DenunciasUsuarioScreen extends React.Component {
               alignItems: "center",
               // marginHorizontal: Dimensions.get("window").width * 0.03,
               height: Dimensions.get("window").height * 0.07,
-              backgroundColor: this.props.kind == "current" ? "grey" : "white",
+              backgroundColor: this.props.kind == "current" ? "blue" : "white",
               width: "50%",
               borderBottomColor: "grey",
               borderBottomWidth: 1
@@ -182,7 +247,8 @@ class DenunciasUsuarioScreen extends React.Component {
             <Text
               style={{
                 top: Dimensions.get("window").height * 0.02,
-                alignSelf: "center"
+                alignSelf: "center",
+                color: this.props.kind == "current" ? "white" : "black",
               }}
             >
               Utilizar Local Atual
@@ -193,9 +259,8 @@ class DenunciasUsuarioScreen extends React.Component {
             style={{
               alignSelf: "stretch",
               alignItems: "center",
-              // marginHorizontal: Dimensions.get("window").width * 0.03,
               height: Dimensions.get("window").height * 0.07,
-              backgroundColor: this.props.kind == "current" ? "white" : "grey",
+              backgroundColor: this.props.kind == "current" ? "white" : "blue",
               width: "50%",
               borderBottomColor: "grey",
               borderBottomWidth: 1
@@ -204,7 +269,8 @@ class DenunciasUsuarioScreen extends React.Component {
             <Text
               style={{
                 top: Dimensions.get("window").height * 0.02,
-                alignSelf: "center"
+                alignSelf: "center",
+                color: this.props.kind == "current" ? "black" : "white",
               }}
             >
               Pesquisar Local
@@ -288,10 +354,47 @@ class DenunciasUsuarioScreen extends React.Component {
                 }}
               />
             )}
-            <Button
-              title="Camera"
-              onPress={() => this.props.navigation.navigate("Camera")}
-            ></Button>
+            <View
+              style={{
+                justifyContent: "center",
+                flexDirection: "row",
+                width: Dimensions.get("window").width * 0.9
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => this.getPhotosAndSave()}
+                style={[
+                  styles.afterCapture,
+                  {
+                    width: Dimensions.get("window").width * 0.1,
+                    height: Dimensions.get("window").width * 0.1,
+                    padding: 0,
+                    paddingHorizontal: 0,
+                    alignItens: "center",
+                    justifyContent: "center"
+                  }
+                ]}
+              >
+                <FontAwesomeIcon icon="images" size={28} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => this.props.navigation.navigate("Camera")}
+                style={[
+                  styles.afterCapture,
+                  {
+                    width: Dimensions.get("window").width * 0.1,
+                    height: Dimensions.get("window").width * 0.1,
+                    padding: 0,
+                    paddingHorizontal: 0,
+                    alignItens: "center",
+                    justifyContent: "center"
+                  }
+                ]}
+              >
+                <FontAwesomeIcon icon="camera" size={28} />
+              </TouchableOpacity>
+            </View>
+            {this.renderImagesDeleteAction()}
             {this.renderImagesList()}
           </ScrollView>
         </View>
@@ -354,11 +457,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     alignSelf: "center",
     margin: 20
+  },
+  afterCapture: {
+    borderRadius: 5,
+    padding: 15,
+    paddingHorizontal: 20,
+    alignSelf: "stretch",
+    alignItems: "center",
+    margin: 20,
+    width: Dimensions.get("window").width * 0.4
   }
 });
 
 export default connect(mapStateToProps, {
   getAllDenuncias,
   addDenunciaUsuario,
-  setPlaceKind
+  setPlaceKind,
+  addImagem,
+  addPaths,
+  removeImage
 })(DenunciasUsuarioScreen);

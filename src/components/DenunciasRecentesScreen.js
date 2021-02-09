@@ -24,10 +24,24 @@ class DenunciasRecentesScreen extends React.Component {
         <FlatList
           data={this.props.allDenuncias.filter(t => {
             var today = new Date();
-            var days = 86400000; //number of milliseconds in a day
-            var fiveDaysAgo = new Date(today - days / 2);
-            var dateTimeT = new Date(t.data_hora);
-            if (dateTimeT > fiveDaysAgo) return t;
+            var mesPraUsar;
+            var anoPraUsar = today.getFullYear();
+            var mes = today.getMonth();
+            if (mes == 1) {
+              mesPraUsar = 12;
+              anoPraUsar = today.getFullYear() - 1;
+            } else {
+              mesPraUsar = mes - 1;
+            }
+            var fiveDaysAgo = new Date(anoPraUsar, mesPraUsar, today.getDate());
+            var itemDate = new Date(
+              t.data_hora.split("T")[0].split("-")[0],
+              t.data_hora.split("T")[0].split("-")[1],
+              t.data_hora.split("T")[0].split("-")[2],
+              t.data_hora.split("T")[1].split(":")[0],
+              t.data_hora.split("T")[1].split(":")[1]
+            );
+            if (itemDate.getTime() < fiveDaysAgo.getTime()) return t;
           })}
           ListEmptyComponent={
             <EmptyList text="Você ainda não possui nenhuma denuncia cadastrada" />
